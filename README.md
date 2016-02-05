@@ -1,30 +1,8 @@
-# Labm8
+# My PhD
 
-[![Build Status](https://travis-ci.org/ChrisCummins/phd.svg)](https://travis-ci.org/ChrisCummins/phd)
-[![Coverage Status](https://coveralls.io/repos/ChrisCummins/phd/badge.svg)](https://coveralls.io/r/ChrisCummins/phd)
-
-A collection of functions and utilities for collecting and
-manipulating quantitative experimental data.
-
-![pip-db](https://raw.github.com/ChrisCummins/phd/master/src/labm8/docs/logo.jpg)
-
-## Installation
-
-Install with `sudo python ./setup.py install`.
-
-## License
-
-Copyright 2015 Chris Cummins.
-
-Released under the terms of the
-[GNU General Public License, Version 3](http://www.gnu.org/copyleft/gpl.html).
-
-This is free software: you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by the Free
-Software Foundation, either version 3 of the License, or (at your
-option) any later version.
-
-This software is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-General Public License for more details.
+This repo is not intended for human consumption. However, in the
+interest of open and honest scientific inquiry, I have decided to live
+my research career like an open wound and am posting all of my
+scribblings in this repository. Licensing is a mixed bag, so it would
+be best if you want to actually use any of this code (lord mercy!) to
+drop me an email at c.cummins@ed.ac.uk.
