@@ -1,8 +1,8 @@
-# My PhD
+# Instrumentation:
 
-This repo is not intended for human consumption. However, in the
-interest of open and honest scientific inquiry, I have decided to live
-my research career like an open wound and am posting all of my
-scribblings in this repository. Licensing is a mixed bag, so it would
-be best if you want to actually use any of this stuff (lord mercy!) to
-drop me an email at c.cummins@ed.ac.uk.
+1. Modify Makefile to add `cec-profile.o` to links.
+1. Add `#include <cec-profile.h>` to source files.
+1. Replace 'clCreateCommandQueue()' with 'CEC_COMMAND_QUEUE()'.
+1. Replace 'clEnqueueNDRangeKernel()' with 'CEC_ND_KERNEL()', and
+   remove last argument (event*).
+1. Replace 'clEnqueueReadBuffer()' with 'CEC_READ_BUFFER()'.
