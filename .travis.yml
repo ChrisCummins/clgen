@@ -2,9 +2,8 @@ language: python
 python:
   - "2.7"
   - "3.3"
-
-git:
-  submodules: false
+  - "3.4"
+  - "3.5"
 
 before_install:
   # Install Anaconda, which we will use to install scipy and other
@@ -25,14 +24,14 @@ install:
   - conda install --yes -c dan_blanchard python-coveralls nose-cov
   # Install support for coveralls.io:
   - pip install coveralls coverage
-  - cd src/labm8 && python setup.py install
+  - python ./setup.py install
 
 script:
-  - cd src/labm8 && coverage run --source=labm8 setup.py test
+  - coverage run --source=labm8 ./setup.py test
 
 after_success:
   # Create coverage report:
-  - cd src/labm8 && coveralls
+  - coveralls
 
 notifications:
   email:
