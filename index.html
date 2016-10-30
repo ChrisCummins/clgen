@@ -1,0 +1,228 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Requirements &#8212; clgen 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="clgen 0.0.1 documentation" href="#" />
+    <link rel="next" title="Building CLgen" href="build_system.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="figure align-center">
+<a class="reference internal image-reference" href="https://raw.githubusercontent.com/ChrisCummins/clgen/master/docs/assets/logo.png"><img alt="CLgen: Deep Learning Program Generator." src="https://raw.githubusercontent.com/ChrisCummins/clgen/master/docs/assets/logo.png" style="width: 420px;" /></a>
+</div>
+<hr class="docutils" />
+<p><a class="reference external" href="https://travis-ci.org/ChrisCummins/clgen"><img alt="Build Status" src="https://travis-ci.org/ChrisCummins/clgen.svg?branch=master" /></a> <img alt="Documentation Status" src="https://img.shields.io/badge/docs-latest-brightgreen.svg" /> <a class="reference external" href="https://www.python.org/"><img alt="Python Version" src="https://img.shields.io/badge/python-2%20%26%203-blue.svg" /></a> <a class="reference external" href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img alt="License Badge" src="https://img.shields.io/badge/license-GNU%20GPL%20v3-blue.svg" /></a></p>
+<p><strong>CLgen</strong> is an open source application for generating runnable programs using
+deep learning. CLgen <em>learns</em> to program using neural networks which model
+the semantics and usage from large volumes of program fragments, generating
+many-core OpenCL programs that are representative of, but <em>distinct</em> from,
+the programs it learns from.</p>
+<div class="figure">
+<img alt="CLgen synthesis pipeline." src="https://raw.githubusercontent.com/ChrisCummins/clgen/master/docs/assets/pipeline.png" />
+</div>
+<div class="section" id="requirements">
+<h1>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>Linux (x64) or OS X.</li>
+<li><a class="reference external" href="https://gcc.gnu.org/">GCC</a> &gt;= 4.7 or
+<a class="reference external" href="http://llvm.org/releases/download.html">clang</a> &gt;= 3.1.</li>
+<li><a class="reference external" href="http://savannah.gnu.org/projects/make">GNU Make</a> &gt;= 3.79.</li>
+<li><a class="reference external" href="https://www.python.org/">Python</a> 2.7 or &gt;= 3.4.</li>
+<li><a class="reference external" href="https://www.khronos.org/opencl/">OpenCL</a> == 1.2.</li>
+<li><a class="reference external" href="http://zlib.net/">zlib</a> &gt;= 1.2.3.4.</li>
+<li><a class="reference external" href="https://support.hdfgroup.org/HDF5/release/obtainsrc.html">libhdf5</a> &gt;= 1.8.11.</li>
+</ul>
+<p>Optional, but highly recommended:</p>
+<ul class="simple">
+<li>An NVIDIA GPU and
+<a class="reference external" href="http://www.nvidia.com/object/cuda_home_new.html">CUDA</a> &gt;= 6.5.</li>
+</ul>
+</div>
+<div class="section" id="getting-started">
+<h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<p>Checkout CLgen locally:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="o">--</span><span class="n">recursive</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">ChrisCummins</span><span class="o">/</span><span class="n">clgen</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+<p>If CUDA support is not available on your system (see optional requirements),
+run:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">CLGEN_GPU</span><span class="o">=</span><span class="mi">0</span>
+</pre></div>
+</div>
+<p>Build and install clgen:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">install</span><span class="o">.</span><span class="n">sh</span>
+</pre></div>
+</div>
+<p>Run the test suite. Everything should pass:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">test</span><span class="o">.</span><span class="n">sh</span>
+</pre></div>
+</div>
+<p>Train and sample a very small clgen model using the included training set:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">clgen</span> <span class="n">model</span><span class="o">.</span><span class="n">json</span> <span class="n">sampler</span><span class="o">.</span><span class="n">json</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="license">
+<h1>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h1>
+<p>Copyright 2016 Chris Cummins <a class="reference external" href="mailto:chrisc&#46;101&#37;&#52;&#48;gmail&#46;com">chrisc<span>&#46;</span>101<span>&#64;</span>gmail<span>&#46;</span>com</a>.</p>
+<p>Released under the terms of the GPLv3 license. See
+<a class="reference external" href="/LICENSE.txt">LICENSE.txt</a> for details.</p>
+</div>
+<div class="section" id="contents">
+<h1>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="build_system.html">Building CLgen</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="build_system.html#host-toolchain">Host Toolchain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_system.html#native-file-compilation">Native File Compilation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_system.html#python-package-installation">Python Package Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="binaries.html">Programs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="binaries.html#clgen">clgen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binaries.html#clgen-create-db">clgen-create-db</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binaries.html#clgen-drive">clgen-drive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binaries.html#clgen-explore">clgen-explore</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binaries.html#clgen-features">clgen-features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binaries.html#clgen-fetch">clgen-fetch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binaries.html#clgen-fetch-clgen">clgen-fetch-clgen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binaries.html#clgen-fetch-clsmith">clgen-fetch-clsmith</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binaries.html#clgen-fetch-db">clgen-fetch-db</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binaries.html#clgen-fetch-github">clgen-fetch-github</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binaries.html#clgen-preprocess">clgen-preprocess</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binaries.html#clgen-train">clgen-train</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Python API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-clgen">clgen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-clgen.cache">clgen.cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-clgen.cldrive">clgen.cldrive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-clgen.cli">clgen.cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-clgen.clutil">clgen.clutil</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-clgen.corpus">clgen.corpus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-clgen.dbutil">clgen.dbutil</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-clgen.explore">clgen.explore</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-clgen.features">clgen.features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-clgen.fetch">clgen.fetch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-clgen.log">clgen.log</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-clgen.model">clgen.model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-clgen.native">clgen.native</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-clgen.preprocess">clgen.preprocess</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-clgen.sampler">clgen.sampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-clgen.torch_rnn">clgen.torch_rnn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-clgen.train">clgen.train</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="license.html#preamble">Preamble</a></li>
+<li class="toctree-l2"><a class="reference internal" href="license.html#terms-and-conditions">Terms and Conditions</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Requirements</a></li>
+<li><a class="reference internal" href="#getting-started">Getting started</a></li>
+<li><a class="reference internal" href="#license">License</a></li>
+<li><a class="reference internal" href="#contents">Contents</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="build_system.html" title="next chapter">Building CLgen</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Chris Cummins.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/index.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,657 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>clgen.fetch &#8212; clgen 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="top" title="clgen 0.0.1 documentation" href="../../index.html" />
+    <link rel="up" title="clgen" href="../clgen.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for clgen.fetch</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Copyright 2016 Chris Cummins &lt;chrisc.101@gmail.com&gt;.</span>
+<span class="c1">#</span>
+<span class="c1"># This file is part of CLgen.</span>
+<span class="c1">#</span>
+<span class="c1"># CLgen is free software: you can redistribute it and/or modify</span>
+<span class="c1"># it under the terms of the GNU General Public License as published by</span>
+<span class="c1"># the Free Software Foundation, either version 3 of the License, or</span>
+<span class="c1"># (at your option) any later version.</span>
+<span class="c1">#</span>
+<span class="c1"># CLgen is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1"># GNU General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License</span>
+<span class="c1"># along with CLgen.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1">#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Fetch OpenCL files</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">with_statement</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">sqlite3</span>
+
+<span class="kn">from</span> <span class="nn">base64</span> <span class="k">import</span> <span class="n">b64decode</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">github</span> <span class="k">import</span> <span class="n">Github</span><span class="p">,</span> <span class="n">GithubException</span>
+<span class="kn">from</span> <span class="nn">hashlib</span> <span class="k">import</span> <span class="n">sha1</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="nb">open</span>
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">Popen</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">sleep</span>
+
+<span class="kn">import</span> <span class="nn">clgen</span>
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">clutil</span>
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">explore</span>
+
+
+<div class="viewcode-block" id="FetchException"><a class="viewcode-back" href="../../api.html#clgen.fetch.FetchException">[docs]</a><span class="k">class</span> <span class="nc">FetchException</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<span class="n">MAX_KERNEL_LEN</span> <span class="o">=</span> <span class="mi">5000</span>
+
+<span class="c1"># Counters</span>
+<span class="n">repos_new_counter</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">repos_modified_counter</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">repos_unchanged_counter</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">files_new_counter</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">files_modified_counter</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">files_unchanged_counter</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">errors_counter</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">status_string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+
+<div class="viewcode-block" id="print_repo_details"><a class="viewcode-back" href="../../api.html#clgen.fetch.print_repo_details">[docs]</a><span class="k">def</span> <span class="nf">print_repo_details</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;url:&#39;</span><span class="p">,</span> <span class="n">repo</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;owner:&#39;</span><span class="p">,</span> <span class="n">repo</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;name:&#39;</span><span class="p">,</span> <span class="n">repo</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;fork:&#39;</span><span class="p">,</span> <span class="n">repo</span><span class="o">.</span><span class="n">fork</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;stars:&#39;</span><span class="p">,</span> <span class="n">repo</span><span class="o">.</span><span class="n">stargazers_count</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;contributors:&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_contributors</span><span class="p">()]))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;forks:&#39;</span><span class="p">,</span> <span class="n">repo</span><span class="o">.</span><span class="n">forks</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;created_at:&#39;</span><span class="p">,</span> <span class="n">repo</span><span class="o">.</span><span class="n">created_at</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;updated_at:&#39;</span><span class="p">,</span> <span class="n">repo</span><span class="o">.</span><span class="n">updated_at</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="print_file_details"><a class="viewcode-back" href="../../api.html#clgen.fetch.print_file_details">[docs]</a><span class="k">def</span> <span class="nf">print_file_details</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;url:&#39;</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;path:&#39;</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;sha:&#39;</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">sha</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;size:&#39;</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">size</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="print_counters"><a class="viewcode-back" href="../../api.html#clgen.fetch.print_counters">[docs]</a><span class="k">def</span> <span class="nf">print_counters</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\r\033</span><span class="s1">[Kfiles: new &#39;</span><span class="p">,</span> <span class="n">files_new_counter</span><span class="p">,</span>
+          <span class="s1">&#39;, modified &#39;</span><span class="p">,</span> <span class="n">files_modified_counter</span><span class="p">,</span>
+          <span class="s1">&#39;, unchanged &#39;</span><span class="p">,</span> <span class="n">files_unchanged_counter</span><span class="p">,</span>
+          <span class="s1">&#39;. repos: new &#39;</span><span class="p">,</span> <span class="n">repos_new_counter</span><span class="p">,</span>
+          <span class="s1">&#39;, modified &#39;</span><span class="p">,</span> <span class="n">repos_modified_counter</span><span class="p">,</span>
+          <span class="s1">&#39;, unchanged &#39;</span><span class="p">,</span> <span class="n">repos_unchanged_counter</span><span class="p">,</span>
+          <span class="s1">&#39;. errors &#39;</span><span class="p">,</span> <span class="n">errors_counter</span><span class="p">,</span>
+          <span class="s1">&#39;. current: &#39;</span><span class="p">,</span> <span class="n">status_string</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">25</span><span class="p">],</span>
+          <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="rate_limit"><a class="viewcode-back" href="../../api.html#clgen.fetch.rate_limit">[docs]</a><span class="k">def</span> <span class="nf">rate_limit</span><span class="p">(</span><span class="n">g</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">status_string</span>
+    <span class="n">remaining</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">get_rate_limit</span><span class="p">()</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">remaining</span>
+    <span class="k">while</span> <span class="n">remaining</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">:</span>
+        <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">status_string</span> <span class="o">=</span> <span class="s1">&#39;WAITING ON RATE LIMIT&#39;</span>
+        <span class="n">print_counters</span><span class="p">()</span>
+        <span class="n">remaining</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">get_rate_limit</span><span class="p">()</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">remaining</span></div>
+
+
+<div class="viewcode-block" id="process_repo"><a class="viewcode-back" href="../../api.html#clgen.fetch.process_repo">[docs]</a><span class="k">def</span> <span class="nf">process_repo</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">repo</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">repos_new_counter</span>
+    <span class="k">global</span> <span class="n">repos_modified_counter</span>
+    <span class="k">global</span> <span class="n">repos_unchanged_counter</span>
+    <span class="k">global</span> <span class="n">status_string</span>
+
+    <span class="n">rate_limit</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">url</span>
+    <span class="n">updated_at</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">updated_at</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">status_string</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="n">print_counters</span><span class="p">()</span>
+
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT updated_at FROM Repositories WHERE url=?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">url</span><span class="p">,))</span>
+    <span class="n">cached_updated_at</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+
+    <span class="c1"># Do nothing unless updated timestamps don&#39;t match</span>
+    <span class="k">if</span> <span class="n">cached_updated_at</span> <span class="ow">and</span> <span class="n">cached_updated_at</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">updated_at</span><span class="p">:</span>
+        <span class="n">repos_unchanged_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">owner</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">email</span>
+    <span class="n">fork</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">repo</span><span class="o">.</span><span class="n">fork</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="n">stars</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">stargazers_count</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">contributors</span> <span class="o">=</span> <span class="nb">len</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_contributors</span><span class="p">()])</span>
+    <span class="k">except</span> <span class="n">GithubException</span><span class="p">:</span>
+        <span class="n">contributors</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">forks</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">forks</span>
+    <span class="n">created_at</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">created_at</span>
+    <span class="n">updated_at</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">updated_at</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DELETE FROM Repositories WHERE url=?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">url</span><span class="p">,))</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;INSERT INTO Repositories VALUES(?,?,?,?,?,?,?,?,?)&quot;</span><span class="p">,</span>
+              <span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">owner</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">fork</span><span class="p">,</span> <span class="n">stars</span><span class="p">,</span> <span class="n">contributors</span><span class="p">,</span> <span class="n">forks</span><span class="p">,</span> <span class="n">created_at</span><span class="p">,</span>
+               <span class="n">updated_at</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">cached_updated_at</span><span class="p">:</span>
+        <span class="n">repos_modified_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">repos_new_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="is_opencl_path"><a class="viewcode-back" href="../../api.html#clgen.fetch.is_opencl_path">[docs]</a><span class="k">def</span> <span class="nf">is_opencl_path</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.cl&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.ocl&#39;</span><span class="p">)</span></div>
+
+<span class="n">_include_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;\w*#include [&quot;&lt;](.*)[&quot;&gt;]&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="download_file"><a class="viewcode-back" href="../../api.html#clgen.fetch.download_file">[docs]</a><span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span><span class="n">github_token</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">stack</span><span class="p">):</span>
+    <span class="c1"># Recursion stack</span>
+    <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="n">url</span><span class="p">,</span>
+        <span class="n">headers</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;Authorization&#39;</span><span class="p">:</span> <span class="s1">&#39;token &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">github_token</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+    <span class="n">src</span> <span class="o">=</span> <span class="n">b64decode</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+    <span class="n">outlines</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">src</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">_include_re</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="n">include_name</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># Try and resolve relative paths</span>
+            <span class="n">include_name</span> <span class="o">=</span> <span class="n">include_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;../&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+            <span class="n">branch</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">default_branch</span>
+            <span class="n">tree_iterator</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_git_tree</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tree</span>
+            <span class="n">include_url</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">tree_iterator</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">include_name</span><span class="p">):</span>
+                    <span class="n">include_url</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">url</span>
+                    <span class="k">break</span>
+
+            <span class="k">if</span> <span class="n">include_url</span> <span class="ow">and</span> <span class="n">include_url</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stack</span><span class="p">:</span>
+                <span class="n">include_src</span> <span class="o">=</span> <span class="n">download_file</span><span class="p">(</span><span class="n">github_token</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">include_url</span><span class="p">)</span>
+                <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">include_src</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">include_url</span><span class="p">:</span>
+                    <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;// [FETCH] didnt find: &#39;</span> <span class="o">+</span> <span class="n">line</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;// [FETCH] skipped: &#39;</span> <span class="o">+</span> <span class="n">line</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outlines</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="process_file"><a class="viewcode-back" href="../../api.html#clgen.fetch.process_file">[docs]</a><span class="k">def</span> <span class="nf">process_file</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">github_token</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">files_new_counter</span>
+    <span class="k">global</span> <span class="n">files_modified_counter</span>
+    <span class="k">global</span> <span class="n">files_unchanged_counter</span>
+    <span class="k">global</span> <span class="n">status_string</span>
+
+    <span class="c1"># rate_limit(g)</span>
+
+    <span class="c1"># We&#39;re only interested in OpenCL files.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_opencl_path</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">return</span>
+
+    <span class="n">url</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">url</span>
+    <span class="n">sha</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">sha</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">path</span>
+    <span class="n">status_string</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">path</span>
+    <span class="n">print_counters</span><span class="p">()</span>
+
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT sha FROM ContentMeta WHERE id=?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">url</span><span class="p">,))</span>
+    <span class="n">cached_sha</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+
+    <span class="c1"># Do nothing unless checksums don&#39;t match</span>
+    <span class="k">if</span> <span class="n">cached_sha</span> <span class="ow">and</span> <span class="n">cached_sha</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">sha</span><span class="p">:</span>
+        <span class="n">files_unchanged_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">repo_url</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">url</span>
+    <span class="n">contents</span> <span class="o">=</span> <span class="n">download_file</span><span class="p">(</span><span class="n">github_token</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">size</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DELETE FROM ContentFiles WHERE id=?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">url</span><span class="p">,))</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DELETE FROM ContentMeta WHERE id=?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">url</span><span class="p">,))</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;INSERT INTO ContentFiles VALUES(?,?)&quot;</span><span class="p">,</span>
+              <span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">contents</span><span class="p">))</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;INSERT INTO ContentMeta VALUES(?,?,?,?,?)&quot;</span><span class="p">,</span>
+              <span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">repo_url</span><span class="p">,</span> <span class="n">sha</span><span class="p">,</span> <span class="n">size</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">cached_sha</span><span class="p">:</span>
+        <span class="n">files_modified_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">files_new_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<span class="c1"># Download all of the OpenCL on GitHub (!)</span>
+<span class="c1">#</span>
+<span class="c1"># Shortcomings of this appraoch:</span>
+<span class="c1">#</span>
+<span class="c1">#   Only includes exclusively OpenCL files, no inline strings</span>
+<div class="viewcode-block" id="github"><a class="viewcode-back" href="../../api.html#clgen.fetch.github">[docs]</a><span class="k">def</span> <span class="nf">github</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">github_username</span><span class="p">,</span> <span class="n">github_pw</span><span class="p">,</span> <span class="n">github_token</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">errors_counter</span>
+
+    <span class="n">g</span> <span class="o">=</span> <span class="n">Github</span><span class="p">(</span><span class="n">github_username</span><span class="p">,</span> <span class="n">github_pw</span><span class="p">)</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+    <span class="n">handle_repo</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">process_repo</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">db</span><span class="p">)</span>
+    <span class="c1"># TODO: Verify tables have been created</span>
+
+    <span class="c1"># Fetch the repositories to iterate over. Since opencl isn&#39;t</span>
+    <span class="c1"># treated as a first-class language by GitHub, we can&#39;t use the</span>
+    <span class="c1"># &#39;language=&#39; keyword for queries, so instead we through a much</span>
+    <span class="c1"># wider net and filter the results afterwards.</span>
+    <span class="c1">#</span>
+    <span class="n">query_terms</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;opencl&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;cl&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;khronos&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;gpu&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;gpgpu&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;cuda&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;amd&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;nvidia&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;heterogeneous&#39;</span>
+    <span class="p">]</span>
+    <span class="k">for</span> <span class="n">query</span> <span class="ow">in</span> <span class="n">query_terms</span><span class="p">:</span>
+        <span class="n">repos</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">search_repositories</span><span class="p">(</span><span class="n">query</span> <span class="o">+</span> <span class="s1">&#39; fork:true sort:stars&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">repos</span><span class="p">:</span>
+            <span class="n">repo_modified</span> <span class="o">=</span> <span class="n">handle_repo</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
+
+            <span class="c1"># do nothing unless the repo is new or modified</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">repo_modified</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">handle_file</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">process_file</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">github_token</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">repo</span><span class="p">)</span>
+
+            <span class="c1"># Iterate over the entire git tree of the repo&#39;s default</span>
+            <span class="c1"># branch (usually &#39;master&#39;). If a file ends with the .cl</span>
+            <span class="c1"># extension, check to see if we already have it, else download</span>
+            <span class="c1"># it.</span>
+            <span class="c1">#</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">branch</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">default_branch</span>
+                <span class="n">tree_iterator</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_git_tree</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tree</span>
+                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">tree_iterator</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">handle_file</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                        <span class="n">errors_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">except</span> <span class="n">GithubException</span><span class="p">:</span>
+                <span class="c1"># do nothing in case of error (such as an empty repo)</span>
+                <span class="k">pass</span>
+
+    <span class="n">print_counters</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">done.&quot;</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<span class="n">_include_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;\w*#include [&quot;&lt;](.*)[&quot;&gt;]&#39;</span><span class="p">)</span>
+<span class="n">_parboil_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+    <span class="s1">r&#39;.+/benchmarks/parboil/benchmarks/(.+)/src/opencl_base/(.+\.cl)&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_path_id"><a class="viewcode-back" href="../../api.html#clgen.fetch.get_path_id">[docs]</a><span class="k">def</span> <span class="nf">get_path_id</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">_parboil_re</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="inline_fs_headers"><a class="viewcode-back" href="../../api.html#clgen.fetch.inline_fs_headers">[docs]</a><span class="k">def</span> <span class="nf">inline_fs_headers</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">stack</span><span class="p">):</span>
+    <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="n">outlines</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">src</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">_include_re</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="n">include_name</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># try and resolve relative paths</span>
+            <span class="n">include_name</span> <span class="o">=</span> <span class="n">include_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;../&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+            <span class="n">include_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">include_name</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">include_path</span><span class="p">)</span> <span class="ow">and</span> <span class="n">include_path</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stack</span><span class="p">:</span>
+                <span class="n">include_src</span> <span class="o">=</span> <span class="n">inline_headers</span><span class="p">(</span><span class="n">include_path</span><span class="p">,</span> <span class="n">stack</span><span class="p">)</span>
+                <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;// [FETCH] include: &#39;</span> <span class="o">+</span> <span class="n">include_path</span><span class="p">)</span>
+                <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">include_src</span><span class="p">)</span>
+                <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;// [FETCH] eof(&#39;</span> <span class="o">+</span> <span class="n">include_path</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">include_path</span> <span class="ow">in</span> <span class="n">stack</span><span class="p">:</span>
+                    <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;// [FETCH] ignored recursive include: &#39;</span> <span class="o">+</span>
+                                    <span class="n">include_path</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;// [FETCH] 404 not found: &#39;</span> <span class="o">+</span>
+                                    <span class="n">include_path</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outlines</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="flatten"><a class="viewcode-back" href="../../api.html#clgen.fetch.flatten">[docs]</a><span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">l</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="process_cl_file"><a class="viewcode-back" href="../../api.html#clgen.fetch.process_cl_file">[docs]</a><span class="k">def</span> <span class="nf">process_cl_file</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :param db_path: Path to output database.</span>
+<span class="sd">    :param path: Path to input file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+    <span class="n">contents</span> <span class="o">=</span> <span class="n">inline_fs_headers</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">get_path_id</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;INSERT OR IGNORE INTO ContentFiles VALUES(?,?)&#39;</span><span class="p">,</span>
+              <span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">contents</span><span class="p">))</span>
+
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="content_db"><a class="viewcode-back" href="../../api.html#clgen.fetch.content_db">[docs]</a><span class="k">def</span> <span class="nf">content_db</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">in_db_path</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="s1">&#39;PreprocessedFiles&#39;</span><span class="p">):</span>
+    <span class="n">odb</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+    <span class="n">idb</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">in_db_path</span><span class="p">)</span>
+    <span class="n">ic</span> <span class="o">=</span> <span class="n">idb</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+    <span class="n">ic</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT id,contents FROM </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="p">))</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="n">ic</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">contents</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+        <span class="n">kernels</span> <span class="o">=</span> <span class="n">clutil</span><span class="o">.</span><span class="n">get_cl_kernels</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">clgen</span><span class="o">.</span><span class="n">checksum_str</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span> <span class="k">for</span> <span class="n">kernel</span> <span class="ow">in</span> <span class="n">kernels</span><span class="p">]</span>
+        <span class="c1"># print(&quot;{} kernels in {}&quot;.format(len(kernels), id))</span>
+        <span class="k">for</span> <span class="n">kid</span><span class="p">,</span> <span class="n">kernel</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">kernels</span><span class="p">):</span>
+            <span class="n">oc</span> <span class="o">=</span> <span class="n">odb</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+            <span class="n">oc</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;INSERT OR IGNORE INTO ContentFiles VALUES(?,?)&#39;</span><span class="p">,</span>
+                       <span class="p">(</span><span class="n">kid</span><span class="p">,</span> <span class="n">kernel</span><span class="p">))</span>
+            <span class="n">odb</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="fs"><a class="viewcode-back" href="../../api.html#clgen.fetch.fs">[docs]</a><span class="k">def</span> <span class="nf">fs</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">paths</span><span class="o">=</span><span class="p">[]):</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+        <span class="n">process_cl_file</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\033</span><span class="s2">[K</span><span class="se">\n</span><span class="s2">done.&quot;</span><span class="p">)</span></div>
+
+
+<span class="c1"># Counters</span>
+<span class="n">kernel_counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<div class="viewcode-block" id="process_sample_file"><a class="viewcode-back" href="../../api.html#clgen.fetch.process_sample_file">[docs]</a><span class="k">def</span> <span class="nf">process_sample_file</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">sample_path</span><span class="p">,</span> <span class="n">first_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">max_kernel_len</span><span class="o">=</span><span class="mi">5000</span><span class="p">):</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">sample_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+        <span class="n">sample</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">tail</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="s1">&#39;__kernel void &#39;</span><span class="p">)</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\r\033</span><span class="s1">[Kkernel&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+        <span class="c1"># Find the starting index of the next kernel.</span>
+        <span class="n">tail</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;__kernel void &#39;</span><span class="p">,</span> <span class="n">tail</span><span class="p">)</span>
+
+        <span class="c1"># If we didn&#39;t find another kernel, stop.</span>
+        <span class="k">if</span> <span class="n">tail</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="c1"># Find the end index of this kernel.</span>
+        <span class="n">head</span> <span class="o">=</span> <span class="n">clutil</span><span class="o">.</span><span class="n">get_cl_kernel_end_idx</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">start_idx</span><span class="o">=</span><span class="n">tail</span><span class="p">,</span>
+                                            <span class="n">max_len</span><span class="o">=</span><span class="n">max_kernel_len</span><span class="p">)</span>
+
+        <span class="c1"># Look for other ends</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;__kernel void &#39;</span><span class="p">,</span>
+                          <span class="n">tail</span> <span class="o">+</span> <span class="n">offset</span><span class="p">,</span> <span class="n">tail</span> <span class="o">+</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">max_kernel_len</span><span class="p">)</span>
+        <span class="n">head</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">end</span><span class="p">,</span> <span class="n">head</span><span class="p">)</span> <span class="k">if</span> <span class="n">end</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">else</span> <span class="n">head</span>
+
+        <span class="n">kernel</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">tail</span><span class="p">:</span><span class="n">head</span><span class="p">]</span>
+        <span class="nb">id</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">checksum_str</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;INSERT OR IGNORE INTO ContentFiles VALUES(?,?)&#39;</span><span class="p">,</span>
+                  <span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">kernel</span><span class="p">))</span>
+        <span class="n">tail</span> <span class="o">=</span> <span class="n">head</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">first_only</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="nb">print</span><span class="p">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">explore</span><span class="o">.</span><span class="n">explore</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="clgen_sample"><a class="viewcode-back" href="../../api.html#clgen.fetch.clgen_sample">[docs]</a><span class="k">def</span> <span class="nf">clgen_sample</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">samples_dir</span><span class="p">,</span> <span class="n">sample_path</span><span class="p">,</span> <span class="n">first_only</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">samples_dir</span><span class="p">:</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">samples_dir</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">samples_dir</span><span class="p">)</span>
+                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">samples_dir</span><span class="p">,</span> <span class="n">f</span><span class="p">))]</span>
+        <span class="k">for</span> <span class="n">sample_path</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="n">process_sample_file</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">sample_path</span><span class="p">,</span> <span class="n">first_only</span><span class="o">=</span><span class="n">first_only</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">process_sample_file</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">sample_path</span><span class="p">,</span> <span class="n">first_only</span><span class="o">=</span><span class="n">first_only</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\033</span><span class="s2">[K</span><span class="se">\n</span><span class="s2">done.&quot;</span><span class="p">)</span></div>
+
+
+<span class="c1"># Counters</span>
+<span class="n">files_new_counter</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">errors_counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<div class="viewcode-block" id="CLSmithException"><a class="viewcode-back" href="../../api.html#clgen.fetch.CLSmithException">[docs]</a><span class="k">class</span> <span class="nc">CLSmithException</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="HeaderNotFoundException"><a class="viewcode-back" href="../../api.html#clgen.fetch.HeaderNotFoundException">[docs]</a><span class="k">class</span> <span class="nc">HeaderNotFoundException</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="print_clsmith_counters"><a class="viewcode-back" href="../../api.html#clgen.fetch.print_clsmith_counters">[docs]</a><span class="k">def</span> <span class="nf">print_clsmith_counters</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\r\033</span><span class="s1">[Kfiles: new &#39;</span><span class="p">,</span> <span class="n">files_new_counter</span><span class="p">,</span>
+          <span class="s1">&#39;. errors &#39;</span><span class="p">,</span> <span class="n">errors_counter</span><span class="p">,</span>
+          <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span></div>
+
+
+<span class="n">_include_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;\w*#include [&quot;&lt;](.*)[&quot;&gt;]&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="include_path"><a class="viewcode-back" href="../../api.html#clgen.fetch.include_path">[docs]</a><span class="k">def</span> <span class="nf">include_path</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="n">dirs</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;~/phd/extern/clsmith/runtime&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;~/phd/extern/clsmith/build&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="nb">dir</span> <span class="ow">in</span> <span class="n">dirs</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="nb">dir</span><span class="p">),</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">path</span>
+    <span class="k">raise</span> <span class="n">HeaderNotFoundException</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="inline_headers"><a class="viewcode-back" href="../../api.html#clgen.fetch.inline_headers">[docs]</a><span class="k">def</span> <span class="nf">inline_headers</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
+    <span class="n">outlines</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">src</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">_include_re</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="n">include_name</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">path</span> <span class="o">=</span> <span class="n">include_path</span><span class="p">(</span><span class="n">include_name</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+                <span class="n">header</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+                <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inline_headers</span><span class="p">(</span><span class="n">header</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outlines</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_new_program"><a class="viewcode-back" href="../../api.html#clgen.fetch.get_new_program">[docs]</a><span class="k">def</span> <span class="nf">get_new_program</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">files_new_counter</span>
+
+    <span class="n">outputpath</span> <span class="o">=</span> <span class="s1">&#39;CLProg.c&#39;</span>
+
+    <span class="n">db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+    <span class="c1"># TODO: CLSmith might not be in path</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CLSmith&quot;</span><span class="p">]</span>
+
+    <span class="n">process</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CLSmithException</span><span class="p">()</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outputpath</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="n">contents</span> <span class="o">=</span> <span class="n">inline_headers</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
+
+    <span class="n">sha</span> <span class="o">=</span> <span class="n">sha1</span><span class="p">(</span><span class="n">contents</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;INSERT OR IGNORE INTO ContentFiles VALUES(?,?)&#39;</span><span class="p">,</span>
+              <span class="p">(</span><span class="n">sha</span><span class="p">,</span> <span class="n">contents</span><span class="p">))</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">files_new_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">print_clsmith_counters</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="clsmith"><a class="viewcode-back" href="../../api.html#clgen.fetch.clsmith">[docs]</a><span class="k">def</span> <span class="nf">clsmith</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">target_num_kernels</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">errors_counter</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;generating&#39;</span><span class="p">,</span> <span class="n">target_num_kernels</span><span class="p">,</span> <span class="s1">&#39;kernels to&#39;</span><span class="p">,</span> <span class="n">db_path</span><span class="p">)</span>
+
+    <span class="n">db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT Count(*) FROM ContentFiles&#39;</span><span class="p">)</span>
+    <span class="n">num_kernels</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">while</span> <span class="n">num_kernels</span> <span class="o">&lt;</span> <span class="n">target_num_kernels</span><span class="p">:</span>
+        <span class="n">get_new_program</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT Count(*) FROM ContentFiles&#39;</span><span class="p">)</span>
+        <span class="n">num_kernels</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">print_counters</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">done.&quot;</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  <li><a href="../clgen.html">clgen</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Chris Cummins.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

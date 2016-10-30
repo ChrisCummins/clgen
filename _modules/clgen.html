@@ -1,0 +1,469 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>clgen &#8212; clgen 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="clgen 0.0.1 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for clgen</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Copyright 2016 Chris Cummins &lt;chrisc.101@gmail.com&gt;.</span>
+<span class="c1">#</span>
+<span class="c1"># This file is part of CLgen.</span>
+<span class="c1">#</span>
+<span class="c1"># CLgen is free software: you can redistribute it and/or modify</span>
+<span class="c1"># it under the terms of the GNU General Public License as published by</span>
+<span class="c1"># the Free Software Foundation, either version 3 of the License, or</span>
+<span class="c1"># (at your option) any later version.</span>
+<span class="c1">#</span>
+<span class="c1"># CLgen is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1"># GNU General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License</span>
+<span class="c1"># along with CLgen.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1">#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Deep learning program generator</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">with_statement</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">six</span>
+<span class="kn">import</span> <span class="nn">tarfile</span>
+
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="k">import</span> <span class="n">contextmanager</span>
+<span class="kn">from</span> <span class="nn">hashlib</span> <span class="k">import</span> <span class="n">sha1</span>
+<span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="k">import</span> <span class="n">resource_filename</span><span class="p">,</span> <span class="n">resource_string</span><span class="p">,</span> <span class="n">require</span>
+
+<span class="kn">import</span> <span class="nn">labm8</span>
+<span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">fs</span>
+<span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">system</span>
+
+
+<div class="viewcode-block" id="CLgenError"><a class="viewcode-back" href="../api.html#clgen.CLgenError">[docs]</a><span class="k">class</span> <span class="nc">CLgenError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Module error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="InternalError"><a class="viewcode-back" href="../api.html#clgen.InternalError">[docs]</a><span class="k">class</span> <span class="nc">InternalError</span><span class="p">(</span><span class="n">CLgenError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An internal module error. This class of errors should not leak outside</span>
+<span class="sd">    of the module into user code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="UserError"><a class="viewcode-back" href="../api.html#clgen.UserError">[docs]</a><span class="k">class</span> <span class="nc">UserError</span><span class="p">(</span><span class="n">CLgenError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raised in case of bad user interaction, e.g. an invalid argument.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="NotImplementedError"><a class="viewcode-back" href="../api.html#clgen.NotImplementedError">[docs]</a><span class="k">class</span> <span class="nc">NotImplementedError</span><span class="p">(</span><span class="n">InternalError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Code not found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="File404"><a class="viewcode-back" href="../api.html#clgen.File404">[docs]</a><span class="k">class</span> <span class="nc">File404</span><span class="p">(</span><span class="n">InternalError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Data not found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="CLgenObject"><a class="viewcode-back" href="../api.html#clgen.CLgenObject">[docs]</a><span class="k">class</span> <span class="nc">CLgenObject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base object for CLgen classes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="version"><a class="viewcode-back" href="../api.html#clgen.version">[docs]</a><span class="k">def</span> <span class="nf">version</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the package version.</span>
+
+<span class="sd">    DO NOT try and parse this or derive any special major/minor version</span>
+<span class="sd">    information from it, treat it as an opaque char array. The only valid</span>
+<span class="sd">    operators for comparing versions are == and !=.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Version string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">require</span><span class="p">(</span><span class="s2">&quot;clgen&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">version</span></div>
+
+
+<div class="viewcode-block" id="must_exist"><a class="viewcode-back" href="../api.html#clgen.must_exist">[docs]</a><span class="k">def</span> <span class="nf">must_exist</span><span class="p">(</span><span class="o">*</span><span class="n">path_components</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Require that a file exists.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        *path_components (str): Components of the path.</span>
+<span class="sd">        **kwargs (optional): Key &quot;Error&quot; specifies the exception type to throw.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">path_components</span><span class="p">))</span>
+
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">path_components</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="n">Error</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Error&quot;</span><span class="p">,</span> <span class="n">File404</span><span class="p">)</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">Error</span><span class="p">(</span><span class="s2">&quot;path &#39;</span><span class="si">{}</span><span class="s2">&#39; does not exist&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+        <span class="n">e</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="k">raise</span> <span class="n">e</span>
+    <span class="k">return</span> <span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="host_has_opencl"><a class="viewcode-back" href="../api.html#clgen.host_has_opencl">[docs]</a><span class="k">def</span> <span class="nf">host_has_opencl</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns whether the host has a working OpenCL.</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">        bool: True if host has OpenCL support, else False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">system</span><span class="o">.</span><span class="n">is_mac</span><span class="p">()</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="s1">&#39;/etc/OpenCL/vendors&#39;</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="checksum"><a class="viewcode-back" href="../api.html#clgen.checksum">[docs]</a><span class="k">def</span> <span class="nf">checksum</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checksum a byte stream.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        data (bytes): Data.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Checksum.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">sha1</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InternalError</span><span class="p">(</span><span class="s2">&quot;failed to checksum &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">[:</span><span class="mi">100</span><span class="p">]))</span></div>
+
+
+<div class="viewcode-block" id="checksum_str"><a class="viewcode-back" href="../api.html#clgen.checksum_str">[docs]</a><span class="k">def</span> <span class="nf">checksum_str</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checksum a string.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        string (str): String.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Checksum.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">checksum</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">string</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">UnicodeEncodeError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InternalError</span><span class="p">(</span><span class="s2">&quot;failed to encode &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">string</span><span class="p">[:</span><span class="mi">100</span><span class="p">]))</span></div>
+
+
+<div class="viewcode-block" id="checksum_file"><a class="viewcode-back" href="../api.html#clgen.checksum_file">[docs]</a><span class="k">def</span> <span class="nf">checksum_file</span><span class="p">(</span><span class="o">*</span><span class="n">path_components</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checksum a file.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        path_components (str): Path.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Checksum.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">must_exist</span><span class="p">(</span><span class="o">*</span><span class="n">path_components</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">checksum</span><span class="p">(</span><span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CLgenError</span><span class="p">(</span><span class="s2">&quot;failed to read &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="unpack_archive"><a class="viewcode-back" href="../api.html#clgen.unpack_archive">[docs]</a><span class="k">def</span> <span class="nf">unpack_archive</span><span class="p">(</span><span class="o">*</span><span class="n">components</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Unpack a compressed archive.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        *components (str[]): Absolute path.</span>
+<span class="sd">        **kwargs (dict, optional): Set &quot;compression&quot; to compression type.</span>
+<span class="sd">            Default: bz2. Set &quot;dir&quot; to destination directory. Defaults to the</span>
+<span class="sd">            directory of the archive.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="o">*</span><span class="n">components</span><span class="p">)</span>
+    <span class="n">compression</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;compression&quot;</span><span class="p">,</span> <span class="s2">&quot;bz2&quot;</span><span class="p">)</span>
+    <span class="nb">dir</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dir&quot;</span><span class="p">,</span> <span class="n">fs</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+
+    <span class="n">fs</span><span class="o">.</span><span class="n">cd</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
+    <span class="n">tar</span> <span class="o">=</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r:&quot;</span> <span class="o">+</span> <span class="n">compression</span><span class="p">)</span>
+    <span class="n">tar</span><span class="o">.</span><span class="n">extractall</span><span class="p">()</span>
+    <span class="n">tar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">fs</span><span class="o">.</span><span class="n">cdpop</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="nb">dir</span></div>
+
+
+<div class="viewcode-block" id="get_substring_idxs"><a class="viewcode-back" href="../api.html#clgen.get_substring_idxs">[docs]</a><span class="k">def</span> <span class="nf">get_substring_idxs</span><span class="p">(</span><span class="n">substr</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a list of indexes of substr. If substr not found, list is</span>
+<span class="sd">    empty.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        substr (str): Substring to match.</span>
+<span class="sd">        s (str): String to match in.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list of int: Start indices of substr.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">substr</span><span class="p">,</span> <span class="n">s</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="package_path"><a class="viewcode-back" href="../api.html#clgen.package_path">[docs]</a><span class="k">def</span> <span class="nf">package_path</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Path to package file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">))</span>
+    <span class="n">abspath</span> <span class="o">=</span> <span class="n">resource_filename</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">must_exist</span><span class="p">(</span><span class="n">abspath</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="data_path"><a class="viewcode-back" href="../api.html#clgen.data_path">[docs]</a><span class="k">def</span> <span class="nf">data_path</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Path to package file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">package_path</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="package_data"><a class="viewcode-back" href="../api.html#clgen.package_data">[docs]</a><span class="k">def</span> <span class="nf">package_data</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read package data file.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        path (str): The relative path to the data file, e.g. &#39;share/foo.txt&#39;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bytes: File contents.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        InternalError: In case of IO error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># throw exception if file doesn&#39;t exist</span>
+    <span class="n">package_path</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">resource_string</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InternalError</span><span class="p">(</span><span class="s2">&quot;failed to read package data &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="package_str"><a class="viewcode-back" href="../api.html#clgen.package_str">[docs]</a><span class="k">def</span> <span class="nf">package_str</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read package data file as a string.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        path (str): The relative path to the text file, e.g. &#39;share/foo.txt&#39;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: File contents.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        InternalError: In case of IO error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">package_data</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">UnicodeDecodeError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InternalError</span><span class="p">(</span><span class="s2">&quot;failed to decode package data &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="sql_script"><a class="viewcode-back" href="../api.html#clgen.sql_script">[docs]</a><span class="k">def</span> <span class="nf">sql_script</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read SQL script to string.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        name (str): The name of the SQL script (without file extension).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: SQL script.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;sql&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.sql&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">package_str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="format_json"><a class="viewcode-back" href="../api.html#clgen.format_json">[docs]</a><span class="k">def</span> <span class="nf">format_json</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pretty print JSON.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        data (dict): JSON blob.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;: &#39;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="loads"><a class="viewcode-back" href="../api.html#clgen.loads">[docs]</a><span class="k">def</span> <span class="nf">loads</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Deserialize `text` (a `str` or `unicode` instance containing a JSON</span>
+<span class="sd">    document with Python or JavaScript like comments) to a Python object.</span>
+
+<span class="sd">    Taken from `commentjson &lt;https://github.com/vaidik/commentjson&gt;`_, written</span>
+<span class="sd">    by `Vaidik Kapoor &lt;https://github.com/vaidik&gt;`_.</span>
+
+<span class="sd">    Copyright (c) 2014 Vaidik Kapoor, MIT license.</span>
+
+<span class="sd">    :param text: serialized JSON string with or without comments.</span>
+<span class="sd">    :param kwargs: all the arguments that `json.loads</span>
+<span class="sd">                   &lt;http://docs.python.org/2/library/json.html#json.loads&gt;`_</span>
+<span class="sd">                   accepts.</span>
+<span class="sd">    :returns: `dict` or `list`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">regex</span> <span class="o">=</span> <span class="s1">r&#39;\s*(#|\/</span><span class="si">{2}</span><span class="s1">).*$&#39;</span>
+    <span class="n">regex_inline</span> <span class="o">=</span> <span class="s1">r&#39;(:?(?:\s)*([A-Za-z\d\.</span><span class="si">{}</span><span class="s1">]*)|((?&lt;=\&quot;).*\&quot;),?)(?:\s)*(((#|(\/</span><span class="si">{2}</span><span class="s1">)).*)|)$&#39;</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">r&#39;^&#39;</span> <span class="o">+</span> <span class="n">regex</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">):</span>
+                <span class="n">lines</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">regex_inline</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+                <span class="n">lines</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">regex_inline</span><span class="p">,</span> <span class="s1">r&#39;\1&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="load_json_file"><a class="viewcode-back" href="../api.html#clgen.load_json_file">[docs]</a><span class="k">def</span> <span class="nf">load_json_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">must_exist</span><span class="p">(</span><span class="n">path</span><span class="p">))</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">loads</span><span class="p">(</span><span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s2">&quot;malformed file &#39;</span><span class="si">{}</span><span class="s2">&#39;. Message from parser: &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                      <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)),</span>
+                  <span class="s2">&quot;    &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
+                  <span class="s2">&quot;Hope that makes sense!&quot;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">File404</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s2">&quot;could not find file &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span></div>
+
+
+<span class="nd">@contextmanager</span>
+<div class="viewcode-block" id="terminating"><a class="viewcode-back" href="../api.html#clgen.terminating">[docs]</a><span class="k">def</span> <span class="nf">terminating</span><span class="p">(</span><span class="n">thing</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Context manager to terminate object at end of scope.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">thing</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">thing</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="write_file"><a class="viewcode-back" href="../api.html#clgen.write_file">[docs]</a><span class="k">def</span> <span class="nf">write_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">contents</span><span class="p">):</span>
+    <span class="n">fs</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+        <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../api.html#clgen.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">model_json</span><span class="p">,</span> <span class="n">sampler_json</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Main entry point for clgen.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        model_json (dict): Model specification.</span>
+<span class="sd">        sample_json (dict): Sample specification.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">model</span>
+    <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">sampler</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">model_json</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">sampler_json</span><span class="p">)</span>
+    <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">model</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Chris Cummins.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

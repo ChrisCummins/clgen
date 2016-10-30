@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>clgen.model &#8212; clgen 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="top" title="clgen 0.0.1 documentation" href="../../index.html" />
+    <link rel="up" title="clgen" href="../clgen.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for clgen.model</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Copyright 2016 Chris Cummins &lt;chrisc.101@gmail.com&gt;.</span>
+<span class="c1">#</span>
+<span class="c1"># This file is part of CLgen.</span>
+<span class="c1">#</span>
+<span class="c1"># CLgen is free software: you can redistribute it and/or modify</span>
+<span class="c1"># it under the terms of the GNU General Public License as published by</span>
+<span class="c1"># the Free Software Foundation, either version 3 of the License, or</span>
+<span class="c1"># (at your option) any later version.</span>
+<span class="c1">#</span>
+<span class="c1"># CLgen is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1"># GNU General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License</span>
+<span class="c1"># along with CLgen.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1">#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">CLgen model.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">copy</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">glob</span><span class="p">,</span> <span class="n">iglob</span>
+<span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">fs</span>
+
+<span class="kn">import</span> <span class="nn">clgen</span>
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">torch_rnn</span>
+<span class="kn">from</span> <span class="nn">clgen.cache</span> <span class="k">import</span> <span class="n">Cache</span>
+<span class="kn">from</span> <span class="nn">clgen.corpus</span> <span class="k">import</span> <span class="n">Corpus</span>
+
+
+<div class="viewcode-block" id="Model"><a class="viewcode-back" href="../../api.html#clgen.model.Model">[docs]</a><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">corpus</span><span class="p">,</span> <span class="n">train_opts</span><span class="p">):</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">corpus</span><span class="p">,</span> <span class="n">Corpus</span><span class="p">))</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">train_opts</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">corpus</span> <span class="o">=</span> <span class="n">corpus</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_opts</span> <span class="o">=</span> <span class="n">train_opts</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checksum</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_cache</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">hash</span><span class="p">))</span>
+
+<div class="viewcode-block" id="Model.checksum"><a class="viewcode-back" href="../../api.html#clgen.model.Model.checksum">[docs]</a>    <span class="k">def</span> <span class="nf">checksum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_opts</span><span class="p">)])</span>
+        <span class="k">return</span> <span class="n">clgen</span><span class="o">.</span><span class="n">checksum_str</span><span class="p">(</span><span class="n">string</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Model.train"><a class="viewcode-back" href="../../api.html#clgen.model.Model.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># assemble training options</span>
+        <span class="n">opts</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_opts</span><span class="p">)</span>
+
+        <span class="n">opts</span><span class="p">[</span><span class="s2">&quot;reset_iterations&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">opts</span><span class="p">[</span><span class="s2">&quot;input_json&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">input_json</span>
+        <span class="n">opts</span><span class="p">[</span><span class="s2">&quot;input_h5&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">input_h5</span>
+        <span class="n">opts</span><span class="p">[</span><span class="s2">&quot;checkpoint_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">)</span>
+
+        <span class="c1"># set default arguments</span>
+        <span class="k">if</span> <span class="n">opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;print_every&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">opts</span><span class="p">[</span><span class="s2">&quot;print_every&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="k">if</span> <span class="n">opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;checkpoint_every&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">opts</span><span class="p">[</span><span class="s2">&quot;checkpoint_every&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>
+
+        <span class="c1"># resume from prior checkpoint</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">most_recent_checkpoint</span><span class="p">:</span>
+            <span class="n">opts</span><span class="p">[</span><span class="s2">&quot;init_from&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">most_recent_checkpoint</span>
+
+        <span class="n">torch_rnn</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="o">**</span><span class="n">opts</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">checkpoints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">glob</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;*.t7&#39;</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">most_recent_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get path to most recently initialized t7</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># if there&#39;s nothing trained, then max() will raise ValueError because</span>
+        <span class="c1"># of an empty sequence</span>
+        <span class="k">def</span> <span class="nf">get_checkpoint_iterations</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;model_([0-9]+)\.t7&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">iglob</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;*.t7&#39;</span><span class="p">)),</span>
+                       <span class="n">key</span><span class="o">=</span><span class="n">get_checkpoint_iterations</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="from_json"><a class="viewcode-back" href="../../api.html#clgen.model.from_json">[docs]</a><span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="n">model_json</span><span class="p">):</span>
+    <span class="n">corpus</span> <span class="o">=</span> <span class="n">Corpus</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">model_json</span><span class="p">[</span><span class="s2">&quot;corpus&quot;</span><span class="p">])</span>
+    <span class="n">train_opts</span> <span class="o">=</span> <span class="n">model_json</span><span class="p">[</span><span class="s2">&quot;train_opts&quot;</span><span class="p">]</span>
+
+    <span class="c1"># validate train_opts flags against those accpted by torch-rnn/train.lua</span>
+    <span class="n">valid_opts</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;batch_size&quot;</span><span class="p">,</span> <span class="s2">&quot;seq_length&quot;</span><span class="p">,</span> <span class="s2">&quot;model_type&quot;</span><span class="p">,</span> <span class="s2">&quot;rnn_size&quot;</span><span class="p">,</span> <span class="s2">&quot;num_layers&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dropout&quot;</span><span class="p">,</span> <span class="s2">&quot;batchnorm&quot;</span><span class="p">,</span> <span class="s2">&quot;learning_rate&quot;</span><span class="p">,</span> <span class="s2">&quot;max_epochs&quot;</span><span class="p">,</span> <span class="s2">&quot;grad_clip&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;lr_decay_every&quot;</span><span class="p">,</span> <span class="s2">&quot;lr_decay_factor&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">train_opts</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_opts</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span>
+                <span class="s2">&quot;Unrecognized training option &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">Model</span><span class="p">(</span><span class="n">corpus</span><span class="p">,</span> <span class="n">train_opts</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  <li><a href="../clgen.html">clgen</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Chris Cummins.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

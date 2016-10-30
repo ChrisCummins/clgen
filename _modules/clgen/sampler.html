@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>clgen.sampler &#8212; clgen 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="top" title="clgen 0.0.1 documentation" href="../../index.html" />
+    <link rel="up" title="clgen" href="../clgen.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for clgen.sampler</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Copyright 2016 Chris Cummins &lt;chrisc.101@gmail.com&gt;.</span>
+<span class="c1">#</span>
+<span class="c1"># This file is part of CLgen.</span>
+<span class="c1">#</span>
+<span class="c1"># CLgen is free software: you can redistribute it and/or modify</span>
+<span class="c1"># it under the terms of the GNU General Public License as published by</span>
+<span class="c1"># the Free Software Foundation, either version 3 of the License, or</span>
+<span class="c1"># (at your option) any later version.</span>
+<span class="c1">#</span>
+<span class="c1"># CLgen is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1"># GNU General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License</span>
+<span class="c1"># along with CLgen.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1">#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Sample a CLgen model.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+
+<span class="kn">import</span> <span class="nn">labm8</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">copy</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">glob</span><span class="p">,</span> <span class="n">iglob</span>
+<span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">fs</span>
+
+<span class="kn">import</span> <span class="nn">clgen</span>
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">dbutil</span>
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">explore</span>
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">fetch</span>
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">preprocess</span>
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">torch_rnn</span>
+<span class="kn">from</span> <span class="nn">clgen.cache</span> <span class="k">import</span> <span class="n">Cache</span>
+<span class="kn">from</span> <span class="nn">clgen.model</span> <span class="k">import</span> <span class="n">Model</span>
+
+
+<div class="viewcode-block" id="serialize_argspec"><a class="viewcode-back" href="../../api.html#clgen.sampler.serialize_argspec">[docs]</a><span class="k">def</span> <span class="nf">serialize_argspec</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">chr</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">97</span><span class="p">,</span> <span class="mi">97</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)))</span>
+    <span class="n">strings</span> <span class="o">=</span> <span class="p">[</span><span class="n">arg</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">name</span> <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">names</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="s2">&quot;__kernel void A(</span><span class="si">{args}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">strings</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Sampler"><a class="viewcode-back" href="../../api.html#clgen.sampler.Sampler">[docs]</a><span class="k">class</span> <span class="nc">Sampler</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler_opts</span><span class="p">,</span> <span class="n">kernel_opts</span><span class="p">):</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">sampler_opts</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">kernel_opts</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">)</span>
+
+        <span class="n">checksum_data</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">sampler_opts</span><span class="o">.</span><span class="n">values</span><span class="p">())]</span> <span class="o">+</span>
+            <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">kernel_opts</span><span class="o">.</span><span class="n">values</span><span class="p">())])</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">checksum_data</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hash</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">checksum_str</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+
+        <span class="c1"># parse sampler options</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_kernels</span> <span class="o">=</span> <span class="n">sampler_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_kernels&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">sampler_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;batch_size&quot;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">static_checker</span> <span class="o">=</span> <span class="n">sampler_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;static_checker&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dynamic_checker</span> <span class="o">=</span> <span class="n">sampler_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dynamic_checker&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel_opts</span> <span class="o">=</span> <span class="n">kernel_opts</span>
+
+<div class="viewcode-block" id="Sampler.get_cache"><a class="viewcode-back" href="../../api.html#clgen.sampler.Sampler.get_cache">[docs]</a>    <span class="k">def</span> <span class="nf">get_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Cache</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">hash</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">hash</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Sampler.sample_iteration"><a class="viewcode-back" href="../../api.html#clgen.sampler.Sampler.sample_iteration">[docs]</a>    <span class="k">def</span> <span class="nf">sample_iteration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">Model</span><span class="p">))</span>
+
+        <span class="n">cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cache</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+        <span class="c1"># create samples database if it doesn&#39;t exist</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">]:</span>
+            <span class="n">dbutil</span><span class="o">.</span><span class="n">create_db</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;kernels.tmp.db&quot;</span><span class="p">))</span>
+            <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span>
+                <span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;kernels.tmp.db&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">start_text</span> <span class="o">=</span> <span class="n">serialize_argspec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_opts</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">start_text</span> <span class="o">=</span> <span class="s2">&quot;__kernel void A(&quot;</span>
+
+        <span class="c1"># sample options</span>
+        <span class="n">opts</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;opencl&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;stream&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="s2">&quot;checkpoint&quot;</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">most_recent_checkpoint</span><span class="p">,</span>
+            <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;temperature&quot;</span><span class="p">,</span> <span class="o">.</span><span class="mi">75</span><span class="p">),</span>
+            <span class="s2">&quot;length&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_length&quot;</span><span class="p">,</span> <span class="mi">10000</span><span class="p">),</span>
+            <span class="s2">&quot;start_text&quot;</span><span class="p">:</span> <span class="n">start_text</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">tmppath</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;sample.tmp.cl&quot;</span><span class="p">)</span>
+        <span class="n">torch_rnn</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">tmppath</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span>
+        <span class="n">fetch</span><span class="o">.</span><span class="n">process_sample_file</span><span class="p">(</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">],</span> <span class="n">tmppath</span><span class="p">,</span>
+                                  <span class="n">max_kernel_len</span><span class="o">=</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;length&quot;</span><span class="p">])</span>
+
+        <span class="c1"># TODO: Parse static checker requirement</span>
+        <span class="n">preprocess</span><span class="o">.</span><span class="n">preprocess_db</span><span class="p">(</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span>
+        <span class="n">fs</span><span class="o">.</span><span class="n">rm</span><span class="p">(</span><span class="n">tmppath</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Sampler.sample"><a class="viewcode-back" href="../../api.html#clgen.sampler.Sampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="n">cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cache</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+        <span class="c1"># create samples database if it doesn&#39;t exist</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">]:</span>
+            <span class="n">dbutil</span><span class="o">.</span><span class="n">create_db</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;kernels.tmp.db&quot;</span><span class="p">))</span>
+            <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span>
+                <span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;kernels.tmp.db&quot;</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_kernels</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span>
+                <span class="n">dbutil</span><span class="o">.</span><span class="n">num_good_kernels</span><span class="p">(</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_kernels</span><span class="p">):</span>
+                <span class="k">return</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">sample_iteration</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;samples database:&quot;</span><span class="p">,</span> <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span></div></div>
+
+
+<div class="viewcode-block" id="from_json"><a class="viewcode-back" href="../../api.html#clgen.sampler.from_json">[docs]</a><span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="n">sampler_json</span><span class="p">):</span>
+    <span class="n">sampler_opts</span> <span class="o">=</span> <span class="n">sampler_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sampler&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sampler_opts</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s2">&quot;no sampler section in sampler specification&quot;</span><span class="p">)</span>
+
+    <span class="n">kernel_opts</span> <span class="o">=</span> <span class="n">sampler_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;kernels&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">kernel_opts</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s2">&quot;no kernels section in sampler specification&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Sampler</span><span class="p">(</span><span class="n">sampler_opts</span><span class="p">,</span> <span class="n">kernel_opts</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  <li><a href="../clgen.html">clgen</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Chris Cummins.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

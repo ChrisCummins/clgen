@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Building CLgen &#8212; clgen 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="clgen 0.0.1 documentation" href="index.html" />
+    <link rel="next" title="Programs" href="binaries.html" />
+    <link rel="prev" title="Requirements" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="building-clgen">
+<span id="building-clgen"></span><h1>Building CLgen<a class="headerlink" href="#building-clgen" title="Permalink to this headline">¶</a></h1>
+<p>If your system has the <a class="reference external" href="https://github.com/ChrisCummins/clgen#requirements">required
+components</a>, then building
+CLgen should be a relatively straightforward. First, if GPU support is <em>not</em>
+required (i.e. you don&#8217;t have an NVIDIA GPU running CUDA &gt;= 6.5), then set the
+following environment variable:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ export CLGEN_GPU=0
+</pre></div>
+</div>
+<p>For convenience sake you may consider adding that to your shell configuration:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>export CLGEN_GPU=0 &gt;&gt; ~/.$(basename $SHELL)rc
+</pre></div>
+</div>
+<p>Then, compile and install the clgen software stack in one shot:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span></span>$ ./install.sh
+</pre></div>
+</div>
+<p>This may take some time (upwards of an hour). If you encounter any problems,
+please consider opening a <a class="reference external" href="https://github.com/ChrisCummins/clgen/issues">bug
+report</a>. The remainder of this
+document provides a brief outline of the build process, which may be useful for
+diagnosing a problem, if one arises.</p>
+<div class="section" id="host-toolchain">
+<span id="host-toolchain"></span><h2>Host Toolchain<a class="headerlink" href="#host-toolchain" title="Permalink to this headline">¶</a></h2>
+<p>CLgen requires the LLVM and Clang libraries and binaries. These are built in
+three steps:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span></span>$ make ninja
+</pre></div>
+</div>
+<p>The ninja build tool is downloaded and compiled in <code class="docutils literal"><span class="pre">native/ninja</span></code>.</p>
+<div class="highlight-sh"><div class="highlight"><pre><span></span>$ make cmake
+</pre></div>
+</div>
+<p>A precompiled version of CMake is downloaded to <code class="docutils literal"><span class="pre">native/cmake</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ make llvm
+</pre></div>
+</div>
+<p>The clang compiler is downloaded and compiled in in <code class="docutils literal"><span class="pre">native/llvm</span></code>.</p>
+</div>
+<div class="section" id="native-file-compilation">
+<span id="native-file-compilation"></span><h2>Native File Compilation<a class="headerlink" href="#native-file-compilation" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-sh"><div class="highlight"><pre><span></span>$ make native
+</pre></div>
+</div>
+<p>Once the toolchain has been built, it is used to compile the native components
+of CLgen. Roughly, those are:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span></span>$ make libclc
+</pre></div>
+</div>
+<p>Libclc provides headers for a generic OpenCL implementation.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ make torch
+</pre></div>
+</div>
+<p>The machine learning is implemented using torch.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ make torch-rnn
+</pre></div>
+</div>
+<p>Torch-rnn provides the recursive neural network.</p>
+</div>
+<div class="section" id="python-package-installation">
+<span id="python-package-installation"></span><h2>Python Package Installation<a class="headerlink" href="#python-package-installation" title="Permalink to this headline">¶</a></h2>
+<p>One the native components are compiled, the remainder of the build process
+involves installing the python package. This is performed either in a virtual
+environment or into the system python path. The unit tests are performed using a
+virtual environment install:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span></span>$ make <span class="nb">test</span>
+</pre></div>
+</div>
+<p>The process for virtual environment or system-wide install is the same:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span></span>$ pip install --upgrade pip
+$ pip install numpy&gt;<span class="o">=</span>1.10.4
+$ pip install -r requirements.txt
+$ pip install -r requirements.devel.txt
+$ <span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;</span><span class="nv">$GPU</span><span class="s2">&quot;</span> -ne <span class="m">0</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span> pip install -r requirements.gpu.txt<span class="p">;</span> <span class="k">fi</span>
+$ python ./setup.py install
+$ python ./setup.py <span class="nb">test</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Building CLgen</a><ul>
+<li><a class="reference internal" href="#host-toolchain">Host Toolchain</a></li>
+<li><a class="reference internal" href="#native-file-compilation">Native File Compilation</a></li>
+<li><a class="reference internal" href="#python-package-installation">Python Package Installation</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Requirements</a></li>
+      <li>Next: <a href="binaries.html" title="next chapter">Programs</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/build_system.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Chris Cummins.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/build_system.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

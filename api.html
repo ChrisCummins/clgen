@@ -1,0 +1,1768 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Python API &#8212; clgen 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="clgen 0.0.1 documentation" href="index.html" />
+    <link rel="next" title="License" href="license.html" />
+    <link rel="prev" title="Programs" href="binaries.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="python-api">
+<h1>Python API<a class="headerlink" href="#python-api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-clgen">
+<span id="clgen"></span><h2>clgen<a class="headerlink" href="#module-clgen" title="Permalink to this headline">¶</a></h2>
+<p>Deep learning program generator</p>
+<dl class="exception">
+<dt id="clgen.CLgenError">
+<em class="property">exception </em><code class="descclassname">clgen.</code><code class="descname">CLgenError</code><a class="reference internal" href="_modules/clgen.html#CLgenError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.CLgenError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Module error.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="clgen.CLgenObject">
+<em class="property">class </em><code class="descclassname">clgen.</code><code class="descname">CLgenObject</code><a class="reference internal" href="_modules/clgen.html#CLgenObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.CLgenObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base object for CLgen classes.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="clgen.File404">
+<em class="property">exception </em><code class="descclassname">clgen.</code><code class="descname">File404</code><a class="reference internal" href="_modules/clgen.html#File404"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.File404" title="Permalink to this definition">¶</a></dt>
+<dd><p>Data not found.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="clgen.InternalError">
+<em class="property">exception </em><code class="descclassname">clgen.</code><code class="descname">InternalError</code><a class="reference internal" href="_modules/clgen.html#InternalError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.InternalError" title="Permalink to this definition">¶</a></dt>
+<dd><p>An internal module error. This class of errors should not leak outside
+of the module into user code.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="clgen.NotImplementedError">
+<em class="property">exception </em><code class="descclassname">clgen.</code><code class="descname">NotImplementedError</code><a class="reference internal" href="_modules/clgen.html#NotImplementedError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.NotImplementedError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Code not found.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="clgen.UserError">
+<em class="property">exception </em><code class="descclassname">clgen.</code><code class="descname">UserError</code><a class="reference internal" href="_modules/clgen.html#UserError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.UserError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raised in case of bad user interaction, e.g. an invalid argument.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.checksum">
+<code class="descclassname">clgen.</code><code class="descname">checksum</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#checksum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.checksum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checksum a byte stream.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>data (bytes): Data.</dd>
+<dt>Returns:</dt>
+<dd>str: Checksum.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.checksum_file">
+<code class="descclassname">clgen.</code><code class="descname">checksum_file</code><span class="sig-paren">(</span><em>*path_components</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#checksum_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.checksum_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checksum a file.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>path_components (str): Path.</dd>
+<dt>Returns:</dt>
+<dd>str: Checksum.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.checksum_str">
+<code class="descclassname">clgen.</code><code class="descname">checksum_str</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#checksum_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.checksum_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checksum a string.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>string (str): String.</dd>
+<dt>Returns:</dt>
+<dd>str: Checksum.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.data_path">
+<code class="descclassname">clgen.</code><code class="descname">data_path</code><span class="sig-paren">(</span><em>*path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#data_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.data_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to package file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.format_json">
+<code class="descclassname">clgen.</code><code class="descname">format_json</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#format_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.format_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pretty print JSON.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>data (dict): JSON blob.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.get_substring_idxs">
+<code class="descclassname">clgen.</code><code class="descname">get_substring_idxs</code><span class="sig-paren">(</span><em>substr</em>, <em>s</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#get_substring_idxs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.get_substring_idxs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of indexes of substr. If substr not found, list is
+empty.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>substr (str): Substring to match.
+s (str): String to match in.</dd>
+<dt>Returns:</dt>
+<dd>list of int: Start indices of substr.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.host_has_opencl">
+<code class="descclassname">clgen.</code><code class="descname">host_has_opencl</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#host_has_opencl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.host_has_opencl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns whether the host has a working OpenCL.</p>
+<p>Returns:</p>
+<blockquote>
+<div>bool: True if host has OpenCL support, else False.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.load_json_file">
+<code class="descclassname">clgen.</code><code class="descname">load_json_file</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#load_json_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.load_json_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.loads">
+<code class="descclassname">clgen.</code><code class="descname">loads</code><span class="sig-paren">(</span><em>text</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#loads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.loads" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deserialize <cite>text</cite> (a <cite>str</cite> or <cite>unicode</cite> instance containing a JSON
+document with Python or JavaScript like comments) to a Python object.</p>
+<p>Taken from <a class="reference external" href="https://github.com/vaidik/commentjson">commentjson</a>, written
+by <a class="reference external" href="https://github.com/vaidik">Vaidik Kapoor</a>.</p>
+<p>Copyright (c) 2014 Vaidik Kapoor, MIT license.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>text</strong> &#8211; serialized JSON string with or without comments.</li>
+<li><strong>kwargs</strong> &#8211; all the arguments that <a class="reference external" href="http://docs.python.org/2/library/json.html#json.loads">json.loads</a>
+accepts.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><cite>dict</cite> or <cite>list</cite>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.main">
+<code class="descclassname">clgen.</code><code class="descname">main</code><span class="sig-paren">(</span><em>model_json</em>, <em>sampler_json</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main entry point for clgen.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>model_json (dict): Model specification.
+sample_json (dict): Sample specification.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.must_exist">
+<code class="descclassname">clgen.</code><code class="descname">must_exist</code><span class="sig-paren">(</span><em>*path_components</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#must_exist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.must_exist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Require that a file exists.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd><a href="#id1"><span class="problematic" id="id2">*</span></a>path_components (str): Components of the path.
+<a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs (optional): Key &#8220;Error&#8221; specifies the exception type to throw.</dd>
+<dt>Returns:</dt>
+<dd>str: Path.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.package_data">
+<code class="descclassname">clgen.</code><code class="descname">package_data</code><span class="sig-paren">(</span><em>*path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#package_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.package_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read package data file.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>path (str): The relative path to the data file, e.g. &#8216;share/foo.txt&#8217;.</dd>
+<dt>Returns:</dt>
+<dd>bytes: File contents.</dd>
+<dt>Raises:</dt>
+<dd>InternalError: In case of IO error.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.package_path">
+<code class="descclassname">clgen.</code><code class="descname">package_path</code><span class="sig-paren">(</span><em>*path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#package_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.package_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to package file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.package_str">
+<code class="descclassname">clgen.</code><code class="descname">package_str</code><span class="sig-paren">(</span><em>*path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#package_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.package_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read package data file as a string.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>path (str): The relative path to the text file, e.g. &#8216;share/foo.txt&#8217;.</dd>
+<dt>Returns:</dt>
+<dd>str: File contents.</dd>
+<dt>Raises:</dt>
+<dd>InternalError: In case of IO error.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.sql_script">
+<code class="descclassname">clgen.</code><code class="descname">sql_script</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#sql_script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.sql_script" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read SQL script to string.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>name (str): The name of the SQL script (without file extension).</dd>
+<dt>Returns:</dt>
+<dd>str: SQL script.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.terminating">
+<code class="descclassname">clgen.</code><code class="descname">terminating</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#terminating"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.terminating" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context manager to terminate object at end of scope.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.unpack_archive">
+<code class="descclassname">clgen.</code><code class="descname">unpack_archive</code><span class="sig-paren">(</span><em>*components</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#unpack_archive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.unpack_archive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unpack a compressed archive.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd><p class="first"><a href="#id5"><span class="problematic" id="id6">*</span></a>components (str[]): Absolute path.
+<a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs (dict, optional): Set &#8220;compression&#8221; to compression type.</p>
+<blockquote class="last">
+<div>Default: bz2. Set &#8220;dir&#8221; to destination directory. Defaults to the
+directory of the archive.</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.version">
+<code class="descclassname">clgen.</code><code class="descname">version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the package version.</p>
+<p>DO NOT try and parse this or derive any special major/minor version
+information from it, treat it as an opaque char array. The only valid
+operators for comparing versions are == and !=.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>str: Version string.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.write_file">
+<code class="descclassname">clgen.</code><code class="descname">write_file</code><span class="sig-paren">(</span><em>path</em>, <em>contents</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#write_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.write_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-clgen.cache">
+<span id="clgen-cache"></span><h2>clgen.cache<a class="headerlink" href="#module-clgen.cache" title="Permalink to this headline">¶</a></h2>
+<p>CLgen persistent</p>
+<dl class="class">
+<dt id="clgen.cache.Cache">
+<em class="property">class </em><code class="descclassname">clgen.cache.</code><code class="descname">Cache</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cache.html#Cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cache.Cache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Persistent filesystem cache.</p>
+<dl class="method">
+<dt id="clgen.cache.Cache.empty">
+<code class="descname">empty</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cache.html#Cache.empty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cache.Cache.empty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Empty the filesystem cache.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clgen.cache.Cache.escape">
+<code class="descname">escape</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cache.html#Cache.escape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cache.Cache.escape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Escape key to path.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>key (str): Key.</dd>
+<dt>Returns:</dt>
+<dd>str: Escaped key.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="clgen.cache.Cache.keypath">
+<code class="descname">keypath</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cache.html#Cache.keypath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cache.Cache.keypath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return path to key in cache.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>key (str): Key.</dd>
+<dt>Returns:</dt>
+<dd>str: Absolute path.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="clgen.cache.Cache.mapkey">
+<code class="descname">mapkey</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cache.html#Cache.mapkey"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cache.Cache.mapkey" title="Permalink to this definition">¶</a></dt>
+<dd><p>Map a key to an internal key.</p>
+<p>Key mapping in case the keys stored in the cache should be distinct
+from the keys used to access the cache.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>key (str): Key.</dd>
+<dt>Returns:</dt>
+<dd>str: Mapped key.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="clgen.cache.Cache404">
+<em class="property">exception </em><code class="descclassname">clgen.cache.</code><code class="descname">Cache404</code><a class="reference internal" href="_modules/clgen/cache.html#Cache404"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cache.Cache404" title="Permalink to this definition">¶</a></dt>
+<dd><p>Error thrown for cache miss.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-clgen.cldrive">
+<span id="clgen-cldrive"></span><h2>clgen.cldrive<a class="headerlink" href="#module-clgen.cldrive" title="Permalink to this headline">¶</a></h2>
+<p>OpenCL kernel driver</p>
+<dl class="exception">
+<dt id="clgen.cldrive.CLDriveException">
+<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">CLDriveException</code><a class="reference internal" href="_modules/clgen/cldrive.html#CLDriveException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.CLDriveException" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="clgen.cldrive.E_BAD_ARGS">
+<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_BAD_ARGS</code><a class="reference internal" href="_modules/clgen/cldrive.html#E_BAD_ARGS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_BAD_ARGS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="clgen.cldrive.E_BAD_CODE">
+<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_BAD_CODE</code><a class="reference internal" href="_modules/clgen/cldrive.html#E_BAD_CODE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_BAD_CODE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="clgen.cldrive.E_BAD_DRIVER">
+<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_BAD_DRIVER</code><a class="reference internal" href="_modules/clgen/cldrive.html#E_BAD_DRIVER"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_BAD_DRIVER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="clgen.cldrive.E_BAD_PROFILE">
+<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_BAD_PROFILE</code><a class="reference internal" href="_modules/clgen/cldrive.html#E_BAD_PROFILE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_BAD_PROFILE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="clgen.cldrive.E_INPUT_INSENSITIVE">
+<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_INPUT_INSENSITIVE</code><a class="reference internal" href="_modules/clgen/cldrive.html#E_INPUT_INSENSITIVE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_INPUT_INSENSITIVE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="clgen.cldrive.E_NONDETERMINISTIC">
+<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_NONDETERMINISTIC</code><a class="reference internal" href="_modules/clgen/cldrive.html#E_NONDETERMINISTIC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_NONDETERMINISTIC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="clgen.cldrive.E_NON_TERMINATING">
+<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_NON_TERMINATING</code><a class="reference internal" href="_modules/clgen/cldrive.html#E_NON_TERMINATING"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_NON_TERMINATING" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="clgen.cldrive.E_NO_OUTPUTS">
+<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_NO_OUTPUTS</code><a class="reference internal" href="_modules/clgen/cldrive.html#E_NO_OUTPUTS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_NO_OUTPUTS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="clgen.cldrive.E_UGLY_CODE">
+<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_UGLY_CODE</code><a class="reference internal" href="_modules/clgen/cldrive.html#E_UGLY_CODE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_UGLY_CODE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="clgen.cldrive.KernelDriver">
+<em class="property">class </em><code class="descclassname">clgen.cldrive.</code><code class="descname">KernelDriver</code><span class="sig-paren">(</span><em>ctx</em>, <em>source</em>, <em>source_path=u'&lt;stdin&gt;'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#KernelDriver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelDriver" title="Permalink to this definition">¶</a></dt>
+<dd><p>OpenCL Kernel driver. Drives a single OpenCL kernel.</p>
+<p>Arguments:</p>
+<blockquote>
+<div>ctx:  pyopencl context.
+queue: OpenCL queue for context.
+source: String kernel source.</div></blockquote>
+<p>Raises:</p>
+<blockquote>
+<div>E_BAD_CODE: If program doesn&#8217;t compile.
+E_UGLY_CODE: If program contains multiple kernels.</div></blockquote>
+<dl class="staticmethod">
+<dt id="clgen.cldrive.KernelDriver.build_program">
+<em class="property">static </em><code class="descname">build_program</code><span class="sig-paren">(</span><em>ctx</em>, <em>src</em>, <em>quiet=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#KernelDriver.build_program"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelDriver.build_program" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compile an OpenCL program.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.cldrive.KernelDriver.context">
+<code class="descname">context</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.context" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.cldrive.KernelDriver.kernel">
+<code class="descname">kernel</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.kernel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.cldrive.KernelDriver.name">
+<code class="descname">name</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="clgen.cldrive.KernelDriver.profile">
+<code class="descname">profile</code><span class="sig-paren">(</span><em>queue</em>, <em>size=16</em>, <em>must_validate=False</em>, <em>out=&lt;open file '&lt;stdout&gt;'</em>, <em>mode 'w'&gt;</em>, <em>metaout=&lt;open file '&lt;stderr&gt;'</em>, <em>mode 'w'&gt;</em>, <em>min_num_iterations=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#KernelDriver.profile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelDriver.profile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output format (CSV):</p>
+<blockquote>
+<div>out:      &lt;kernel&gt; &lt;wgsize&gt; &lt;transfer&gt; &lt;runtime&gt; &lt;ci&gt;
+metaout:  &lt;error&gt; &lt;kernel&gt;</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.cldrive.KernelDriver.program">
+<code class="descname">program</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.program" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.cldrive.KernelDriver.prototype">
+<code class="descname">prototype</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.prototype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.cldrive.KernelDriver.runtimes">
+<code class="descname">runtimes</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.runtimes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.cldrive.KernelDriver.source">
+<code class="descname">source</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.cldrive.KernelDriver.transfers">
+<code class="descname">transfers</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.transfers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="clgen.cldrive.KernelDriver.validate">
+<code class="descname">validate</code><span class="sig-paren">(</span><em>queue</em>, <em>size=16</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#KernelDriver.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelDriver.validate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.cldrive.KernelDriver.wgsizes">
+<code class="descname">wgsizes</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.wgsizes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="clgen.cldrive.KernelDriverException">
+<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">KernelDriverException</code><a class="reference internal" href="_modules/clgen/cldrive.html#KernelDriverException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelDriverException" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="clgen.cldrive.KernelPayload">
+<em class="property">class </em><code class="descclassname">clgen.cldrive.</code><code class="descname">KernelPayload</code><span class="sig-paren">(</span><em>ctx</em>, <em>args</em>, <em>ndrange</em>, <em>transfersize</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#KernelPayload"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelPayload" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="clgen.cldrive.KernelPayload.args">
+<code class="descname">args</code><a class="headerlink" href="#clgen.cldrive.KernelPayload.args" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.cldrive.KernelPayload.context">
+<code class="descname">context</code><a class="headerlink" href="#clgen.cldrive.KernelPayload.context" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="clgen.cldrive.KernelPayload.create_random">
+<em class="property">static </em><code class="descname">create_random</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#KernelPayload.create_random"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelPayload.create_random" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="clgen.cldrive.KernelPayload.create_sequential">
+<em class="property">static </em><code class="descname">create_sequential</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#KernelPayload.create_sequential"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelPayload.create_sequential" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="clgen.cldrive.KernelPayload.device_to_host">
+<code class="descname">device_to_host</code><span class="sig-paren">(</span><em>queue</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#KernelPayload.device_to_host"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelPayload.device_to_host" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="clgen.cldrive.KernelPayload.host_to_device">
+<code class="descname">host_to_device</code><span class="sig-paren">(</span><em>queue</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#KernelPayload.host_to_device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelPayload.host_to_device" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.cldrive.KernelPayload.kargs">
+<code class="descname">kargs</code><a class="headerlink" href="#clgen.cldrive.KernelPayload.kargs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.cldrive.KernelPayload.ndrange">
+<code class="descname">ndrange</code><a class="headerlink" href="#clgen.cldrive.KernelPayload.ndrange" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.cldrive.KernelPayload.transfersize">
+<code class="descname">transfersize</code><a class="headerlink" href="#clgen.cldrive.KernelPayload.transfersize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="clgen.cldrive.OpenCLDriverException">
+<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">OpenCLDriverException</code><a class="reference internal" href="_modules/clgen/cldrive.html#OpenCLDriverException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.OpenCLDriverException" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="clgen.cldrive.OpenCLNotSupported">
+<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">OpenCLNotSupported</code><a class="reference internal" href="_modules/clgen/cldrive.html#OpenCLNotSupported"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.OpenCLNotSupported" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.cldrive.assert_device_type">
+<code class="descclassname">clgen.cldrive.</code><code class="descname">assert_device_type</code><span class="sig-paren">(</span><em>device</em>, <em>devtype</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#assert_device_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.assert_device_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that device type matches.</p>
+<p>Raises:</p>
+<blockquote>
+<div>OpenCLDriverException: If device type does not match argument.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.cldrive.directory">
+<code class="descclassname">clgen.cldrive.</code><code class="descname">directory</code><span class="sig-paren">(</span><em>path</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#directory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.directory" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.cldrive.file">
+<code class="descclassname">clgen.cldrive.</code><code class="descname">file</code><span class="sig-paren">(</span><em>path</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.cldrive.get_event_time">
+<code class="descclassname">clgen.cldrive.</code><code class="descname">get_event_time</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#get_event_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.get_event_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Block until OpenCL event has completed and return time delta
+between event submission and end, in milliseconds.</p>
+<p>Raises:</p>
+<blockquote>
+<div>E_BAD_PROFILE: In case of error.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.cldrive.hang_requires_restart">
+<code class="descclassname">clgen.cldrive.</code><code class="descname">hang_requires_restart</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#hang_requires_restart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.hang_requires_restart" title="Permalink to this definition">¶</a></dt>
+<dd><p>Does an OpenCL kernel hang require a system restart?</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.cldrive.init_opencl">
+<code class="descclassname">clgen.cldrive.</code><code class="descname">init_opencl</code><span class="sig-paren">(</span><em>devtype=u'__placeholder__'</em>, <em>queue_flags=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#init_opencl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.init_opencl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialise an OpenCL context with some command queue.</p>
+<p>Arguments:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>devtype (pyopencl.device_type, optional): OpenCL device type.</dt>
+<dd>Default: gpu.</dd>
+<dt>queue_flags (cl.command_queue_properties, optional): Bitfield of</dt>
+<dd>OpenCL queue constructor options.</dd>
+</dl>
+</div></blockquote>
+<p>Raises:</p>
+<blockquote>
+<div>OpenCLNotSupported: If host does not support OpenCL.
+OpenCLDriverException: In case of error.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.cldrive.kernel">
+<code class="descclassname">clgen.cldrive.</code><code class="descname">kernel</code><span class="sig-paren">(</span><em>src</em>, <em>filename=u'&lt;stdin&gt;'</em>, <em>devtype=u'__placeholder__'</em>, <em>size=None</em>, <em>must_validate=False</em>, <em>fatal_errors=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#kernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.kernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Drive a kernel.</p>
+<p>Output format (CSV):</p>
+<blockquote>
+<div>out:      &lt;file&gt; &lt;size&gt; &lt;kernel&gt; &lt;wgsize&gt; &lt;transfer&gt; &lt;runtime&gt; &lt;ci&gt;
+metaout:  &lt;file&gt; &lt;size&gt; &lt;error&gt; &lt;kernel&gt;</div></blockquote>
+</dd></dl>
+
+</div>
+<div class="section" id="module-clgen.cli">
+<span id="clgen-cli"></span><h2>clgen.cli<a class="headerlink" href="#module-clgen.cli" title="Permalink to this headline">¶</a></h2>
+<p>Command line interface to clgen.</p>
+<dl class="class">
+<dt id="clgen.cli.ArgumentParser">
+<em class="property">class </em><code class="descclassname">clgen.cli.</code><code class="descname">ArgumentParser</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cli.html#ArgumentParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cli.ArgumentParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>CLgen specialized argument parser.</p>
+<dl class="docutils">
+<dt>Differs from python argparse.ArgumentParser in the following areas:</dt>
+<dd><ul class="first last simple">
+<li>Adds an optional &#8211;verbose flag and initializes the logging engine.</li>
+<li>Adds an optional &#8211;version flag which prints version information and
+quits.</li>
+<li>Defaults to using raw formatting for help strings, which disables line
+wrapping and whitespace squeezing.</li>
+<li>Appends author information to description.</li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="clgen.cli.ArgumentParser.parse_args">
+<code class="descname">parse_args</code><span class="sig-paren">(</span><em>args=None</em>, <em>namespace=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cli.html#ArgumentParser.parse_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cli.ArgumentParser.parse_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>See python argparse.ArgumentParser.parse_args().</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.cli.main">
+<code class="descclassname">clgen.cli.</code><code class="descname">main</code><span class="sig-paren">(</span><em>method</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cli.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cli.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the given method as the main entrypoint to a program.</p>
+<p>If an exception is thrown, print error message and exit.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>method (function): Function to execute.
+<a href="#id9"><span class="problematic" id="id10">*</span></a>args (str): Arguments for method.
+<a href="#id11"><span class="problematic" id="id12">**</span></a>kwargs (dict): Keyword arguments for method.</dd>
+<dt>Returns:</dt>
+<dd>method(<a href="#id13"><span class="problematic" id="id14">*</span></a>args, <a href="#id15"><span class="problematic" id="id16">**</span></a>kwargs)</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.cli.print_version_and_exit">
+<code class="descclassname">clgen.cli.</code><code class="descname">print_version_and_exit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cli.html#print_version_and_exit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cli.print_version_and_exit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the clgen version. This function does not return.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-clgen.clutil">
+<span id="clgen-clutil"></span><h2>clgen.clutil<a class="headerlink" href="#module-clgen.clutil" title="Permalink to this headline">¶</a></h2>
+<p>OpenCL utilities</p>
+<dl class="class">
+<dt id="clgen.clutil.KernelArg">
+<em class="property">class </em><code class="descclassname">clgen.clutil.</code><code class="descname">KernelArg</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/clutil.html#KernelArg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.clutil.KernelArg" title="Permalink to this definition">¶</a></dt>
+<dd><p>OpenCL Kernel Argument.</p>
+<p>Requires source code to have been pre-processed.</p>
+<dl class="attribute">
+<dt id="clgen.clutil.KernelArg.bare_type">
+<code class="descname">bare_type</code><a class="headerlink" href="#clgen.clutil.KernelArg.bare_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type name, without vector or pointer qualifiers.</p>
+<p>Examples:</p>
+<blockquote>
+<div>KernelArg(&#8220;float4*&#8221;).bare_type == &#8220;float&#8221;
+KernelArg(&#8220;uchar32&#8221;).bare_type == &#8220;uchar&#8221;</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.clutil.KernelArg.components">
+<code class="descname">components</code><a class="headerlink" href="#clgen.clutil.KernelArg.components" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.clutil.KernelArg.is_const">
+<code class="descname">is_const</code><a class="headerlink" href="#clgen.clutil.KernelArg.is_const" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.clutil.KernelArg.is_global">
+<code class="descname">is_global</code><a class="headerlink" href="#clgen.clutil.KernelArg.is_global" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.clutil.KernelArg.is_local">
+<code class="descname">is_local</code><a class="headerlink" href="#clgen.clutil.KernelArg.is_local" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.clutil.KernelArg.is_pointer">
+<code class="descname">is_pointer</code><a class="headerlink" href="#clgen.clutil.KernelArg.is_pointer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.clutil.KernelArg.is_restrict">
+<code class="descname">is_restrict</code><a class="headerlink" href="#clgen.clutil.KernelArg.is_restrict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.clutil.KernelArg.is_vector">
+<code class="descname">is_vector</code><a class="headerlink" href="#clgen.clutil.KernelArg.is_vector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.clutil.KernelArg.name">
+<code class="descname">name</code><a class="headerlink" href="#clgen.clutil.KernelArg.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.clutil.KernelArg.numpy_type">
+<code class="descname">numpy_type</code><a class="headerlink" href="#clgen.clutil.KernelArg.numpy_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the numpy data type associated with this argument.</p>
+<p>Return:</p>
+<blockquote>
+<div>numpy type</div></blockquote>
+<p>Raises:</p>
+<blockquote>
+<div>UnknownTypeException: If type can&#8217;t be deduced.</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.clutil.KernelArg.qualifiers">
+<code class="descname">qualifiers</code><a class="headerlink" href="#clgen.clutil.KernelArg.qualifiers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.clutil.KernelArg.string">
+<code class="descname">string</code><a class="headerlink" href="#clgen.clutil.KernelArg.string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.clutil.KernelArg.type">
+<code class="descname">type</code><a class="headerlink" href="#clgen.clutil.KernelArg.type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.clutil.KernelArg.vector_width">
+<code class="descname">vector_width</code><a class="headerlink" href="#clgen.clutil.KernelArg.vector_width" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="clgen.clutil.KernelPrototype">
+<em class="property">class </em><code class="descclassname">clgen.clutil.</code><code class="descname">KernelPrototype</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/clutil.html#KernelPrototype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.clutil.KernelPrototype" title="Permalink to this definition">¶</a></dt>
+<dd><p>OpenCL Kernel Prototype.</p>
+<p>Requires source code to have been pre-processed.</p>
+<dl class="attribute">
+<dt id="clgen.clutil.KernelPrototype.args">
+<code class="descname">args</code><a class="headerlink" href="#clgen.clutil.KernelPrototype.args" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="clgen.clutil.KernelPrototype.from_source">
+<em class="property">static </em><code class="descname">from_source</code><span class="sig-paren">(</span><em>src</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/clutil.html#KernelPrototype.from_source"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.clutil.KernelPrototype.from_source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.clutil.KernelPrototype.name">
+<code class="descname">name</code><a class="headerlink" href="#clgen.clutil.KernelPrototype.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="clgen.clutil.OpenCLUtilException">
+<em class="property">exception </em><code class="descclassname">clgen.clutil.</code><code class="descname">OpenCLUtilException</code><a class="reference internal" href="_modules/clgen/clutil.html#OpenCLUtilException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.clutil.OpenCLUtilException" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="clgen.clutil.PrototypeException">
+<em class="property">exception </em><code class="descclassname">clgen.clutil.</code><code class="descname">PrototypeException</code><a class="reference internal" href="_modules/clgen/clutil.html#PrototypeException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.clutil.PrototypeException" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="clgen.clutil.UnknownTypeException">
+<em class="property">exception </em><code class="descclassname">clgen.clutil.</code><code class="descname">UnknownTypeException</code><a class="reference internal" href="_modules/clgen/clutil.html#UnknownTypeException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.clutil.UnknownTypeException" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.clutil.extract_prototype">
+<code class="descclassname">clgen.clutil.</code><code class="descname">extract_prototype</code><span class="sig-paren">(</span><em>src</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/clutil.html#extract_prototype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.clutil.extract_prototype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract OpenCL kernel prototype from preprocessed file.</p>
+<p>Arguments:</p>
+<blockquote>
+<div>src (str): OpenCL source.</div></blockquote>
+<p>Returns:</p>
+<blockquote>
+<div>KernelPrototype: Prototype instance.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.clutil.get_attribute_range">
+<code class="descclassname">clgen.clutil.</code><code class="descname">get_attribute_range</code><span class="sig-paren">(</span><em>s</em>, <em>start_idx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/clutil.html#get_attribute_range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.clutil.get_attribute_range" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.clutil.get_cl_kernel">
+<code class="descclassname">clgen.clutil.</code><code class="descname">get_cl_kernel</code><span class="sig-paren">(</span><em>src</em>, <em>start_idx</em>, <em>max_len=5000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/clutil.html#get_cl_kernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.clutil.get_cl_kernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the OpenCL kernel.</p>
+<p>Arguments:</p>
+<blockquote>
+<div>src (str): OpenCL source.
+start_idx (int, optional): Start index.
+max_len (int, optional): Maximum kernel length.</div></blockquote>
+<p>Returns:</p>
+<blockquote>
+<div>str: OpenCL kernel.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.clutil.get_cl_kernel_end_idx">
+<code class="descclassname">clgen.clutil.</code><code class="descname">get_cl_kernel_end_idx</code><span class="sig-paren">(</span><em>src</em>, <em>start_idx=0</em>, <em>max_len=5000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/clutil.html#get_cl_kernel_end_idx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.clutil.get_cl_kernel_end_idx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the index of the character after the end of the OpenCL
+kernel.</p>
+<p>Arguments:</p>
+<blockquote>
+<div>src (str): OpenCL source.
+start_idx (int, optional): Start index.
+max_len (int, optional): Maximum kernel length.</div></blockquote>
+<p>Returns:</p>
+<blockquote>
+<div>int: Index of end of OpenCL kernel.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.clutil.get_cl_kernels">
+<code class="descclassname">clgen.clutil.</code><code class="descname">get_cl_kernels</code><span class="sig-paren">(</span><em>src</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/clutil.html#get_cl_kernels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.clutil.get_cl_kernels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return OpenCL kernels.</p>
+<p>Arguments:</p>
+<blockquote>
+<div>src (str): OpenCL source.</div></blockquote>
+<p>Returns:</p>
+<blockquote>
+<div>str[]: OpenCL kernels.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.clutil.strip_attributes">
+<code class="descclassname">clgen.clutil.</code><code class="descname">strip_attributes</code><span class="sig-paren">(</span><em>src</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/clutil.html#strip_attributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.clutil.strip_attributes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-clgen.corpus">
+<span id="clgen-corpus"></span><h2>clgen.corpus<a class="headerlink" href="#module-clgen.corpus" title="Permalink to this headline">¶</a></h2>
+<p>Manipulating and handling training corpuses.</p>
+<dl class="class">
+<dt id="clgen.corpus.Corpus">
+<em class="property">class </em><code class="descclassname">clgen.corpus.</code><code class="descname">Corpus</code><span class="sig-paren">(</span><em>path</em>, <em>isgithub=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/corpus.html#Corpus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.corpus.Corpus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Representation of a training corpus.</p>
+<dl class="staticmethod">
+<dt id="clgen.corpus.Corpus.from_json">
+<em class="property">static </em><code class="descname">from_json</code><span class="sig-paren">(</span><em>corpus_json</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/corpus.html#Corpus.from_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.corpus.Corpus.from_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiate Corpus from JSON.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.corpus.Corpus.input_h5">
+<code class="descname">input_h5</code><a class="headerlink" href="#clgen.corpus.Corpus.input_h5" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.corpus.Corpus.input_json">
+<code class="descname">input_json</code><a class="headerlink" href="#clgen.corpus.Corpus.input_json" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.corpus.unpack_directory_if_needed">
+<code class="descclassname">clgen.corpus.</code><code class="descname">unpack_directory_if_needed</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/corpus.html#unpack_directory_if_needed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.corpus.unpack_directory_if_needed" title="Permalink to this definition">¶</a></dt>
+<dd><p>If path is a tarball, unpack it. If path doesn&#8217;t exist but there is a
+tarball with the same name, unpack it.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>path (str): Path to directory or tarball.</dd>
+<dt>Returns:</dt>
+<dd>str: Path to directory.</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-clgen.dbutil">
+<span id="clgen-dbutil"></span><h2>clgen.dbutil<a class="headerlink" href="#module-clgen.dbutil" title="Permalink to this headline">¶</a></h2>
+<p>CLgen sqlite3 database utilities</p>
+<dl class="exception">
+<dt id="clgen.dbutil.DatabaseException">
+<em class="property">exception </em><code class="descclassname">clgen.dbutil.</code><code class="descname">DatabaseException</code><a class="reference internal" href="_modules/clgen/dbutil.html#DatabaseException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.DatabaseException" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.dbutil.create_db">
+<code class="descclassname">clgen.dbutil.</code><code class="descname">create_db</code><span class="sig-paren">(</span><em>path</em>, <em>github=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/dbutil.html#create_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.create_db" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.dbutil.is_github">
+<code class="descclassname">clgen.dbutil.</code><code class="descname">is_github</code><span class="sig-paren">(</span><em>db</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/dbutil.html#is_github"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.is_github" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.dbutil.num_good_kernels">
+<code class="descclassname">clgen.dbutil.</code><code class="descname">num_good_kernels</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/dbutil.html#num_good_kernels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.num_good_kernels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.dbutil.table_exists">
+<code class="descclassname">clgen.dbutil.</code><code class="descname">table_exists</code><span class="sig-paren">(</span><em>db</em>, <em>table_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/dbutil.html#table_exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.table_exists" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-clgen.explore">
+<span id="clgen-explore"></span><h2>clgen.explore<a class="headerlink" href="#module-clgen.explore" title="Permalink to this headline">¶</a></h2>
+<p>Exploratory analysis of OpenCL dataset</p>
+<dl class="function">
+<dt id="clgen.explore.bigint">
+<code class="descclassname">clgen.explore.</code><code class="descname">bigint</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/explore.html#bigint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.explore.bigint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.explore.decode">
+<code class="descclassname">clgen.explore.</code><code class="descname">decode</code><span class="sig-paren">(</span><em>code</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/explore.html#decode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.explore.decode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.explore.div">
+<code class="descclassname">clgen.explore.</code><code class="descname">div</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/explore.html#div"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.explore.div" title="Permalink to this definition">¶</a></dt>
+<dd><p>Zero-safe division.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> &#8211; Numerator</li>
+<li><strong>y</strong> &#8211; Denominator</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">x / y</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.explore.explore">
+<code class="descclassname">clgen.explore.</code><code class="descname">explore</code><span class="sig-paren">(</span><em>db_path</em>, <em>graph=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/explore.html#explore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.explore.explore" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.explore.explore_gh">
+<code class="descclassname">clgen.explore.</code><code class="descname">explore_gh</code><span class="sig-paren">(</span><em>db_path</em>, <em>graph=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/explore.html#explore_gh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.explore.explore_gh" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.explore.gh_stats_worker">
+<code class="descclassname">clgen.explore.</code><code class="descname">gh_stats_worker</code><span class="sig-paren">(</span><em>db_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/explore.html#gh_stats_worker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.explore.gh_stats_worker" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.explore.graph_bc_lc">
+<code class="descclassname">clgen.explore.</code><code class="descname">graph_bc_lc</code><span class="sig-paren">(</span><em>db_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/explore.html#graph_bc_lc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.explore.graph_bc_lc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.explore.graph_ocl_lc">
+<code class="descclassname">clgen.explore.</code><code class="descname">graph_ocl_lc</code><span class="sig-paren">(</span><em>db_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/explore.html#graph_ocl_lc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.explore.graph_ocl_lc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.explore.graph_ocl_stars">
+<code class="descclassname">clgen.explore.</code><code class="descname">graph_ocl_stars</code><span class="sig-paren">(</span><em>db_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/explore.html#graph_ocl_stars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.explore.graph_ocl_stars" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.explore.median">
+<code class="descclassname">clgen.explore.</code><code class="descname">median</code><span class="sig-paren">(</span><em>sorted_arr</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/explore.html#median"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.explore.median" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.explore.seq_stats">
+<code class="descclassname">clgen.explore.</code><code class="descname">seq_stats</code><span class="sig-paren">(</span><em>sorted_arr</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/explore.html#seq_stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.explore.seq_stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.explore.stats_worker">
+<code class="descclassname">clgen.explore.</code><code class="descname">stats_worker</code><span class="sig-paren">(</span><em>db_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/explore.html#stats_worker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.explore.stats_worker" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-clgen.features">
+<span id="clgen-features"></span><h2>clgen.features<a class="headerlink" href="#module-clgen.features" title="Permalink to this headline">¶</a></h2>
+<p>OpenCL feature extraction</p>
+<dl class="function">
+<dt id="clgen.features.extra_args">
+<code class="descclassname">clgen.features.</code><code class="descname">extra_args</code><span class="sig-paren">(</span><em>use_shim=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/features.html#extra_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.features.extra_args" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.features.feature_headers">
+<code class="descclassname">clgen.features.</code><code class="descname">feature_headers</code><span class="sig-paren">(</span><em>file=&lt;open file '&lt;stdout&gt;'</em>, <em>mode 'w'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/features.html#feature_headers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.features.feature_headers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.features.features">
+<code class="descclassname">clgen.features.</code><code class="descname">features</code><span class="sig-paren">(</span><em>path</em>, <em>file=&lt;open file '&lt;stdout&gt;'</em>, <em>mode 'w'&gt;</em>, <em>fatal_errors=False</em>, <em>use_shim=False</em>, <em>quiet=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/features.html#features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.features.features" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.features.files">
+<code class="descclassname">clgen.features.</code><code class="descname">files</code><span class="sig-paren">(</span><em>paths</em>, <em>header=True</em>, <em>file=&lt;open file '&lt;stdout&gt;'</em>, <em>mode 'w'&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/features.html#files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.features.files" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.features.is_features">
+<code class="descclassname">clgen.features.</code><code class="descname">is_features</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/features.html#is_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.features.is_features" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.features.is_good_features">
+<code class="descclassname">clgen.features.</code><code class="descname">is_good_features</code><span class="sig-paren">(</span><em>line</em>, <em>stderr</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/features.html#is_good_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.features.is_good_features" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.features.summarize">
+<code class="descclassname">clgen.features.</code><code class="descname">summarize</code><span class="sig-paren">(</span><em>csv_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/features.html#summarize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.features.summarize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-clgen.fetch">
+<span id="clgen-fetch"></span><h2>clgen.fetch<a class="headerlink" href="#module-clgen.fetch" title="Permalink to this headline">¶</a></h2>
+<p>Fetch OpenCL files</p>
+<dl class="exception">
+<dt id="clgen.fetch.CLSmithException">
+<em class="property">exception </em><code class="descclassname">clgen.fetch.</code><code class="descname">CLSmithException</code><a class="reference internal" href="_modules/clgen/fetch.html#CLSmithException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.CLSmithException" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="clgen.fetch.FetchException">
+<em class="property">exception </em><code class="descclassname">clgen.fetch.</code><code class="descname">FetchException</code><a class="reference internal" href="_modules/clgen/fetch.html#FetchException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.FetchException" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="clgen.fetch.HeaderNotFoundException">
+<em class="property">exception </em><code class="descclassname">clgen.fetch.</code><code class="descname">HeaderNotFoundException</code><a class="reference internal" href="_modules/clgen/fetch.html#HeaderNotFoundException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.HeaderNotFoundException" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.fetch.clgen_sample">
+<code class="descclassname">clgen.fetch.</code><code class="descname">clgen_sample</code><span class="sig-paren">(</span><em>db_path</em>, <em>samples_dir</em>, <em>sample_path</em>, <em>first_only</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/fetch.html#clgen_sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.clgen_sample" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.fetch.clsmith">
+<code class="descclassname">clgen.fetch.</code><code class="descname">clsmith</code><span class="sig-paren">(</span><em>db_path</em>, <em>target_num_kernels</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/fetch.html#clsmith"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.clsmith" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.fetch.content_db">
+<code class="descclassname">clgen.fetch.</code><code class="descname">content_db</code><span class="sig-paren">(</span><em>db_path</em>, <em>in_db_path</em>, <em>table='PreprocessedFiles'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/fetch.html#content_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.content_db" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.fetch.download_file">
+<code class="descclassname">clgen.fetch.</code><code class="descname">download_file</code><span class="sig-paren">(</span><em>github_token</em>, <em>repo</em>, <em>url</em>, <em>stack</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/fetch.html#download_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.download_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.fetch.flatten">
+<code class="descclassname">clgen.fetch.</code><code class="descname">flatten</code><span class="sig-paren">(</span><em>l</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/fetch.html#flatten"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.flatten" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.fetch.fs">
+<code class="descclassname">clgen.fetch.</code><code class="descname">fs</code><span class="sig-paren">(</span><em>db_path</em>, <em>paths=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/fetch.html#fs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.fs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.fetch.get_new_program">
+<code class="descclassname">clgen.fetch.</code><code class="descname">get_new_program</code><span class="sig-paren">(</span><em>db_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/fetch.html#get_new_program"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.get_new_program" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.fetch.get_path_id">
+<code class="descclassname">clgen.fetch.</code><code class="descname">get_path_id</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/fetch.html#get_path_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.get_path_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.fetch.github">
+<code class="descclassname">clgen.fetch.</code><code class="descname">github</code><span class="sig-paren">(</span><em>db_path</em>, <em>github_username</em>, <em>github_pw</em>, <em>github_token</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/fetch.html#github"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.github" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.fetch.include_path">
+<code class="descclassname">clgen.fetch.</code><code class="descname">include_path</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/fetch.html#include_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.include_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.fetch.inline_fs_headers">
+<code class="descclassname">clgen.fetch.</code><code class="descname">inline_fs_headers</code><span class="sig-paren">(</span><em>path</em>, <em>stack</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/fetch.html#inline_fs_headers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.inline_fs_headers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.fetch.inline_headers">
+<code class="descclassname">clgen.fetch.</code><code class="descname">inline_headers</code><span class="sig-paren">(</span><em>src</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/fetch.html#inline_headers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.inline_headers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.fetch.is_opencl_path">
+<code class="descclassname">clgen.fetch.</code><code class="descname">is_opencl_path</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/fetch.html#is_opencl_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.is_opencl_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.fetch.print_clsmith_counters">
+<code class="descclassname">clgen.fetch.</code><code class="descname">print_clsmith_counters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/fetch.html#print_clsmith_counters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.print_clsmith_counters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.fetch.print_counters">
+<code class="descclassname">clgen.fetch.</code><code class="descname">print_counters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/fetch.html#print_counters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.print_counters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.fetch.print_file_details">
+<code class="descclassname">clgen.fetch.</code><code class="descname">print_file_details</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/fetch.html#print_file_details"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.print_file_details" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.fetch.print_repo_details">
+<code class="descclassname">clgen.fetch.</code><code class="descname">print_repo_details</code><span class="sig-paren">(</span><em>repo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/fetch.html#print_repo_details"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.print_repo_details" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.fetch.process_cl_file">
+<code class="descclassname">clgen.fetch.</code><code class="descname">process_cl_file</code><span class="sig-paren">(</span><em>db_path</em>, <em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/fetch.html#process_cl_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.process_cl_file" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>db_path</strong> &#8211; Path to output database.</li>
+<li><strong>path</strong> &#8211; Path to input file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.fetch.process_file">
+<code class="descclassname">clgen.fetch.</code><code class="descname">process_file</code><span class="sig-paren">(</span><em>g</em>, <em>github_token</em>, <em>db</em>, <em>repo</em>, <em>file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/fetch.html#process_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.process_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.fetch.process_repo">
+<code class="descclassname">clgen.fetch.</code><code class="descname">process_repo</code><span class="sig-paren">(</span><em>g</em>, <em>db</em>, <em>repo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/fetch.html#process_repo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.process_repo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.fetch.process_sample_file">
+<code class="descclassname">clgen.fetch.</code><code class="descname">process_sample_file</code><span class="sig-paren">(</span><em>db_path</em>, <em>sample_path</em>, <em>first_only=False</em>, <em>max_kernel_len=5000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/fetch.html#process_sample_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.process_sample_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.fetch.rate_limit">
+<code class="descclassname">clgen.fetch.</code><code class="descname">rate_limit</code><span class="sig-paren">(</span><em>g</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/fetch.html#rate_limit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.rate_limit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-clgen.log">
+<span id="clgen-log"></span><h2>clgen.log<a class="headerlink" href="#module-clgen.log" title="Permalink to this headline">¶</a></h2>
+<p>clgen logging interface.</p>
+<dl class="function">
+<dt id="clgen.log.debug">
+<code class="descclassname">clgen.log.</code><code class="descname">debug</code><span class="sig-paren">(</span><em>*msg</em>, <em>**opts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/log.html#debug"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.log.debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Debug message.</p>
+<p>If executing verbosely, prints the given message to stderr. To execute
+verbosely, intialize logging engine using log.init(verbose=True).</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd><a href="#id17"><span class="problematic" id="id18">*</span></a>msg (sequence): Message to print.
+sep (str, optional keyword): Message component separator.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.log.error">
+<code class="descclassname">clgen.log.</code><code class="descname">error</code><span class="sig-paren">(</span><em>*msg</em>, <em>**opts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/log.html#error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.log.error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Error message.</p>
+<p>Prints the given message to stderr prefixed with &#8220;error: &#8221;.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd><a href="#id19"><span class="problematic" id="id20">*</span></a>msg (sequence): Message to print.
+sep (str, optional keyword): Message component separator.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.log.fatal">
+<code class="descclassname">clgen.log.</code><code class="descname">fatal</code><span class="sig-paren">(</span><em>*msg</em>, <em>**opts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/log.html#fatal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.log.fatal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fatal error.</p>
+<p>Prints the given message to stderr prefixed with &#8220;fatal: &#8221;, then exists.
+This function does not return.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd><a href="#id21"><span class="problematic" id="id22">*</span></a>msg (sequence): Message to print.
+sep (str, optional keyword): Message component separator.
+ret (int, optional keyword): Value to exit with.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.log.info">
+<code class="descclassname">clgen.log.</code><code class="descname">info</code><span class="sig-paren">(</span><em>*msg</em>, <em>**opts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/log.html#info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.log.info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Info message.</p>
+<p>Prints the given message to stderr.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd><a href="#id23"><span class="problematic" id="id24">*</span></a>msg (sequence): Message to print.
+sep (str, optional keyword): Message component separator.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.log.init">
+<code class="descclassname">clgen.log.</code><code class="descname">init</code><span class="sig-paren">(</span><em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/log.html#init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.log.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialiaze the logging engine.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>verbose (bool, optional keyword): If True, print debug() messages.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.log.warning">
+<code class="descclassname">clgen.log.</code><code class="descname">warning</code><span class="sig-paren">(</span><em>*msg</em>, <em>**opts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/log.html#warning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.log.warning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Warning message.</p>
+<p>Prints the given message to stderr prefixed with &#8220;warning: &#8221;.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd><a href="#id25"><span class="problematic" id="id26">*</span></a>msg (sequence): Message to print.
+sep (str, optional keyword): Message component separator.</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-clgen.model">
+<span id="clgen-model"></span><h2>clgen.model<a class="headerlink" href="#module-clgen.model" title="Permalink to this headline">¶</a></h2>
+<p>CLgen model.</p>
+<dl class="class">
+<dt id="clgen.model.Model">
+<em class="property">class </em><code class="descclassname">clgen.model.</code><code class="descname">Model</code><span class="sig-paren">(</span><em>corpus</em>, <em>train_opts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/model.html#Model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.model.Model" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="clgen.model.Model.checkpoints">
+<code class="descname">checkpoints</code><a class="headerlink" href="#clgen.model.Model.checkpoints" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="clgen.model.Model.checksum">
+<code class="descname">checksum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/model.html#Model.checksum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.model.Model.checksum" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.model.Model.most_recent_checkpoint">
+<code class="descname">most_recent_checkpoint</code><a class="headerlink" href="#clgen.model.Model.most_recent_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get path to most recently initialized t7</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clgen.model.Model.train">
+<code class="descname">train</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/model.html#Model.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.model.Model.train" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.model.from_json">
+<code class="descclassname">clgen.model.</code><code class="descname">from_json</code><span class="sig-paren">(</span><em>model_json</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/model.html#from_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.model.from_json" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-clgen.native">
+<span id="clgen-native"></span><h2>clgen.native<a class="headerlink" href="#module-clgen.native" title="Permalink to this headline">¶</a></h2>
+<p>Native files</p>
+</div>
+<div class="section" id="module-clgen.preprocess">
+<span id="clgen-preprocess"></span><h2>clgen.preprocess<a class="headerlink" href="#module-clgen.preprocess" title="Permalink to this headline">¶</a></h2>
+<p>Preprocess OpenCL files for machine learning</p>
+<dl class="exception">
+<dt id="clgen.preprocess.BadCodeException">
+<em class="property">exception </em><code class="descclassname">clgen.preprocess.</code><code class="descname">BadCodeException</code><a class="reference internal" href="_modules/clgen/preprocess.html#BadCodeException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.BadCodeException" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="clgen.preprocess.ClangException">
+<em class="property">exception </em><code class="descclassname">clgen.preprocess.</code><code class="descname">ClangException</code><a class="reference internal" href="_modules/clgen/preprocess.html#ClangException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.ClangException" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="clgen.preprocess.ClangFormatException">
+<em class="property">exception </em><code class="descclassname">clgen.preprocess.</code><code class="descname">ClangFormatException</code><a class="reference internal" href="_modules/clgen/preprocess.html#ClangFormatException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.ClangFormatException" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="clgen.preprocess.CodeAnalysisException">
+<em class="property">exception </em><code class="descclassname">clgen.preprocess.</code><code class="descname">CodeAnalysisException</code><a class="reference internal" href="_modules/clgen/preprocess.html#CodeAnalysisException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.CodeAnalysisException" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="clgen.preprocess.InstructionCountException">
+<em class="property">exception </em><code class="descclassname">clgen.preprocess.</code><code class="descname">InstructionCountException</code><a class="reference internal" href="_modules/clgen/preprocess.html#InstructionCountException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.InstructionCountException" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="clgen.preprocess.LlvmException">
+<em class="property">exception </em><code class="descclassname">clgen.preprocess.</code><code class="descname">LlvmException</code><a class="reference internal" href="_modules/clgen/preprocess.html#LlvmException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.LlvmException" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="clgen.preprocess.OptException">
+<em class="property">exception </em><code class="descclassname">clgen.preprocess.</code><code class="descname">OptException</code><a class="reference internal" href="_modules/clgen/preprocess.html#OptException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.OptException" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="clgen.preprocess.RewriterException">
+<em class="property">exception </em><code class="descclassname">clgen.preprocess.</code><code class="descname">RewriterException</code><a class="reference internal" href="_modules/clgen/preprocess.html#RewriterException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.RewriterException" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="clgen.preprocess.UglyCodeException">
+<em class="property">exception </em><code class="descclassname">clgen.preprocess.</code><code class="descname">UglyCodeException</code><a class="reference internal" href="_modules/clgen/preprocess.html#UglyCodeException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.UglyCodeException" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.preprocess.bytecode_features">
+<code class="descclassname">clgen.preprocess.</code><code class="descname">bytecode_features</code><span class="sig-paren">(</span><em>bc</em>, <em>id='anon'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#bytecode_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.bytecode_features" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="clgen.preprocess.charcount_aggregator">
+<em class="property">class </em><code class="descclassname">clgen.preprocess.</code><code class="descname">charcount_aggregator</code><a class="reference internal" href="_modules/clgen/preprocess.html#charcount_aggregator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.charcount_aggregator" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="clgen.preprocess.charcount_aggregator.finalize">
+<code class="descname">finalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#charcount_aggregator.finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.charcount_aggregator.finalize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="clgen.preprocess.charcount_aggregator.step">
+<code class="descname">step</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#charcount_aggregator.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.charcount_aggregator.step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.preprocess.clang_cl_args">
+<code class="descclassname">clgen.preprocess.</code><code class="descname">clang_cl_args</code><span class="sig-paren">(</span><em>target='nvptx64-nvidia-nvcl'</em>, <em>error_limit=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#clang_cl_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.clang_cl_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the Clang args to compile OpenCL.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Array of args.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.preprocess.clangformat_ocl">
+<code class="descclassname">clgen.preprocess.</code><code class="descname">clangformat_ocl</code><span class="sig-paren">(</span><em>src</em>, <em>id='anon'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#clangformat_ocl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.clangformat_ocl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.preprocess.compile_cl_bytecode">
+<code class="descclassname">clgen.preprocess.</code><code class="descname">compile_cl_bytecode</code><span class="sig-paren">(</span><em>src</em>, <em>id='anon'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#compile_cl_bytecode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.compile_cl_bytecode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.preprocess.compiler_preprocess_cl">
+<code class="descclassname">clgen.preprocess.</code><code class="descname">compiler_preprocess_cl</code><span class="sig-paren">(</span><em>src</em>, <em>id='anon'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#compiler_preprocess_cl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.compiler_preprocess_cl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.preprocess.escape_sql_key">
+<code class="descclassname">clgen.preprocess.</code><code class="descname">escape_sql_key</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#escape_sql_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.escape_sql_key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.preprocess.instcounts2ratios">
+<code class="descclassname">clgen.preprocess.</code><code class="descname">instcounts2ratios</code><span class="sig-paren">(</span><em>counts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#instcounts2ratios"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.instcounts2ratios" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.preprocess.is_modified">
+<code class="descclassname">clgen.preprocess.</code><code class="descname">is_modified</code><span class="sig-paren">(</span><em>db</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#is_modified"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.is_modified" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="clgen.preprocess.linecount_aggregator">
+<em class="property">class </em><code class="descclassname">clgen.preprocess.</code><code class="descname">linecount_aggregator</code><a class="reference internal" href="_modules/clgen/preprocess.html#linecount_aggregator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.linecount_aggregator" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="clgen.preprocess.linecount_aggregator.finalize">
+<code class="descname">finalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#linecount_aggregator.finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.linecount_aggregator.finalize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="clgen.preprocess.linecount_aggregator.step">
+<code class="descname">step</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#linecount_aggregator.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.linecount_aggregator.step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="clgen.preprocess.md5sum_aggregator">
+<em class="property">class </em><code class="descclassname">clgen.preprocess.</code><code class="descname">md5sum_aggregator</code><a class="reference internal" href="_modules/clgen/preprocess.html#md5sum_aggregator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.md5sum_aggregator" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="clgen.preprocess.md5sum_aggregator.finalize">
+<code class="descname">finalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#md5sum_aggregator.finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.md5sum_aggregator.finalize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="clgen.preprocess.md5sum_aggregator.step">
+<code class="descname">step</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#md5sum_aggregator.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.md5sum_aggregator.step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.preprocess.num_rows_in">
+<code class="descclassname">clgen.preprocess.</code><code class="descname">num_rows_in</code><span class="sig-paren">(</span><em>db</em>, <em>table</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#num_rows_in"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.num_rows_in" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.preprocess.parse_instcounts">
+<code class="descclassname">clgen.preprocess.</code><code class="descname">parse_instcounts</code><span class="sig-paren">(</span><em>txt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#parse_instcounts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.parse_instcounts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.preprocess.preprocess">
+<code class="descclassname">clgen.preprocess.</code><code class="descname">preprocess</code><span class="sig-paren">(</span><em>src</em>, <em>id='anon'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#preprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.preprocess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preprocess an OpenCL source. There are three possible outcomes:</p>
+<ol class="arabic simple">
+<li>Good. Code is preprocessed and ready to be put into a training set.</li>
+<li>Bad. Code can&#8217;t be preprocessed (i.e. it&#8217;s &#8220;bad&#8221; OpenCL).</li>
+<li>Ugly. Code can be preprocessed but isn&#8217;t useful for training
+(e.g. it&#8217;s an empty file).</li>
+</ol>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>src</strong> &#8211; The source code as a string.</li>
+<li><strong>(optional)</strong> (<em>id</em>) &#8211; An identifying name for the source code
+(used in exception messages).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Preprocessed source code as a string.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Throws BadCodeException:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">If code is bad (see above).</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Throws UglyCodeException:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first">If code is ugly (see above).</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Throws clgen.InternalException:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first last">In case of some other error.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.preprocess.preprocess_contentfiles">
+<code class="descclassname">clgen.preprocess.</code><code class="descname">preprocess_contentfiles</code><span class="sig-paren">(</span><em>db_path</em>, <em>num_workers=16</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#preprocess_contentfiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.preprocess_contentfiles" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.preprocess.preprocess_db">
+<code class="descclassname">clgen.preprocess.</code><code class="descname">preprocess_db</code><span class="sig-paren">(</span><em>db_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#preprocess_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.preprocess_db" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.preprocess.preprocess_file">
+<code class="descclassname">clgen.preprocess.</code><code class="descname">preprocess_file</code><span class="sig-paren">(</span><em>path</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#preprocess_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.preprocess_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preprocess a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> &#8211; String path to file.</li>
+<li><strong>(optional)</strong> (<em>inplace</em>) &#8211; If True, overwrite input file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.preprocess.preprocess_inplace">
+<code class="descclassname">clgen.preprocess.</code><code class="descname">preprocess_inplace</code><span class="sig-paren">(</span><em>paths</em>, <em>num_workers=16</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#preprocess_inplace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.preprocess_inplace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preprocess a list of files inplace.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.preprocess.preprocess_split">
+<code class="descclassname">clgen.preprocess.</code><code class="descname">preprocess_split</code><span class="sig-paren">(</span><em>db_path</em>, <em>split</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#preprocess_split"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.preprocess_split" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.preprocess.print_bytecode_features">
+<code class="descclassname">clgen.preprocess.</code><code class="descname">print_bytecode_features</code><span class="sig-paren">(</span><em>db_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#print_bytecode_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.print_bytecode_features" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.preprocess.remove_bad_preprocessed">
+<code class="descclassname">clgen.preprocess.</code><code class="descname">remove_bad_preprocessed</code><span class="sig-paren">(</span><em>db_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#remove_bad_preprocessed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.remove_bad_preprocessed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all ugly and bad contents from PreprocessedFiles table.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.preprocess.rewrite_cl">
+<code class="descclassname">clgen.preprocess.</code><code class="descname">rewrite_cl</code><span class="sig-paren">(</span><em>src</em>, <em>id='anon'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#rewrite_cl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.rewrite_cl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.preprocess.sanitize_prototype">
+<code class="descclassname">clgen.preprocess.</code><code class="descname">sanitize_prototype</code><span class="sig-paren">(</span><em>src</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#sanitize_prototype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.sanitize_prototype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.preprocess.set_modified_status">
+<code class="descclassname">clgen.preprocess.</code><code class="descname">set_modified_status</code><span class="sig-paren">(</span><em>db</em>, <em>checksum</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#set_modified_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.set_modified_status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.preprocess.sql_insert_dict">
+<code class="descclassname">clgen.preprocess.</code><code class="descname">sql_insert_dict</code><span class="sig-paren">(</span><em>c</em>, <em>table</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#sql_insert_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.sql_insert_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.preprocess.verify_bytecode_features">
+<code class="descclassname">clgen.preprocess.</code><code class="descname">verify_bytecode_features</code><span class="sig-paren">(</span><em>bc_features</em>, <em>id='anon'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#verify_bytecode_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.verify_bytecode_features" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-clgen.sampler">
+<span id="clgen-sampler"></span><h2>clgen.sampler<a class="headerlink" href="#module-clgen.sampler" title="Permalink to this headline">¶</a></h2>
+<p>Sample a CLgen model.</p>
+<dl class="class">
+<dt id="clgen.sampler.Sampler">
+<em class="property">class </em><code class="descclassname">clgen.sampler.</code><code class="descname">Sampler</code><span class="sig-paren">(</span><em>sampler_opts</em>, <em>kernel_opts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/sampler.html#Sampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.sampler.Sampler" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="clgen.sampler.Sampler.get_cache">
+<code class="descname">get_cache</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/sampler.html#Sampler.get_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.sampler.Sampler.get_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="clgen.sampler.Sampler.sample">
+<code class="descname">sample</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/sampler.html#Sampler.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.sampler.Sampler.sample" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="clgen.sampler.Sampler.sample_iteration">
+<code class="descname">sample_iteration</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/sampler.html#Sampler.sample_iteration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.sampler.Sampler.sample_iteration" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.sampler.from_json">
+<code class="descclassname">clgen.sampler.</code><code class="descname">from_json</code><span class="sig-paren">(</span><em>sampler_json</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/sampler.html#from_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.sampler.from_json" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.sampler.serialize_argspec">
+<code class="descclassname">clgen.sampler.</code><code class="descname">serialize_argspec</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/sampler.html#serialize_argspec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.sampler.serialize_argspec" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-clgen.torch_rnn">
+<span id="clgen-torch-rnn"></span><h2>clgen.torch_rnn<a class="headerlink" href="#module-clgen.torch_rnn" title="Permalink to this headline">¶</a></h2>
+<p>Python wrapper around torch-rnn.</p>
+<dl class="exception">
+<dt id="clgen.torch_rnn.PreprocessError">
+<em class="property">exception </em><code class="descclassname">clgen.torch_rnn.</code><code class="descname">PreprocessError</code><a class="reference internal" href="_modules/clgen/torch_rnn.html#PreprocessError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.torch_rnn.PreprocessError" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="clgen.torch_rnn.TorchRnnError">
+<em class="property">exception </em><code class="descclassname">clgen.torch_rnn.</code><code class="descname">TorchRnnError</code><a class="reference internal" href="_modules/clgen/torch_rnn.html#TorchRnnError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.torch_rnn.TorchRnnError" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="clgen.torch_rnn.TrainError">
+<em class="property">exception </em><code class="descclassname">clgen.torch_rnn.</code><code class="descname">TrainError</code><a class="reference internal" href="_modules/clgen/torch_rnn.html#TrainError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.torch_rnn.TrainError" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.torch_rnn.get_device_flags">
+<code class="descclassname">clgen.torch_rnn.</code><code class="descname">get_device_flags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/torch_rnn.html#get_device_flags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.torch_rnn.get_device_flags" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.torch_rnn.preprocess">
+<code class="descclassname">clgen.torch_rnn.</code><code class="descname">preprocess</code><span class="sig-paren">(</span><em>input_txt</em>, <em>output_json</em>, <em>output_h5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/torch_rnn.html#preprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.torch_rnn.preprocess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around preprocess script.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.torch_rnn.sample">
+<code class="descclassname">clgen.torch_rnn.</code><code class="descname">sample</code><span class="sig-paren">(</span><em>output</em>, <em>**sample_opts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/torch_rnn.html#sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.torch_rnn.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around torch-rnn sample script.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>output (str): Path to output file.
+<a href="#id27"><span class="problematic" id="id28">**</span></a>train_opts (dict): Key value options for flags.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.torch_rnn.train">
+<code class="descclassname">clgen.torch_rnn.</code><code class="descname">train</code><span class="sig-paren">(</span><em>**train_opts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/torch_rnn.html#train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.torch_rnn.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around torch-rnn train script.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd><a href="#id29"><span class="problematic" id="id30">**</span></a>train_opts (dict): Key value options for flags.</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-clgen.train">
+<span id="clgen-train"></span><h2>clgen.train<a class="headerlink" href="#module-clgen.train" title="Permalink to this headline">¶</a></h2>
+<p>Training utils</p>
+<dl class="function">
+<dt id="clgen.train.create_corpus">
+<code class="descclassname">clgen.train.</code><code class="descname">create_corpus</code><span class="sig-paren">(</span><em>db</em>, <em>out_path</em>, <em>gh=False</em>, <em>fileid=False</em>, <em>reverse=False</em>, <em>input_samples=False</em>, <em>status=0</em>, <em>eof=False</em>, <em>dir=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/train.html#create_corpus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.train.create_corpus" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.train.linecount">
+<code class="descclassname">clgen.train.</code><code class="descname">linecount</code><span class="sig-paren">(</span><em>t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/train.html#linecount"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.train.linecount" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.train.sanitize_id">
+<code class="descclassname">clgen.train.</code><code class="descname">sanitize_id</code><span class="sig-paren">(</span><em>id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/train.html#sanitize_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.train.sanitize_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.train.train">
+<code class="descclassname">clgen.train.</code><code class="descname">train</code><span class="sig-paren">(</span><em>db_path</em>, <em>out_path</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/train.html#train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.train.train" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Python API</a><ul>
+<li><a class="reference internal" href="#module-clgen">clgen</a></li>
+<li><a class="reference internal" href="#module-clgen.cache">clgen.cache</a></li>
+<li><a class="reference internal" href="#module-clgen.cldrive">clgen.cldrive</a></li>
+<li><a class="reference internal" href="#module-clgen.cli">clgen.cli</a></li>
+<li><a class="reference internal" href="#module-clgen.clutil">clgen.clutil</a></li>
+<li><a class="reference internal" href="#module-clgen.corpus">clgen.corpus</a></li>
+<li><a class="reference internal" href="#module-clgen.dbutil">clgen.dbutil</a></li>
+<li><a class="reference internal" href="#module-clgen.explore">clgen.explore</a></li>
+<li><a class="reference internal" href="#module-clgen.features">clgen.features</a></li>
+<li><a class="reference internal" href="#module-clgen.fetch">clgen.fetch</a></li>
+<li><a class="reference internal" href="#module-clgen.log">clgen.log</a></li>
+<li><a class="reference internal" href="#module-clgen.model">clgen.model</a></li>
+<li><a class="reference internal" href="#module-clgen.native">clgen.native</a></li>
+<li><a class="reference internal" href="#module-clgen.preprocess">clgen.preprocess</a></li>
+<li><a class="reference internal" href="#module-clgen.sampler">clgen.sampler</a></li>
+<li><a class="reference internal" href="#module-clgen.torch_rnn">clgen.torch_rnn</a></li>
+<li><a class="reference internal" href="#module-clgen.train">clgen.train</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="binaries.html" title="previous chapter">Programs</a></li>
+      <li>Next: <a href="license.html" title="next chapter">License</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/api.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Chris Cummins.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/api.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
