@@ -88,6 +88,8 @@
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">fs</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">system</span>
 
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">config</span> <span class="k">as</span> <span class="n">cfg</span>
+
 
 <div class="viewcode-block" id="CLgenError"><a class="viewcode-back" href="../api.html#clgen.CLgenError">[docs]</a><span class="k">class</span> <span class="nc">CLgenError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -166,20 +168,6 @@
         <span class="n">e</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
         <span class="k">raise</span> <span class="n">e</span>
     <span class="k">return</span> <span class="n">path</span></div>
-
-
-<div class="viewcode-block" id="host_has_opencl"><a class="viewcode-back" href="../api.html#clgen.host_has_opencl">[docs]</a><span class="k">def</span> <span class="nf">host_has_opencl</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns whether the host has a working OpenCL.</span>
-
-<span class="sd">    Returns:</span>
-
-<span class="sd">        bool: True if host has OpenCL support, else False.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">system</span><span class="o">.</span><span class="n">is_mac</span><span class="p">()</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="s1">&#39;/etc/OpenCL/vendors&#39;</span><span class="p">))</span>
-    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">False</span></div>
 
 
 <div class="viewcode-block" id="checksum"><a class="viewcode-back" href="../api.html#clgen.checksum">[docs]</a><span class="k">def</span> <span class="nf">checksum</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>

@@ -80,6 +80,7 @@
 <span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span><span class="p">,</span> <span class="n">STDOUT</span>
 
 <span class="kn">import</span> <span class="nn">clgen</span>
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">config</span> <span class="k">as</span> <span class="n">cfg</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">native</span>
 
@@ -117,7 +118,22 @@
 
 
 <div class="viewcode-block" id="get_device_flags"><a class="viewcode-back" href="../../api.html#clgen.torch_rnn.get_device_flags">[docs]</a><span class="k">def</span> <span class="nf">get_device_flags</span><span class="p">():</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;gpu&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">}</span></div>
+    <span class="c1"># TODO: This should be runtime configurable</span>
+    <span class="n">gpu_id</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">USE_CUDA</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;gpu&quot;</span><span class="p">:</span> <span class="n">gpu_id</span><span class="p">}</span>
+    <span class="c1"># TODO: it apperas that cltorch can no longer be installed using this</span>
+    <span class="c1"># method, but instead requires using a fork of the torch distro with</span>
+    <span class="c1"># OpenCL support baked in. It would be fairly substantial job to add</span>
+    <span class="c1"># support for this second torch distro, so I&#39;m going to ignore it and</span>
+    <span class="c1"># simply disable OpenCL support for torch. See:</span>
+    <span class="c1">#   https://github.com/hughperkins/distro-cl</span>
+    <span class="c1">#</span>
+    <span class="c1"># elif cfg.USE_OPENCL:</span>
+    <span class="c1">#     return {&quot;gpu&quot;: gpu_id, &quot;gpu_backend&quot;: &quot;opencl&quot;}</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># cpu-only</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;gpu&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="train"><a class="viewcode-back" href="../../api.html#clgen.torch_rnn.train">[docs]</a><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="o">**</span><span class="n">train_opts</span><span class="p">):</span>

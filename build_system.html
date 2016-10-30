@@ -28,7 +28,7 @@
     <link rel="search" title="Search" href="search.html" />
     <link rel="top" title="clgen 0.0.1 documentation" href="index.html" />
     <link rel="next" title="Programs" href="binaries.html" />
-    <link rel="prev" title="Requirements" href="index.html" /> 
+    <link rel="prev" title="Contents" href="index.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -44,7 +44,7 @@
           <a href="binaries.html" title="Programs"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Requirements"
+          <a href="index.html" title="Contents"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">clgen 0.0.1 documentation</a> &#187;</li> 
       </ul>
@@ -59,21 +59,16 @@
 <span id="building-clgen"></span><h1>Building CLgen<a class="headerlink" href="#building-clgen" title="Permalink to this headline">¶</a></h1>
 <p>If your system has the <a class="reference external" href="https://github.com/ChrisCummins/clgen#requirements">required
 components</a>, then building
-CLgen should be a relatively straightforward. First, if GPU support is <em>not</em>
-required (i.e. you don&#8217;t have an NVIDIA GPU running CUDA &gt;= 6.5), then set the
-following environment variable:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ export CLGEN_GPU=0
-</pre></div>
-</div>
-<p>For convenience sake you may consider adding that to your shell configuration:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>export CLGEN_GPU=0 &gt;&gt; ~/.$(basename $SHELL)rc
+CLgen should be a relatively straightforward. First configure your build:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ./configure
 </pre></div>
 </div>
 <p>Then, compile and install the clgen software stack in one shot:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span></span>$ ./install.sh
+<div class="highlight-sh"><div class="highlight"><pre><span></span>$ make
+$ sudo make install
 </pre></div>
 </div>
-<p>This may take some time (upwards of an hour). If you encounter any problems,
+<p>This may take some time (over two hours). If you encounter any problems,
 please consider opening a <a class="reference external" href="https://github.com/ChrisCummins/clgen/issues">bug
 report</a>. The remainder of this
 document provides a brief outline of the build process, which may be useful for
@@ -97,7 +92,7 @@ three steps:</p>
 </div>
 <div class="section" id="native-file-compilation">
 <span id="native-file-compilation"></span><h2>Native File Compilation<a class="headerlink" href="#native-file-compilation" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-sh"><div class="highlight"><pre><span></span>$ make native
+<div class="highlight-sh"><div class="highlight"><pre><span></span>$ make all
 </pre></div>
 </div>
 <p>Once the toolchain has been built, it is used to compile the native components
@@ -118,19 +113,15 @@ of CLgen. Roughly, those are:</p>
 <div class="section" id="python-package-installation">
 <span id="python-package-installation"></span><h2>Python Package Installation<a class="headerlink" href="#python-package-installation" title="Permalink to this headline">¶</a></h2>
 <p>One the native components are compiled, the remainder of the build process
-involves installing the python package. This is performed either in a virtual
-environment or into the system python path. The unit tests are performed using a
-virtual environment install:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span></span>$ make <span class="nb">test</span>
+involves installing the python package:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span></span>$ sudo make install
+$ make <span class="nb">test</span>
 </pre></div>
 </div>
-<p>The process for virtual environment or system-wide install is the same:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span></span>$ pip install --upgrade pip
-$ pip install numpy&gt;<span class="o">=</span>1.10.4
+<p>This is roughly equivalent to:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span></span>$ pip install numpy&gt;<span class="o">=</span>1.10.4
 $ pip install -r requirements.txt
-$ pip install -r requirements.devel.txt
-$ <span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;</span><span class="nv">$GPU</span><span class="s2">&quot;</span> -ne <span class="m">0</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span> pip install -r requirements.gpu.txt<span class="p">;</span> <span class="k">fi</span>
-$ python ./setup.py install
+$ sudo python ./setup.py install
 $ python ./setup.py <span class="nb">test</span>
 </pre></div>
 </div>
@@ -155,7 +146,7 @@ $ python ./setup.py <span class="nb">test</span>
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
-                        title="previous chapter">Requirements</a></p>
+                        title="previous chapter">Contents</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="binaries.html"
                         title="next chapter">Programs</a></p>
@@ -193,7 +184,7 @@ $ python ./setup.py <span class="nb">test</span>
           <a href="binaries.html" title="Programs"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Requirements"
+          <a href="index.html" title="Contents"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">clgen 0.0.1 documentation</a> &#187;</li> 
       </ul>
