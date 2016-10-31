@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Contents &#8212; clgen 0.0.4 documentation</title>
+    <title>Requirements &#8212; clgen 0.0.5 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.0.4',
+        VERSION:     '0.0.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,8 +26,8 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="clgen 0.0.4 documentation" href="#" />
-    <link rel="next" title="Building CLgen" href="build_system.html" /> 
+    <link rel="top" title="clgen 0.0.5 documentation" href="#" />
+    <link rel="next" title="Detailed Build Instructions" href="installation.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -40,9 +40,9 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="build_system.html" title="Building CLgen"
+          <a href="installation.html" title="Detailed Build Instructions"
              accesskey="N">next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">clgen 0.0.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">clgen 0.0.5 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -56,22 +56,56 @@
 </div>
 <hr class="docutils" />
 <p class="centered">
-<strong><a class="reference external" href="https://travis-ci.org/ChrisCummins/clgen"><img alt="Build Status" src="https://img.shields.io/travis/ChrisCummins/clgen/master.svg?style=flat" /></a> <a class="reference external" href="https://coveralls.io/github/ChrisCummins/clgen?branch=master"><img alt="Coverage Status" src="https://img.shields.io/coveralls/ChrisCummins/clgen/master.svg?style=flat" /></a> <a class="reference external" href="http://chriscummins.cc/clgen/"><img alt="Documentation Status" src="https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat" /></a> <a class="reference external" href="https://github.com/ChrisCummins/clgen/releases"><img alt="Release Version" src="https://img.shields.io/badge/release-0.0.4-blue.svg?style=flat" /></a> <a class="reference external" href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img alt="License Badge" src="https://img.shields.io/badge/license-GNU%20GPL%20v3-blue.svg?style=flat" /></a></strong></p><p><strong>CLgen</strong> is an open source application for generating runnable programs using
-deep learning. CLgen <em>learns</em> to program using neural networks which model the
-semantics and usage from large volumes of program fragments, generating many-
-core OpenCL programs that are representative of, but <em>distinct</em> from, the
-programs it learns from.</p>
-<div class="figure">
-<a class="reference internal image-reference" href="https://raw.githubusercontent.com/ChrisCummins/clgen/master/docs/assets/pipeline.png"><img alt="CLgen synthesis pipeline." src="https://raw.githubusercontent.com/ChrisCummins/clgen/master/docs/assets/pipeline.png" style="width: 500px;" /></a>
+<strong><a class="reference external" href="https://travis-ci.org/ChrisCummins/clgen"><img alt="Build Status" src="https://img.shields.io/travis/ChrisCummins/clgen/master.svg?style=flat" /></a> <a class="reference external" href="https://coveralls.io/github/ChrisCummins/clgen?branch=master"><img alt="Coverage Status" src="https://img.shields.io/coveralls/ChrisCummins/clgen/master.svg?style=flat" /></a> <a class="reference external" href="http://chriscummins.cc/clgen/"><img alt="Documentation Status" src="https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat" /></a> <a class="reference external" href="https://github.com/ChrisCummins/clgen/releases"><img alt="Release Version" src="https://img.shields.io/badge/release-0.0.5-blue.svg?style=flat" /></a> <a class="reference external" href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img alt="License Badge" src="https://img.shields.io/badge/license-GNU%20GPL%20v3-blue.svg?style=flat" /></a></strong></p><p>Welcome to the CLgen documentation.</p>
+<div class="section" id="requirements">
+<h1>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>Linux (x64) or OS X.</li>
+<li><a class="reference external" href="https://gcc.gnu.org/">GCC</a> &gt; 4.7 or
+<a class="reference external" href="http://llvm.org/releases/download.html">clang</a> &gt;= 3.1.</li>
+<li><a class="reference external" href="http://savannah.gnu.org/projects/make">GNU Make</a> &gt; 3.79.</li>
+<li><a class="reference external" href="https://www.python.org/">Python</a> 2.7 or &gt;= 3.4.</li>
+<li><a class="reference external" href="http://zlib.net/">zlib</a> &gt;= 1.2.3.4.</li>
+<li><a class="reference external" href="https://support.hdfgroup.org/HDF5/release/obtainsrc.html">libhdf5</a>
+&gt;= 1.8.11.</li>
+</ul>
+<p>Optional, but highly recommended:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://www.khronos.org/opencl/">OpenCL</a> == 1.2.</li>
+<li>An NVIDIA GPU and
+<a class="reference external" href="http://www.nvidia.com/object/cuda_home_new.html">CUDA</a> &gt;= 6.5.</li>
+</ul>
+</div>
+<div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>Download and unpack the latest CLgen release:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ wget -O clgen.tar.gz https://github.com/ChrisCummins/clgen/archive/0.0.5.tar.gz
+$ tar xf clgen.tar.gz
+$ cd clgen-0.0.5
+</pre></div>
+</div>
+<p>Compile and build CLgen using:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ./configure
+$ make
+$ sudo make install
+</pre></div>
+</div>
+<p>This may take some time (over an hour). If you encounter any problems,
+please read the <a class="reference external" href="installation.html">deailed build instructions</a> and consider
+opening a <a class="reference external" href="https://github.com/ChrisCummins/clgen/issues">bug report</a>.</p>
+<p>(Optional) Run the test suite using:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ make test
+</pre></div>
+</div>
 </div>
 <div class="section" id="contents">
 <h1>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="build_system.html">Building CLgen</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="build_system.html#host-toolchain">Host Toolchain</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_system.html#native-file-compilation">Native File Compilation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="build_system.html#python-package-installation">Python Package Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Detailed Build Instructions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#native-file-compilation">Native File Compilation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#python-package-installation">Python Package Installation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="binaries.html">Programs</a><ul>
@@ -135,13 +169,15 @@ programs it learns from.</p>
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Contents</a></li>
+<li><a class="reference internal" href="#">Requirements</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#contents">Contents</a></li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 
   <h4>Next topic</h4>
-  <p class="topless"><a href="build_system.html"
-                        title="next chapter">Building CLgen</a></p>
+  <p class="topless"><a href="installation.html"
+                        title="next chapter">Detailed Build Instructions</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -173,9 +209,9 @@ programs it learns from.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="build_system.html" title="Building CLgen"
+          <a href="installation.html" title="Detailed Build Instructions"
              >next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">clgen 0.0.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">clgen 0.0.5 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

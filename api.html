@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Python API &#8212; clgen 0.0.4 documentation</title>
+    <title>Python API &#8212; clgen 0.0.5 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.0.4',
+        VERSION:     '0.0.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="clgen 0.0.4 documentation" href="index.html" />
+    <link rel="top" title="clgen 0.0.5 documentation" href="index.html" />
     <link rel="next" title="License" href="license.html" />
     <link rel="prev" title="Programs" href="binaries.html" /> 
   </head>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="binaries.html" title="Programs"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">clgen 0.0.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">clgen 0.0.5 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -659,6 +659,7 @@ wrapping and whitespace squeezing.</li>
 <code class="descclassname">clgen.cli.</code><code class="descname">main</code><span class="sig-paren">(</span><em>method</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cli.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cli.main" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs the given method as the main entrypoint to a program.</p>
 <p>If an exception is thrown, print error message and exit.</p>
+<p>If environmental variable DEBUG=1, then exception is not caught.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd>method (function): Function to execute.
@@ -914,11 +915,6 @@ tarball with the same name, unpack it.</p>
 <div class="section" id="module-clgen.dbutil">
 <span id="clgen-dbutil"></span><h2>clgen.dbutil<a class="headerlink" href="#module-clgen.dbutil" title="Permalink to this headline">¶</a></h2>
 <p>CLgen sqlite3 database utilities</p>
-<dl class="exception">
-<dt id="clgen.dbutil.DatabaseException">
-<em class="property">exception </em><code class="descclassname">clgen.dbutil.</code><code class="descname">DatabaseException</code><a class="reference internal" href="_modules/clgen/dbutil.html#DatabaseException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.DatabaseException" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="function">
 <dt id="clgen.dbutil.create_db">
 <code class="descclassname">clgen.dbutil.</code><code class="descname">create_db</code><span class="sig-paren">(</span><em>path</em>, <em>github=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/dbutil.html#create_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.create_db" title="Permalink to this definition">¶</a></dt>
@@ -1768,7 +1764,7 @@ sep (str, optional keyword): Message component separator.</dd>
         <li class="right" >
           <a href="binaries.html" title="Programs"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">clgen 0.0.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">clgen 0.0.5 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

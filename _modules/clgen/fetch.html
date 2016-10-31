@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.fetch &#8212; clgen 0.0.4 documentation</title>
+    <title>clgen.fetch &#8212; clgen 0.0.5 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.0.4',
+        VERSION:     '0.0.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="top" title="clgen 0.0.4 documentation" href="../../index.html" />
+    <link rel="top" title="clgen 0.0.5 documentation" href="../../index.html" />
     <link rel="up" title="clgen" href="../clgen.html" /> 
   </head>
   <body role="document">
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.0.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.0.5 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -94,14 +94,13 @@
 
 <span class="kn">import</span> <span class="nn">clgen</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">clutil</span>
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">dbutil</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">explore</span>
 
 
 <div class="viewcode-block" id="FetchException"><a class="viewcode-back" href="../../api.html#clgen.fetch.FetchException">[docs]</a><span class="k">class</span> <span class="nc">FetchException</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
-
-<span class="n">MAX_KERNEL_LEN</span> <span class="o">=</span> <span class="mi">5000</span>
 
 <span class="c1"># Counters</span>
 <span class="n">repos_new_counter</span> <span class="o">=</span> <span class="mi">0</span>
@@ -137,9 +136,6 @@
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\r\033</span><span class="s1">[Kfiles: new &#39;</span><span class="p">,</span> <span class="n">files_new_counter</span><span class="p">,</span>
           <span class="s1">&#39;, modified &#39;</span><span class="p">,</span> <span class="n">files_modified_counter</span><span class="p">,</span>
           <span class="s1">&#39;, unchanged &#39;</span><span class="p">,</span> <span class="n">files_unchanged_counter</span><span class="p">,</span>
-          <span class="s1">&#39;. repos: new &#39;</span><span class="p">,</span> <span class="n">repos_new_counter</span><span class="p">,</span>
-          <span class="s1">&#39;, modified &#39;</span><span class="p">,</span> <span class="n">repos_modified_counter</span><span class="p">,</span>
-          <span class="s1">&#39;, unchanged &#39;</span><span class="p">,</span> <span class="n">repos_unchanged_counter</span><span class="p">,</span>
           <span class="s1">&#39;. errors &#39;</span><span class="p">,</span> <span class="n">errors_counter</span><span class="p">,</span>
           <span class="s1">&#39;. current: &#39;</span><span class="p">,</span> <span class="n">status_string</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">25</span><span class="p">],</span>
           <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
@@ -308,8 +304,11 @@
 
     <span class="n">g</span> <span class="o">=</span> <span class="n">Github</span><span class="p">(</span><span class="n">github_username</span><span class="p">,</span> <span class="n">github_pw</span><span class="p">)</span>
     <span class="n">db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">is_github</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s2">&quot;not a GitHub database&quot;</span><span class="p">)</span>
+
     <span class="n">handle_repo</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">process_repo</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">db</span><span class="p">)</span>
-    <span class="c1"># TODO: Verify tables have been created</span>
 
     <span class="c1"># Fetch the repositories to iterate over. Since opencl isn&#39;t</span>
     <span class="c1"># treated as a first-class language by GitHub, we can&#39;t use the</span>
@@ -328,6 +327,9 @@
         <span class="s1">&#39;heterogeneous&#39;</span>
     <span class="p">]</span>
     <span class="k">for</span> <span class="n">query</span> <span class="ow">in</span> <span class="n">query_terms</span><span class="p">:</span>
+        <span class="c1"># Forks are okay. We use checksums to ensure uniqueness in</span>
+        <span class="c1"># final dataset.</span>
+        <span class="c1">#</span>
         <span class="n">repos</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">search_repositories</span><span class="p">(</span><span class="n">query</span> <span class="o">+</span> <span class="s1">&#39; fork:true sort:stars&#39;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">repos</span><span class="p">:</span>
@@ -647,7 +649,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.0.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.0.5 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

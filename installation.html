@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Detailed Build Instructions &#8212; clgen 0.0.5 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="clgen 0.0.5 documentation" href="index.html" />
+    <link rel="next" title="Programs" href="binaries.html" />
+    <link rel="prev" title="Requirements" href="index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="binaries.html" title="Programs"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Requirements"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">clgen 0.0.5 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="detailed-build-instructions">
+<span id="detailed-build-instructions"></span><h1>Detailed Build Instructions<a class="headerlink" href="#detailed-build-instructions" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="configuration">
+<span id="configuration"></span><h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
+<p>The configuration stage is used to enable features of CLgen:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span></span>./configure
+</pre></div>
+</div>
+<p>Answer the yes/no prompts to reflect your system. OpenCL is required to
+dynamically check and execute generated OpenCL programs. CUDA is required to
+build CLgen models on the GPU.</p>
+</div>
+<div class="section" id="native-file-compilation">
+<span id="native-file-compilation"></span><h2>Native File Compilation<a class="headerlink" href="#native-file-compilation" title="Permalink to this headline">¶</a></h2>
+<p>CLgen is written primarily in Python, but requires numerous components to be
+compiled to native code. To compile these components, run:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span></span>$ make all
+</pre></div>
+</div>
+<p>The program rejection and transformation pipeline requires the LLVM and Clang
+libraries and binaries. These are built in three steps:</p>
+<p>The ninja build tool is downloaded and compiled in <code class="docutils literal"><span class="pre">native/ninja</span></code>:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span></span>$ make ninja
+</pre></div>
+</div>
+<p>A precompiled version of CMake is downloaded to <code class="docutils literal"><span class="pre">native/cmake</span></code>:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span></span>$ make cmake
+</pre></div>
+</div>
+<p>The clang compiler is downloaded and compiled in in <code class="docutils literal"><span class="pre">native/llvm</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ make llvm
+</pre></div>
+</div>
+<p>Once the LLVM toolchain has been compiled, the remainder of the native files
+are built roughly as follows:</p>
+<p>Libclc provides headers for a generic OpenCL implementation:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span></span>$ make libclc
+</pre></div>
+</div>
+<p>The machine learning is implemented using torch:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ make torch
+</pre></div>
+</div>
+<p>Torch-rnn provides the recursive neural network:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ make torch-rnn
+</pre></div>
+</div>
+<p>(note there are other native files which are only compiled when running <code class="docutils literal"><span class="pre">make</span> <span class="pre">all</span></code>).</p>
+</div>
+<div class="section" id="python-package-installation">
+<span id="python-package-installation"></span><h2>Python Package Installation<a class="headerlink" href="#python-package-installation" title="Permalink to this headline">¶</a></h2>
+<p>Once the native components are compiled, the remainder of the build process
+involves installing the python package:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span></span>$ sudo make install
+</pre></div>
+</div>
+<p>This is roughly equivalent to:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span></span>$ pip install numpy&gt;<span class="o">=</span>1.10.4
+$ pip install -r requirements.txt
+$ sudo python ./setup.py install
+$ python ./setup.py <span class="nb">test</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Detailed Build Instructions</a><ul>
+<li><a class="reference internal" href="#configuration">Configuration</a></li>
+<li><a class="reference internal" href="#native-file-compilation">Native File Compilation</a></li>
+<li><a class="reference internal" href="#python-package-installation">Python Package Installation</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Requirements</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="binaries.html"
+                        title="next chapter">Programs</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/installation.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="binaries.html" title="Programs"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Requirements"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">clgen 0.0.5 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Chris Cummins.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+    </div>
+  </body>
+</html>
