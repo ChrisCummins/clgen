@@ -17,6 +17,7 @@ Requirements
    `clang <http://llvm.org/releases/download.html>`__ >= 3.1.
 -  `GNU Make <http://savannah.gnu.org/projects/make>`__ > 3.79.
 -  `Python <https://www.python.org/>`__ 2.7 or >= 3.4.
+-  `git <https://git-scm.com/>`__ >= 1.8.1.4.
 -  `zlib <http://zlib.net/>`__ >= 1.2.3.4.
 -  `libhdf5 <https://support.hdfgroup.org/HDF5/release/obtainsrc.html>`__
    >= 1.8.11.
@@ -31,31 +32,15 @@ Optional, but highly recommended:
 Installation
 ------------
 
-Download and unpack the latest CLgen release:
-
 ::
 
-    $ wget https://github.com/ChrisCummins/clgen/archive/0.0.13.tar.gz -O clgen-0.0.13.tar.gz
-    $ tar xf clgen-0.0.13.tar.gz
-    $ cd clgen-0.0.13
+    $ bash -c "$(curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.0.14/install.sh)"
 
-Compile and build CLgen using:
 
-::
-
-    $ ./configure
-    $ make
-    $ sudo make install
-
-This may take some time (over an hour). If you encounter any problems,
-please read the `deailed build instructions <installation.html>`_ and consider
-opening a `bug report <https://github.com/ChrisCummins/clgen/issues>`_.
-
-(Optional) Run the test suite using:
-
-::
-
-    $ make test
+When prompted, answer yes/no prompts depending on if you have the optional
+requirements. If you encounter any problems, please read the `detailed build
+instructions <installation.html>`_ and consider opening a `bug report
+<https://github.com/ChrisCummins/clgen/issues>`_.
 
 
 Contents
@@ -85,7 +70,7 @@ Indices and tables
 .. |Documentation Status| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat
    :target: http://chriscummins.cc/clgen/
 
-.. |Release Version| image:: https://img.shields.io/badge/release-0.0.13-blue.svg?style=flat
+.. |Release Version| image:: https://img.shields.io/badge/release-0.0.14-blue.svg?style=flat
    :target: https://github.com/ChrisCummins/clgen/releases
 
 .. |License Badge| image:: https://img.shields.io/badge/license-GNU%20GPL%20v3-blue.svg?style=flat
