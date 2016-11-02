@@ -70,9 +70,8 @@
 <span class="c1"># along with CLgen.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
 <span class="c1">#</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">CLgen persistent</span>
+<span class="sd">CLgen persistent cache mechanism.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
 
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">fs</span>
@@ -81,7 +80,7 @@
 <span class="kn">import</span> <span class="nn">clgen</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
 
-<span class="n">ROOT</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">,</span> <span class="s2">&quot;.cache&quot;</span><span class="p">,</span> <span class="s2">&quot;clgen&quot;</span><span class="p">)</span>
+<span class="n">ROOT</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">,</span> <span class="s2">&quot;.cache&quot;</span><span class="p">,</span> <span class="s2">&quot;clgen&quot;</span><span class="p">,</span> <span class="n">clgen</span><span class="o">.</span><span class="n">version</span><span class="p">())</span>
 
 
 <div class="viewcode-block" id="Cache404"><a class="viewcode-back" href="../../api.html#clgen.cache.Cache404">[docs]</a><span class="k">class</span> <span class="nc">Cache404</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">File404</span><span class="p">):</span>
