@@ -17,39 +17,39 @@ Requirements
 ------------
 
 -  Linux (x64) or OS X.
--  `GCC <https://gcc.gnu.org/>`__ > 4.7 or
+-  `GCC <https://gcc.gnu.org/>`__ > 4.8.2 or
    `clang <http://llvm.org/releases/download.html>`__ >= 3.1.
 -  `GNU Make <http://savannah.gnu.org/projects/make>`__ > 3.79.
--  `Python <https://www.python.org/>`__ 2.7 or >= 3.4.
+-  `Python <https://www.python.org/>`__ 2.7.12 or >= 3.4.
 -  `git <https://git-scm.com/>`__ >= 1.8.1.4.
 -  `zlib <http://zlib.net/>`__ >= 1.2.3.4.
 -  `libhdf5 <https://support.hdfgroup.org/HDF5/release/obtainsrc.html>`__
    >= 1.8.11.
--  `libffi <https://sourceware.org/libffi/>`__ >= 3.0.13
+-  `libffi <https://sourceware.org/libffi/>`__ >= 3.0.13.
 -  `curl <https://curl.haxx.se/>`__ and `wget <https://www.gnu.org/software/wget/>`__.
 
 Installation
 ------------
 
-**CPU-only:** *slow performance, some features disabled*
+**CPU-only:** *slow performance, some features disabled.*
 
 ::
 
-    $ bash -c "$(curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.0.22/install-cpu.sh)"
+    $ bash -c "$(curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.0.23/install-cpu.sh)"
 
 **OpenCL enabled:** *slow performance, all features enabled.*
 Requires `OpenCL <https://www.khronos.org/opencl/>`__.
 
 ::
 
-    $ bash -c "$(curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.0.22/install-opencl.sh)"
+    $ bash -c "$(curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.0.23/install-opencl.sh)"
 
 **CUDA enabled:** *fast performance, all features enabled.*
 Requires `CUDA <http://www.nvidia.com/object/cuda_home_new.html>`__ >= 6.5.
 
 ::
 
-    $ bash -c "$(curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.0.22/install-cuda.sh)"
+    $ bash -c "$(curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.0.23/install-cuda.sh)"
 
 If you encounter any problems, please read the `detailed build instructions
 <installation.html>`_ and consider opening a `bug report
@@ -83,7 +83,7 @@ Indices and tables
 .. |Documentation Status| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat
    :target: http://chriscummins.cc/clgen/
 
-.. |Release Version| image:: https://img.shields.io/badge/release-0.0.22-blue.svg?style=flat
+.. |Release Version| image:: https://img.shields.io/badge/release-0.0.23-blue.svg?style=flat
    :target: https://github.com/ChrisCummins/clgen/releases
 
 .. |License Badge| image:: https://img.shields.io/badge/license-GNU%20GPL%20v3-blue.svg?style=flat

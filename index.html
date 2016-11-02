@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Requirements &#8212; clgen 0.0.22 documentation</title>
+    <title>Requirements &#8212; clgen 0.0.23 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.0.22',
+        VERSION:     '0.0.23',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="clgen 0.0.22 documentation" href="#" />
+    <link rel="top" title="clgen 0.0.23 documentation" href="#" />
     <link rel="next" title="Detailed Build Instructions" href="installation.html" /> 
   </head>
   <body role="document">
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="installation.html" title="Detailed Build Instructions"
              accesskey="N">next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">clgen 0.0.22 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">clgen 0.0.23 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -56,7 +56,7 @@
 </div>
 <hr class="docutils" />
 <p class="centered">
-<strong><a class="reference external" href="https://travis-ci.org/ChrisCummins/clgen"><img alt="Build Status" src="https://img.shields.io/travis/ChrisCummins/clgen/master.svg?style=flat" /></a> <a class="reference external" href="https://coveralls.io/github/ChrisCummins/clgen?branch=master"><img alt="Coverage Status" src="https://img.shields.io/coveralls/ChrisCummins/clgen/master.svg?style=flat" /></a> <a class="reference external" href="http://chriscummins.cc/clgen/"><img alt="Documentation Status" src="https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat" /></a> <a class="reference external" href="https://github.com/ChrisCummins/clgen/releases"><img alt="Release Version" src="https://img.shields.io/badge/release-0.0.22-blue.svg?style=flat" /></a> <a class="reference external" href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img alt="License Badge" src="https://img.shields.io/badge/license-GNU%20GPL%20v3-blue.svg?style=flat" /></a></strong></p><p><strong>CLgen</strong> is an open source application for generating runnable programs using
+<strong><a class="reference external" href="https://travis-ci.org/ChrisCummins/clgen"><img alt="Build Status" src="https://img.shields.io/travis/ChrisCummins/clgen/master.svg?style=flat" /></a> <a class="reference external" href="https://coveralls.io/github/ChrisCummins/clgen?branch=master"><img alt="Coverage Status" src="https://img.shields.io/coveralls/ChrisCummins/clgen/master.svg?style=flat" /></a> <a class="reference external" href="http://chriscummins.cc/clgen/"><img alt="Documentation Status" src="https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat" /></a> <a class="reference external" href="https://github.com/ChrisCummins/clgen/releases"><img alt="Release Version" src="https://img.shields.io/badge/release-0.0.23-blue.svg?style=flat" /></a> <a class="reference external" href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img alt="License Badge" src="https://img.shields.io/badge/license-GNU%20GPL%20v3-blue.svg?style=flat" /></a></strong></p><p><strong>CLgen</strong> is an open source application for generating runnable programs using
 deep learning. CLgen <em>learns</em> to program using neural networks which model the
 semantics and usage from large volumes of program fragments, generating  many-
 core OpenCL programs that are representative of, but <em>distinct</em> from, the
@@ -65,32 +65,32 @@ programs it learns from.</p>
 <h1>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
 <li>Linux (x64) or OS X.</li>
-<li><a class="reference external" href="https://gcc.gnu.org/">GCC</a> &gt; 4.7 or
+<li><a class="reference external" href="https://gcc.gnu.org/">GCC</a> &gt; 4.8.2 or
 <a class="reference external" href="http://llvm.org/releases/download.html">clang</a> &gt;= 3.1.</li>
 <li><a class="reference external" href="http://savannah.gnu.org/projects/make">GNU Make</a> &gt; 3.79.</li>
-<li><a class="reference external" href="https://www.python.org/">Python</a> 2.7 or &gt;= 3.4.</li>
+<li><a class="reference external" href="https://www.python.org/">Python</a> 2.7.12 or &gt;= 3.4.</li>
 <li><a class="reference external" href="https://git-scm.com/">git</a> &gt;= 1.8.1.4.</li>
 <li><a class="reference external" href="http://zlib.net/">zlib</a> &gt;= 1.2.3.4.</li>
 <li><a class="reference external" href="https://support.hdfgroup.org/HDF5/release/obtainsrc.html">libhdf5</a>
 &gt;= 1.8.11.</li>
-<li><a class="reference external" href="https://sourceware.org/libffi/">libffi</a> &gt;= 3.0.13</li>
+<li><a class="reference external" href="https://sourceware.org/libffi/">libffi</a> &gt;= 3.0.13.</li>
 <li><a class="reference external" href="https://curl.haxx.se/">curl</a> and <a class="reference external" href="https://www.gnu.org/software/wget/">wget</a>.</li>
 </ul>
 </div>
 <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<p><strong>CPU-only:</strong> <em>slow performance, some features disabled</em></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ bash -c &quot;$(curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.0.22/install-cpu.sh)&quot;
+<p><strong>CPU-only:</strong> <em>slow performance, some features disabled.</em></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ bash -c &quot;$(curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.0.23/install-cpu.sh)&quot;
 </pre></div>
 </div>
 <p><strong>OpenCL enabled:</strong> <em>slow performance, all features enabled.</em>
 Requires <a class="reference external" href="https://www.khronos.org/opencl/">OpenCL</a>.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ bash -c &quot;$(curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.0.22/install-opencl.sh)&quot;
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ bash -c &quot;$(curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.0.23/install-opencl.sh)&quot;
 </pre></div>
 </div>
 <p><strong>CUDA enabled:</strong> <em>fast performance, all features enabled.</em>
 Requires <a class="reference external" href="http://www.nvidia.com/object/cuda_home_new.html">CUDA</a> &gt;= 6.5.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ bash -c &quot;$(curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.0.22/install-cuda.sh)&quot;
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ bash -c &quot;$(curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.0.23/install-cuda.sh)&quot;
 </pre></div>
 </div>
 <p>If you encounter any problems, please read the <a class="reference external" href="installation.html">detailed build instructions</a> and consider opening a <a class="reference external" href="https://github.com/ChrisCummins/clgen/issues">bug report</a>.</p>
@@ -208,7 +208,7 @@ Requires <a class="reference external" href="http://www.nvidia.com/object/cuda_h
         <li class="right" >
           <a href="installation.html" title="Detailed Build Instructions"
              >next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">clgen 0.0.22 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">clgen 0.0.23 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
