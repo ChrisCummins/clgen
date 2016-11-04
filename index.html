@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Requirements &#8212; clgen 0.0.28 documentation</title>
+    <title>Requirements &#8212; clgen 0.0.29 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.0.28',
+        VERSION:     '0.0.29',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,8 +26,8 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="clgen 0.0.28 documentation" href="#" />
-    <link rel="next" title="Detailed Build Instructions" href="installation.html" /> 
+    <link rel="top" title="clgen 0.0.29 documentation" href="#" />
+    <link rel="next" title="Building the Development Version" href="installation.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -40,9 +40,9 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="installation.html" title="Detailed Build Instructions"
+          <a href="installation.html" title="Building the Development Version"
              accesskey="N">next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">clgen 0.0.28 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">clgen 0.0.29 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -56,7 +56,7 @@
 </div>
 <hr class="docutils" />
 <p class="centered">
-<strong><a class="reference external" href="https://travis-ci.org/ChrisCummins/clgen"><img alt="Build Status" src="https://img.shields.io/travis/ChrisCummins/clgen/master.svg?style=flat" /></a> <a class="reference external" href="https://coveralls.io/github/ChrisCummins/clgen?branch=master"><img alt="Coverage Status" src="https://img.shields.io/coveralls/ChrisCummins/clgen/master.svg?style=flat" /></a> <a class="reference external" href="http://chriscummins.cc/clgen/"><img alt="Documentation Status" src="https://img.shields.io/badge/docs-0.0.28-brightgreen.svg?style=flat" /></a> <a class="reference external" href="https://github.com/ChrisCummins/clgen/releases"><img alt="Release Version" src="https://img.shields.io/badge/release-0.0.28-blue.svg?style=flat" /></a> <a class="reference external" href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img alt="License Badge" src="https://img.shields.io/badge/license-GNU%20GPL%20v3-blue.svg?style=flat" /></a></strong></p><p><strong>CLgen</strong> is an open source application for generating runnable programs using
+<strong><a class="reference external" href="https://travis-ci.org/ChrisCummins/clgen"><img alt="Build Status" src="https://img.shields.io/travis/ChrisCummins/clgen/master.svg?style=flat" /></a> <a class="reference external" href="https://coveralls.io/github/ChrisCummins/clgen?branch=master"><img alt="Coverage Status" src="https://img.shields.io/coveralls/ChrisCummins/clgen/master.svg?style=flat" /></a> <a class="reference external" href="http://chriscummins.cc/clgen/"><img alt="Documentation Status" src="https://img.shields.io/badge/docs-0.0.29-brightgreen.svg?style=flat" /></a> <a class="reference external" href="https://github.com/ChrisCummins/clgen/releases"><img alt="Release Version" src="https://img.shields.io/badge/release-0.0.29-blue.svg?style=flat" /></a> <a class="reference external" href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img alt="License Badge" src="https://img.shields.io/badge/license-GNU%20GPL%20v3-blue.svg?style=flat" /></a></strong></p><p><strong>CLgen</strong> is an open source application for generating runnable programs using
 deep learning. CLgen <em>learns</em> to program using neural networks which model the
 semantics and usage from large volumes of program fragments, generating  many-
 core OpenCL programs that are representative of, but <em>distinct</em> from, the
@@ -69,40 +69,90 @@ programs it learns from.</p>
 <a class="reference external" href="http://llvm.org/releases/download.html">clang</a> &gt;= 3.1.</li>
 <li><a class="reference external" href="http://savannah.gnu.org/projects/make">GNU Make</a> &gt; 3.79.</li>
 <li><a class="reference external" href="https://www.python.org/">Python</a> 2.7.12 or &gt;= 3.4.</li>
-<li><a class="reference external" href="https://git-scm.com/">git</a> &gt;= 1.8.1.4.</li>
-<li><a class="reference external" href="http://zlib.net/">zlib</a> &gt;= 1.2.3.4.</li>
-<li><a class="reference external" href="https://support.hdfgroup.org/HDF5/release/obtainsrc.html">libhdf5</a>
-&gt;= 1.8.11.</li>
+<li><a class="reference external" href="https://support.hdfgroup.org/HDF5/release/obtainsrc.html">libhdf5</a> &gt;=
+1.8.11.</li>
 <li><a class="reference external" href="https://sourceware.org/libffi/">libffi</a> &gt;= 3.0.13.</li>
-<li><a class="reference external" href="https://curl.haxx.se/">curl</a> and <a class="reference external" href="https://www.gnu.org/software/wget/">wget</a>.</li>
+<li><a class="reference external" href="http://zlib.net/">zlib</a> &gt;= 1.2.3.4.</li>
+<li><a class="reference external" href="https://git-scm.com/">git</a>, curl &lt;<a class="reference external" href="https://curl.haxx.se/">https://curl.haxx.se/</a>&gt;`__ and <a class="reference external" href="https://www.gnu.org/software/wget/">wget</a>.</li>
 </ul>
-</div>
-<div class="section" id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<p><strong>CPU-only:</strong> <em>slow performance, some features disabled.</em></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ bash -c &quot;$(curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.0.28/install-cpu.sh)&quot;
+<p>On <strong>Ubuntu 16.04</strong> or <strong>OS X</strong>, the following command will install the
+requirements automatically:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.0.29/install-deps.sh | bash
 </pre></div>
 </div>
-<p><strong>OpenCL enabled:</strong> <em>slow performance, all features enabled.</em>
+<p>Note that on Ubuntu, sudo privileges are required to install these requirements
+- you may be prompted for your password.</p>
+<p>For <strong>other Linux distributions</strong> and older versions of Ubuntu, please check
+each of these requirements yourself.</p>
+</div>
+<div class="section" id="installation-virtualenv">
+<h1>Installation - Virtualenv<a class="headerlink" href="#installation-virtualenv" title="Permalink to this headline">¶</a></h1>
+<p>We recommend using a <a class="reference external" href="https://virtualenv.pypa.io/en/stable/">virtualenv</a>
+environment to install CLgen. This installs CLgen in its own directory, not
+impacting any existing programs on the machine. Unlike a system-wide install,
+this does not require sudo privileges.</p>
+<p>Create a virtualenv environment in the directory <cite>~/clgen</cite>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ virtualenv --system-site-packages ~/clgen
+</pre></div>
+</div>
+<p>Activate this environment:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ source ~/clgen/bin/activate
+</pre></div>
+</div>
+<p>Install the latest release of CLgen using one of the following configurations:</p>
+<p><strong>1. CPU-only:</strong> <em>slow performance, some features disabled.</em></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>(clgen)$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.0.29/install-cpu.sh | bash
+</pre></div>
+</div>
+<p><strong>2. OpenCL enabled:</strong> <em>slow performance, all features enabled.</em>
 Requires <a class="reference external" href="https://www.khronos.org/opencl/">OpenCL</a>.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ bash -c &quot;$(curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.0.28/install-opencl.sh)&quot;
+<div class="highlight-default"><div class="highlight"><pre><span></span>(clgen)$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.0.29/install-opencl.sh | bash
 </pre></div>
 </div>
-<p><strong>CUDA enabled:</strong> <em>fast performance, all features enabled.</em>
+<p><strong>3. CUDA enabled:</strong> <em>fast performance, all features enabled.</em> Requires NVIDIA
+GPU, <a class="reference external" href="http://www.nvidia.com/object/cuda_home_new.html">CUDA</a> &gt;= 6.5.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>(clgen)$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.0.29/install-cuda.sh | bash
+</pre></div>
+</div>
+<p>When you are done using CLgen, deactivate the virtualenv environment:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>(clgen)$ deactivate
+</pre></div>
+</div>
+<p>To use CLgen later you will need to activate the virtualenv environment again:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ source ~/clgen/bin/activate
+</pre></div>
+</div>
+</div>
+<div class="section" id="installation-system-wide">
+<h1>Installation - System-wide<a class="headerlink" href="#installation-system-wide" title="Permalink to this headline">¶</a></h1>
+<p>A system-wide install allows any user on the machine to run CLgen without
+activating a virtualenv environment. This may update some of the previously
+installed Python packages. System-wide installation requires sudo priveledges -
+you may be prompted for your password.</p>
+<p>Install the latest release of CLgen system-wide using one of the following
+configurations:</p>
+<p><strong>1. CPU-only:</strong> <em>slow performance, some features disabled.</em></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.0.29/install-cpu.sh | bash
+</pre></div>
+</div>
+<p><strong>2. OpenCL enabled:</strong> <em>slow performance, all features enabled.</em>
+Requires <a class="reference external" href="https://www.khronos.org/opencl/">OpenCL</a>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.0.29/install-opencl.sh | bash
+</pre></div>
+</div>
+<p><strong>3. CUDA enabled:</strong> <em>fast performance, all features enabled.</em>
 Requires <a class="reference external" href="http://www.nvidia.com/object/cuda_home_new.html">CUDA</a> &gt;= 6.5.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ bash -c &quot;$(curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.0.28/install-cuda.sh)&quot;
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.0.29/install-cuda.sh | bash
 </pre></div>
 </div>
-<p>If you encounter any problems, please read the <a class="reference external" href="installation.html">detailed build instructions</a> and consider opening a <a class="reference external" href="https://github.com/ChrisCummins/clgen/issues">bug report</a>.</p>
 </div>
 <div class="section" id="contents">
 <h1>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Detailed Build Instructions</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="installation.html#configuration">Configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="installation.html#native-file-compilation">Native File Compilation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="installation.html#python-package-installation">Python Package Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Building the Development Version</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installation-virtualenv">Installation - Virtualenv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installation-system-wide">Installation - System-wide</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="binaries.html">Programs</a><ul>
@@ -167,14 +217,15 @@ Requires <a class="reference external" href="http://www.nvidia.com/object/cuda_h
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Requirements</a></li>
-<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#installation-virtualenv">Installation - Virtualenv</a></li>
+<li><a class="reference internal" href="#installation-system-wide">Installation - System-wide</a></li>
 <li><a class="reference internal" href="#contents">Contents</a></li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 
   <h4>Next topic</h4>
   <p class="topless"><a href="installation.html"
-                        title="next chapter">Detailed Build Instructions</a></p>
+                        title="next chapter">Building the Development Version</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -206,9 +257,9 @@ Requires <a class="reference external" href="http://www.nvidia.com/object/cuda_h
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="installation.html" title="Detailed Build Instructions"
+          <a href="installation.html" title="Building the Development Version"
              >next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">clgen 0.0.28 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">clgen 0.0.29 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.fetch &#8212; clgen 0.0.28 documentation</title>
+    <title>clgen.fetch &#8212; clgen 0.0.29 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.0.28',
+        VERSION:     '0.0.29',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="top" title="clgen 0.0.28 documentation" href="../../index.html" />
+    <link rel="top" title="clgen 0.0.29 documentation" href="../../index.html" />
     <link rel="up" title="clgen" href="../clgen.html" /> 
   </head>
   <body role="document">
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.0.28 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.0.29 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -89,16 +89,18 @@
 <span class="kn">from</span> <span class="nn">github</span> <span class="k">import</span> <span class="n">Github</span><span class="p">,</span> <span class="n">GithubException</span>
 <span class="kn">from</span> <span class="nn">hashlib</span> <span class="k">import</span> <span class="n">sha1</span>
 <span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="nb">open</span>
+<span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">fs</span>
 <span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">Popen</span>
 <span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">sleep</span>
 
 <span class="kn">import</span> <span class="nn">clgen</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">clutil</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">dbutil</span>
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">explore</span>
 
 
-<div class="viewcode-block" id="FetchException"><a class="viewcode-back" href="../../api.html#clgen.fetch.FetchException">[docs]</a><span class="k">class</span> <span class="nc">FetchException</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
+<div class="viewcode-block" id="FetchError"><a class="viewcode-back" href="../../api.html#clgen.fetch.FetchError">[docs]</a><span class="k">class</span> <span class="nc">FetchError</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
@@ -422,9 +424,13 @@
     <span class="n">db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
 
-    <span class="n">contents</span> <span class="o">=</span> <span class="n">inline_fs_headers</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;fetch </span><span class="si">{path}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">fs</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)))</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="n">inline_fs_headers</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">FetchError</span><span class="p">(</span>
+            <span class="s2">&quot;cannot read file &#39;</span><span class="si">{path}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">fs</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)))</span>
     <span class="nb">id</span> <span class="o">=</span> <span class="n">get_path_id</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
     <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;INSERT OR IGNORE INTO ContentFiles VALUES(?,?)&#39;</span><span class="p">,</span>
               <span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">contents</span><span class="p">))</span>
 
@@ -451,11 +457,9 @@
             <span class="n">odb</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="fs"><a class="viewcode-back" href="../../api.html#clgen.fetch.fs">[docs]</a><span class="k">def</span> <span class="nf">fs</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">paths</span><span class="o">=</span><span class="p">[]):</span>
+<div class="viewcode-block" id="fetch_fs"><a class="viewcode-back" href="../../api.html#clgen.fetch.fetch_fs">[docs]</a><span class="k">def</span> <span class="nf">fetch_fs</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">paths</span><span class="o">=</span><span class="p">[]):</span>
     <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
-        <span class="n">process_cl_file</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\033</span><span class="s2">[K</span><span class="se">\n</span><span class="s2">done.&quot;</span><span class="p">)</span></div>
+        <span class="n">process_cl_file</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span></div>
 
 
 <span class="c1"># Counters</span>
@@ -648,7 +652,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.0.28 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.0.29 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

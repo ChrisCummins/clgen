@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.corpus &#8212; clgen 0.0.28 documentation</title>
+    <title>clgen.corpus &#8212; clgen 0.0.29 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.0.28',
+        VERSION:     '0.0.29',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="top" title="clgen 0.0.28 documentation" href="../../index.html" />
+    <link rel="top" title="clgen 0.0.29 documentation" href="../../index.html" />
     <link rel="up" title="clgen" href="../clgen.html" /> 
   </head>
   <body role="document">
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.0.28 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.0.29 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -130,13 +130,13 @@
         <span class="n">path</span> <span class="o">=</span> <span class="n">unpack_directory_if_needed</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">fs</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s2">&quot;Corpus &#39;</span><span class="si">{}</span><span class="s2">&#39; must be a directory&quot;</span>
+            <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s2">&quot;Corpus path &#39;</span><span class="si">{}</span><span class="s2">&#39; is not a directory&quot;</span>
                                   <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">hash</span> <span class="o">=</span> <span class="n">dirhash</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;sha1&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">isgithub</span> <span class="o">=</span> <span class="n">isgithub</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;corpus </span><span class="si">{hash}</span><span class="s2"> initialized&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">hash</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">))</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;corpus </span><span class="si">{hash}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">hash</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">))</span>
 
         <span class="n">cache</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
 
@@ -158,7 +158,7 @@
     <span class="k">def</span> <span class="nf">_create_kernels_db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="n">cache</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;creating database...&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;creating database&quot;</span><span class="p">)</span>
 
         <span class="c1"># create a database and put it in the cache</span>
         <span class="n">tmppath</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;kernels.db.tmp&quot;</span><span class="p">)</span>
@@ -170,7 +170,7 @@
                     <span class="k">if</span> <span class="n">fs</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span>
 
         <span class="c1"># import files into database</span>
-        <span class="n">fetch</span><span class="o">.</span><span class="n">fs</span><span class="p">(</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">],</span> <span class="n">filelist</span><span class="p">)</span>
+        <span class="n">fetch</span><span class="o">.</span><span class="n">fetch_fs</span><span class="p">(</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">],</span> <span class="n">filelist</span><span class="p">)</span>
 
         <span class="c1"># preprocess files</span>
         <span class="n">preprocess</span><span class="o">.</span><span class="n">preprocess_db</span><span class="p">(</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span>
@@ -184,7 +184,7 @@
     <span class="k">def</span> <span class="nf">_create_txt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">cache</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;creating corpus...&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;creating corpus&quot;</span><span class="p">)</span>
 
         <span class="c1"># TODO: additional options in corpus JSON to accomodate for EOF,</span>
         <span class="c1"># different encodings etc.</span>
@@ -195,7 +195,7 @@
     <span class="k">def</span> <span class="nf">_lstm_preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">cache</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;creating training set...&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;creating training set&quot;</span><span class="p">)</span>
         <span class="n">tmppaths</span> <span class="o">=</span> <span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;corpus.json.tmp&quot;</span><span class="p">),</span>
                     <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;corpus.h5.tmp&quot;</span><span class="p">))</span>
         <span class="n">torch_rnn</span><span class="o">.</span><span class="n">preprocess</span><span class="p">(</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;corpus.txt&quot;</span><span class="p">],</span> <span class="o">*</span><span class="n">tmppaths</span><span class="p">)</span>
@@ -217,11 +217,11 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Instantiate Corpus from JSON.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;reading corpus json...&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;corpus from json&quot;</span><span class="p">)</span>
 
         <span class="n">path</span> <span class="o">=</span> <span class="n">corpus_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s2">&quot;key &#39;path&#39; not in corpus JSON&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s2">&quot;no path found for corpus&quot;</span><span class="p">)</span>
         <span class="n">isgithub</span> <span class="o">=</span> <span class="n">corpus_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;github&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">Corpus</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">isgithub</span><span class="o">=</span><span class="n">isgithub</span><span class="p">)</span></div></div>
@@ -255,7 +255,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.0.28 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.0.29 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

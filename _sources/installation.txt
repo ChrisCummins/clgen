@@ -1,85 +1,71 @@
-# Detailed Build Instructions
+# Building the Development Version
 
-## Configuration
-
-The configuration stage is used to enable features of CLgen:
+To build the latest development version of CLgen, checkout the source
+repository locally using:
 
 ```sh
-./configure
+$ git clone https://github.com/ChrisCummins/clgen.git clgen-dev
+$ cd clgen-dev
 ```
 
-Answer the yes/no prompts to reflect your system. OpenCL is required to
-dynamically check and execute generated OpenCL programs. CUDA is required to
-build CLgen models on the GPU.
-
-
-## Native File Compilation
-
-CLgen is written primarily in Python, but requires numerous components to be
-compiled to native code. To compile these components, run:
+Configure and compile CLgen using:
 
 ```sh
+$ ./configure
 $ make all
 ```
 
-The program rejection and transformation pipeline requires the LLVM and Clang
-libraries and binaries. These are built in three steps:
+Installation - Virtualenv
+-------------------------
 
-The ninja build tool is downloaded and compiled in `native/ninja`:
-
-```sh
-$ make ninja
-```
-
-A precompiled version of CMake is downloaded to `native/cmake`:
+Create a virtualenv environment in the directory `~/clgen-dev`:
 
 ```sh
-$ make cmake
+$ virtualenv --system-site-packages ~/clgen-dev
 ```
 
-The clang compiler is downloaded and compiled in in `native/llvm`:
-
-```
-$ make llvm
-```
-
-Once the LLVM toolchain has been compiled, the remainder of the native files
-are built roughly as follows:
-
-Libclc provides headers for a generic OpenCL implementation:
+Activate this environment:
 
 ```sh
-$ make libclc
+$ source ~/clgen-dev/bin/activate
 ```
 
-The machine learning is implemented using torch:
+Install CLgen in the virtualenv environment:
 
-```
-$ make torch
-```
-
-Torch-rnn provides the recursive neural network:
-
-```
-$ make torch-rnn
+```sh
+(clgen-dev)$ make install
 ```
 
-(note there are other native files which are only compiled when running `make all`).
+(Optional) Run the test suite:
 
-## Python Package Installation
+```sh
+(clgen-dev)$ make test
+```
 
-Once the native components are compiled, the remainder of the build process
-involves installing the python package:
+When you are done using CLgen, deactivate the virtualenv environment:
+
+```sh
+(clgen-dev)$ deactivate
+```
+
+To use CLgen later you will need to activate the virtualenv environment again:
+
+```sh
+$ source ~/clgen-dev/bin/activate
+```
+
+
+Installation - System-wide
+--------------------------
+
+Install CLgen system-wide using:
 
 ```sh
 $ sudo make install
 ```
 
-This is roughly equivalent to:
+(Optional) Run the test suite:
 
 ```sh
-$ pip install numpy>=1.10.4
-$ pip install -r requirements.txt
-$ sudo python ./setup.py install
-$ python ./setup.py test
+$ make test
 ```
