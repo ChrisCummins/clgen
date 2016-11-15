@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.cldrive &#8212; clgen 0.1.2 documentation</title>
+    <title>clgen.cldrive &#8212; clgen 0.1.3 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.2',
+        VERSION:     '0.1.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="top" title="clgen 0.1.2 documentation" href="../../index.html" />
+    <link rel="top" title="clgen 0.1.3 documentation" href="../../index.html" />
     <link rel="up" title="clgen" href="../clgen.html" /> 
   </head>
   <body role="document">
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.1.2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.1.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -78,18 +78,19 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">with_statement</span>
 
-<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
-<span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="nb">open</span>
-<span class="kn">from</span> <span class="nn">random</span> <span class="k">import</span> <span class="n">randrange</span>
-
+<span class="kn">import</span> <span class="nn">labm8</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
-<span class="kn">import</span> <span class="nn">labm8</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="nb">open</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">fs</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">math</span> <span class="k">as</span> <span class="n">labmath</span>
+<span class="kn">from</span> <span class="nn">numbers</span> <span class="k">import</span> <span class="n">Number</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="k">import</span> <span class="n">randrange</span>
+<span class="kn">from</span> <span class="nn">six</span> <span class="k">import</span> <span class="n">string_types</span>
 
 <span class="kn">import</span> <span class="nn">clgen</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">clutil</span>
@@ -308,7 +309,7 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">source_path</span><span class="o">=</span><span class="s1">&#39;&lt;stdin&gt;&#39;</span><span class="p">):</span>
         <span class="c1"># Safety first, kids:</span>
         <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span> <span class="o">==</span> <span class="n">cl</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span>
-        <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="o">==</span> <span class="n">unicode</span><span class="p">)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">string_types</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span> <span class="o">=</span> <span class="n">ctx</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_src</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
@@ -419,7 +420,7 @@
 <span class="sd">            out:      &lt;kernel&gt; &lt;wgsize&gt; &lt;transfer&gt; &lt;runtime&gt; &lt;ci&gt;</span>
 <span class="sd">            metaout:  &lt;error&gt; &lt;kernel&gt;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">queue</span><span class="p">)</span> <span class="o">==</span> <span class="n">cl</span><span class="o">.</span><span class="n">CommandQueue</span><span class="p">)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">cl</span><span class="o">.</span><span class="n">CommandQueue</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">must_validate</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
@@ -538,6 +539,20 @@
 <span class="sd">    Abstraction of data for OpenCL kernel.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">ndrange</span><span class="p">,</span> <span class="n">transfersize</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a kernel payload.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            ctx (cl.Context): OpenCL context.</span>
+<span class="sd">            args (KernelArg[]): Kernel arguments.</span>
+<span class="sd">            ndrange (int tuple): NDRange</span>
+<span class="sd">            transfersize (int): Number of bytes transferred to and from device.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">cl</span><span class="o">.</span><span class="n">Context</span><span class="p">))</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">clutil</span><span class="o">.</span><span class="n">KernelArg</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">args</span><span class="p">))</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ndrange</span><span class="p">))</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">transfersize</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span> <span class="o">=</span> <span class="n">ctx</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="n">args</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ndrange</span> <span class="o">=</span> <span class="n">ndrange</span>
@@ -577,7 +592,15 @@
     <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Equality comparison. Checks that OpenCL context and arguments match.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            other (KernelPayload): Other operand.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if equal, else false.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">KernelPayload</span><span class="p">))</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">context</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
 
@@ -598,12 +621,22 @@
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Not equal check.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            other (KernelPayload): Other operand.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if not equal, else false.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
 
 <div class="viewcode-block" id="KernelPayload.device_to_host"><a class="viewcode-back" href="../../api.html#clgen.cldrive.KernelPayload.device_to_host">[docs]</a>    <span class="k">def</span> <span class="nf">device_to_host</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Transfer payload from device to host.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">cl</span><span class="o">.</span><span class="n">CommandQueue</span><span class="p">))</span>
         <span class="n">elapsed</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">:</span>
@@ -620,6 +653,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Transfer payload from host to device.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">cl</span><span class="o">.</span><span class="n">CommandQueue</span><span class="p">))</span>
         <span class="n">elapsed</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">:</span>
@@ -693,6 +727,10 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_create_payload</span><span class="p">(</span><span class="n">nparray</span><span class="p">,</span> <span class="n">driver</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">callable</span><span class="p">(</span><span class="n">nparray</span><span class="p">))</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="n">KernelDriver</span><span class="p">))</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">Number</span><span class="p">))</span>
+
         <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">clutil</span><span class="o">.</span><span class="n">KernelArg</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">string</span><span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">driver</span><span class="o">.</span><span class="n">prototype</span><span class="o">.</span><span class="n">args</span><span class="p">]</span>
         <span class="n">transfer</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -740,18 +778,32 @@
         <span class="k">return</span> <span class="n">KernelPayload</span><span class="p">(</span><span class="n">driver</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="p">(</span><span class="n">size</span><span class="p">,),</span> <span class="n">transfer</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="KernelPayload.create_sequential"><a class="viewcode-back" href="../../api.html#clgen.cldrive.KernelPayload.create_sequential">[docs]</a>    <span class="k">def</span> <span class="nf">create_sequential</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="KernelPayload.create_sequential"><a class="viewcode-back" href="../../api.html#clgen.cldrive.KernelPayload.create_sequential">[docs]</a>    <span class="k">def</span> <span class="nf">create_sequential</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a payload of sequential values.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            driver (KernelDriver): Driver instance.</span>
+<span class="sd">            size (int): Payload size.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            KernelPayload: Generated payload.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">KernelPayload</span><span class="o">.</span><span class="n">_create_payload</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">KernelPayload</span><span class="o">.</span><span class="n">_create_payload</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">,</span> <span class="n">driver</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span></div>
 
     <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="KernelPayload.create_random"><a class="viewcode-back" href="../../api.html#clgen.cldrive.KernelPayload.create_random">[docs]</a>    <span class="k">def</span> <span class="nf">create_random</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="KernelPayload.create_random"><a class="viewcode-back" href="../../api.html#clgen.cldrive.KernelPayload.create_random">[docs]</a>    <span class="k">def</span> <span class="nf">create_random</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a payload of random values.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            driver (KernelDriver): Driver instance.</span>
+<span class="sd">            size (int): Payload size.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            KernelPayload: Generated payload.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">KernelPayload</span><span class="o">.</span><span class="n">_create_payload</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">KernelPayload</span><span class="o">.</span><span class="n">_create_payload</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">,</span> <span class="n">driver</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="kernel"><a class="viewcode-back" href="../../api.html#clgen.cldrive.kernel">[docs]</a><span class="k">def</span> <span class="nf">kernel</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;&lt;stdin&gt;&#39;</span><span class="p">,</span> <span class="n">devtype</span><span class="o">=</span><span class="s2">&quot;__placeholder__&quot;</span><span class="p">,</span>
@@ -844,7 +896,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.1.2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.1.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

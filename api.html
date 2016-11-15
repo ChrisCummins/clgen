@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Python API &#8212; clgen 0.1.2 documentation</title>
+    <title>Python API &#8212; clgen 0.1.3 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.2',
+        VERSION:     '0.1.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="clgen 0.1.2 documentation" href="index.html" />
+    <link rel="top" title="clgen 0.1.3 documentation" href="index.html" />
     <link rel="next" title="License" href="license.html" />
     <link rel="prev" title="Programs" href="binaries.html" /> 
   </head>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="binaries.html" title="Programs"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">clgen 0.1.2 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">clgen 0.1.3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -722,14 +722,50 @@ metaout:  &lt;error&gt; &lt;kernel&gt;</div></blockquote>
 
 <dl class="staticmethod">
 <dt id="clgen.cldrive.KernelPayload.create_random">
-<em class="property">static </em><code class="descname">create_random</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#KernelPayload.create_random"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelPayload.create_random" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">create_random</code><span class="sig-paren">(</span><em>driver</em>, <em>size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#KernelPayload.create_random"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelPayload.create_random" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a payload of random values.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>driver</strong> (<a class="reference internal" href="#clgen.cldrive.KernelDriver" title="clgen.cldrive.KernelDriver"><em>KernelDriver</em></a>) &#8211; Driver instance.</li>
+<li><strong>size</strong> (<em>int</em>) &#8211; Payload size.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Generated payload.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#clgen.cldrive.KernelPayload" title="clgen.cldrive.KernelPayload">KernelPayload</a></p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="staticmethod">
 <dt id="clgen.cldrive.KernelPayload.create_sequential">
-<em class="property">static </em><code class="descname">create_sequential</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#KernelPayload.create_sequential"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelPayload.create_sequential" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">create_sequential</code><span class="sig-paren">(</span><em>driver</em>, <em>size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#KernelPayload.create_sequential"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelPayload.create_sequential" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a payload of sequential values.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>driver</strong> (<a class="reference internal" href="#clgen.cldrive.KernelDriver" title="clgen.cldrive.KernelDriver"><em>KernelDriver</em></a>) &#8211; Driver instance.</li>
+<li><strong>size</strong> (<em>int</em>) &#8211; Payload size.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Generated payload.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#clgen.cldrive.KernelPayload" title="clgen.cldrive.KernelPayload">KernelPayload</a></p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -921,72 +957,239 @@ wrapping and whitespace squeezing.</li>
 </div>
 <div class="section" id="module-clgen.clutil">
 <span id="clgen-clutil"></span><h2>clgen.clutil<a class="headerlink" href="#module-clgen.clutil" title="Permalink to this headline">¶</a></h2>
-<p>OpenCL utilities</p>
+<p>OpenCL utilities.</p>
 <dl class="class">
 <dt id="clgen.clutil.KernelArg">
 <em class="property">class </em><code class="descclassname">clgen.clutil.</code><code class="descname">KernelArg</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/clutil.html#KernelArg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.clutil.KernelArg" title="Permalink to this definition">¶</a></dt>
 <dd><p>OpenCL Kernel Argument.</p>
-<p>Requires source code to have been pre-processed.</p>
+<p><em>Note:</em> Requires source code to have been pre-processed.</p>
 <dl class="attribute">
 <dt id="clgen.clutil.KernelArg.bare_type">
 <code class="descname">bare_type</code><a class="headerlink" href="#clgen.clutil.KernelArg.bare_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Type name, without vector or pointer qualifiers.</p>
 <p class="rubric">Examples</p>
-<p>KernelArg(&#8220;float4*&#8221;).bare_type == &#8220;float&#8221;
-KernelArg(&#8220;uchar32&#8221;).bare_type == &#8220;uchar&#8221;</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;__global float4* a&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">bare_type</span>
+<span class="go">&quot;float&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;const int b&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">bare_type</span>
+<span class="go">&quot;uchar&quot;</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Bare type.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.clutil.KernelArg.components">
 <code class="descname">components</code><a class="headerlink" href="#clgen.clutil.KernelArg.components" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Kernel argument components.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;__global float4* a&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">components</span>
+<span class="go">[&quot;__global&quot;, &quot;float4*&quot;, &quot;a&quot;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;const int b&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">components</span>
+<span class="go">[&quot;const&quot;, &quot;int&quot;, &quot;b&quot;]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Argument components.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str[]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.clutil.KernelArg.is_const">
 <code class="descname">is_const</code><a class="headerlink" href="#clgen.clutil.KernelArg.is_const" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Kernel arg is constant.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;__global float4* a&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">is_const</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;const int b&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">is_const</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if const, else False.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.clutil.KernelArg.is_global">
 <code class="descname">is_global</code><a class="headerlink" href="#clgen.clutil.KernelArg.is_global" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Kernel arg is global.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;__global float4* a&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">is_global</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;const int b&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">is_global</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if global, else False.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.clutil.KernelArg.is_local">
 <code class="descname">is_local</code><a class="headerlink" href="#clgen.clutil.KernelArg.is_local" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Kernel arg is local.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;__local float4* a&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">is_local</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;const int b&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">is_local</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if local, else False.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.clutil.KernelArg.is_pointer">
 <code class="descname">is_pointer</code><a class="headerlink" href="#clgen.clutil.KernelArg.is_pointer" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns whether argument is a pointer.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;__global float4* a&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">is_pointer</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;const int b&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">is_pointer</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if pointer, else False.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.clutil.KernelArg.is_restrict">
 <code class="descname">is_restrict</code><a class="headerlink" href="#clgen.clutil.KernelArg.is_restrict" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Argument has restrict keyword.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;__global float4* a&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">is_restrict</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;restrict int* b&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">is_restrict</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if restrict.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.clutil.KernelArg.is_vector">
 <code class="descname">is_vector</code><a class="headerlink" href="#clgen.clutil.KernelArg.is_vector" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns whether argument is a vectory type, e.g. &#8216;int4&#8217;.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;__global float4* a&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">is_vector</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;const int b&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">is_vector</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if vector type, else False.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.clutil.KernelArg.name">
 <code class="descname">name</code><a class="headerlink" href="#clgen.clutil.KernelArg.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the argument variable name.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;__global float4* a&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+<span class="go">&quot;a&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;const int b&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+<span class="go">&quot;b&quot;</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Argument name.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.clutil.KernelArg.numpy_type">
 <code class="descname">numpy_type</code><a class="headerlink" href="#clgen.clutil.KernelArg.numpy_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the numpy data type associated with this argument.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;__local float4* a&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">numpy_type</span>
+<span class="go">np.float32</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;const int b&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">numpy_type</span>
+<span class="go">np.int32</span>
+</pre></div>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">numpy type</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Kernel type.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="#clgen.clutil.UnknownTypeException" title="clgen.clutil.UnknownTypeException"><code class="xref py py-exc docutils literal"><span class="pre">UnknownTypeException</span></code></a> &#8211; If type can&#8217;t be deduced.</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">numpy type</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="#clgen.clutil.UnknownTypeException" title="clgen.clutil.UnknownTypeException"><code class="xref py py-exc docutils literal"><span class="pre">UnknownTypeException</span></code></a> &#8211; If type can&#8217;t be deduced.</td>
 </tr>
 </tbody>
 </table>
@@ -995,22 +1198,94 @@ KernelArg(&#8220;uchar32&#8221;).bare_type == &#8220;uchar&#8221;</p>
 <dl class="attribute">
 <dt id="clgen.clutil.KernelArg.qualifiers">
 <code class="descname">qualifiers</code><a class="headerlink" href="#clgen.clutil.KernelArg.qualifiers" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Return all argument type qualifiers.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;__global float4* a&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">qualifiers</span>
+<span class="go">[&quot;__global&quot;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;const int b&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">qualifiers</span>
+<span class="go">[&quot;const&quot;]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Type qualifiers.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str[]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.clutil.KernelArg.string">
 <code class="descname">string</code><a class="headerlink" href="#clgen.clutil.KernelArg.string" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Return the original string.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;__global float4* a&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">string</span>
+<span class="go">&quot;__global float4* a&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;const int b&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">string</span>
+<span class="go">&quot;const int b&quot;</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">String, as passed to constructor.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.clutil.KernelArg.type">
 <code class="descname">type</code><a class="headerlink" href="#clgen.clutil.KernelArg.type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the argument type.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;__global float4* a&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">type</span>
+<span class="go">&quot;float4*&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;const int b&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">type</span>
+<span class="go">&quot;int&quot;</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Argument type, including pointer &#8216;*&#8217; symbol, if present.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.clutil.KernelArg.vector_width">
 <code class="descname">vector_width</code><a class="headerlink" href="#clgen.clutil.KernelArg.vector_width" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns width of vector type.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;__global float4* a&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">vector_width</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">KernelArg</span><span class="p">(</span><span class="s2">&quot;__global int* a&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">vector_width</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Vector width.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 
@@ -1039,17 +1314,20 @@ KernelArg(&#8220;uchar32&#8221;).bare_type == &#8220;uchar&#8221;</p>
 <dl class="exception">
 <dt id="clgen.clutil.OpenCLUtilException">
 <em class="property">exception </em><code class="descclassname">clgen.clutil.</code><code class="descname">OpenCLUtilException</code><a class="reference internal" href="_modules/clgen/clutil.html#OpenCLUtilException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.clutil.OpenCLUtilException" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Module error.</p>
+</dd></dl>
 
 <dl class="exception">
 <dt id="clgen.clutil.PrototypeException">
 <em class="property">exception </em><code class="descclassname">clgen.clutil.</code><code class="descname">PrototypeException</code><a class="reference internal" href="_modules/clgen/clutil.html#PrototypeException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.clutil.PrototypeException" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Kernel prototype error.</p>
+</dd></dl>
 
 <dl class="exception">
 <dt id="clgen.clutil.UnknownTypeException">
 <em class="property">exception </em><code class="descclassname">clgen.clutil.</code><code class="descname">UnknownTypeException</code><a class="reference internal" href="_modules/clgen/clutil.html#UnknownTypeException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.clutil.UnknownTypeException" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Bad or unsupported type.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="clgen.clutil.extract_prototype">
@@ -2430,7 +2708,7 @@ of epochs.</p>
         <li class="right" >
           <a href="binaries.html" title="Programs"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">clgen 0.1.2 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">clgen 0.1.3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

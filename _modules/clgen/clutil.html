@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.clutil &#8212; clgen 0.1.2 documentation</title>
+    <title>clgen.clutil &#8212; clgen 0.1.3 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.2',
+        VERSION:     '0.1.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="top" title="clgen 0.1.2 documentation" href="../../index.html" />
+    <link rel="top" title="clgen 0.1.3 documentation" href="../../index.html" />
     <link rel="up" title="clgen" href="../clgen.html" /> 
   </head>
   <body role="document">
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.1.2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.1.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -70,32 +70,58 @@
 <span class="c1"># along with CLgen.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
 <span class="c1">#</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">OpenCL utilities</span>
+<span class="sd">OpenCL utilities.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">platform</span>
 <span class="kn">import</span> <span class="nn">psutil</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">from</span> <span class="nn">six</span> <span class="k">import</span> <span class="n">string_types</span>
 
 <span class="kn">import</span> <span class="nn">clgen</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">config</span> <span class="k">as</span> <span class="n">cfg</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
 
 
-<div class="viewcode-block" id="OpenCLUtilException"><a class="viewcode-back" href="../../api.html#clgen.clutil.OpenCLUtilException">[docs]</a><span class="k">class</span> <span class="nc">OpenCLUtilException</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span> <span class="k">pass</span></div>
-<div class="viewcode-block" id="PrototypeException"><a class="viewcode-back" href="../../api.html#clgen.clutil.PrototypeException">[docs]</a><span class="k">class</span> <span class="nc">PrototypeException</span><span class="p">(</span><span class="n">OpenCLUtilException</span><span class="p">):</span> <span class="k">pass</span></div>
-<div class="viewcode-block" id="UnknownTypeException"><a class="viewcode-back" href="../../api.html#clgen.clutil.UnknownTypeException">[docs]</a><span class="k">class</span> <span class="nc">UnknownTypeException</span><span class="p">(</span><span class="n">PrototypeException</span><span class="p">):</span> <span class="k">pass</span></div>
+<div class="viewcode-block" id="OpenCLUtilException"><a class="viewcode-back" href="../../api.html#clgen.clutil.OpenCLUtilException">[docs]</a><span class="k">class</span> <span class="nc">OpenCLUtilException</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Module error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="PrototypeException"><a class="viewcode-back" href="../../api.html#clgen.clutil.PrototypeException">[docs]</a><span class="k">class</span> <span class="nc">PrototypeException</span><span class="p">(</span><span class="n">OpenCLUtilException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Kernel prototype error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="UnknownTypeException"><a class="viewcode-back" href="../../api.html#clgen.clutil.UnknownTypeException">[docs]</a><span class="k">class</span> <span class="nc">UnknownTypeException</span><span class="p">(</span><span class="n">PrototypeException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bad or unsupported type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="KernelArg"><a class="viewcode-back" href="../../api.html#clgen.clutil.KernelArg">[docs]</a><span class="k">class</span> <span class="nc">KernelArg</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    OpenCL Kernel Argument.</span>
 
-<span class="sd">    Requires source code to have been pre-processed.</span>
+<span class="sd">    *Note:* Requires source code to have been pre-processed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a kernel argument from a string.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            string (str): OpenCL argument string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">string_types</span><span class="p">))</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_string</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_components</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_string</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
 
@@ -103,10 +129,7 @@
             <span class="k">if</span> <span class="s2">&quot;restrict&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_components</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_is_restrict</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_components</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;restrict&quot;</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_is_restrict</span> <span class="o">=</span> <span class="kc">False</span>
-
-            <span class="k">if</span> <span class="s2">&quot;__restrict&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_components</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="s2">&quot;__restrict&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_components</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_is_restrict</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_components</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;__restrict&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -121,39 +144,156 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the original string.</span>
+
+<span class="sd">        Examples:</span>
+
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global float4* a&quot;).string</span>
+<span class="sd">            &quot;__global float4* a&quot;</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;const int b&quot;).string</span>
+<span class="sd">            &quot;const int b&quot;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: String, as passed to constructor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_string</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">components</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Kernel argument components.</span>
+
+<span class="sd">        Examples:</span>
+
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global float4* a&quot;).components</span>
+<span class="sd">            [&quot;__global&quot;, &quot;float4*&quot;, &quot;a&quot;]</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;const int b&quot;).components</span>
+<span class="sd">            [&quot;const&quot;, &quot;int&quot;, &quot;b&quot;]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str[]: Argument components.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_components</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the argument variable name.</span>
+
+<span class="sd">        Examples:</span>
+
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global float4* a&quot;).name</span>
+<span class="sd">            &quot;a&quot;</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;const int b&quot;).name</span>
+<span class="sd">            &quot;b&quot;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Argument name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_components</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the argument type.</span>
+
+<span class="sd">        Examples:</span>
+
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global float4* a&quot;).type</span>
+<span class="sd">            &quot;float4*&quot;</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;const int b&quot;).type</span>
+<span class="sd">            &quot;int&quot;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Argument type, including pointer &#39;*&#39; symbol, if present.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_components</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">is_restrict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Argument has restrict keyword.</span>
+
+<span class="sd">        Examples:</span>
+
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global float4* a&quot;).is_restrict</span>
+<span class="sd">            False</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;restrict int* b&quot;).is_restrict</span>
+<span class="sd">            True</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if restrict.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_restrict</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">qualifiers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return all argument type qualifiers.</span>
+
+<span class="sd">        Examples:</span>
+
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global float4* a&quot;).qualifiers</span>
+<span class="sd">            [&quot;__global&quot;]</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;const int b&quot;).qualifiers</span>
+<span class="sd">            [&quot;const&quot;]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str[]: Type qualifiers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_components</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">is_pointer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns whether argument is a pointer.</span>
+
+<span class="sd">        Examples:</span>
+
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global float4* a&quot;).is_pointer</span>
+<span class="sd">            True</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;const int b&quot;).is_pointer</span>
+<span class="sd">            False</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if pointer, else False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;*&#39;</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">is_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns whether argument is a vectory type, e.g. &#39;int4&#39;.</span>
+
+<span class="sd">        Examples:</span>
+
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global float4* a&quot;).is_vector</span>
+<span class="sd">            True</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;const int b&quot;).is_vector</span>
+<span class="sd">            False</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if vector type, else False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_pointer</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">vector_width</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns width of vector type.</span>
+
+<span class="sd">        Examples:</span>
+
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global float4* a&quot;).vector_width</span>
+<span class="sd">            4</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global int* a&quot;).vector_width</span>
+<span class="sd">            1</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: Vector width.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vector_width</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>  <span class="c1"># set</span>
@@ -171,8 +311,13 @@
 
 <span class="sd">        Examples:</span>
 
-<span class="sd">            KernelArg(&quot;float4*&quot;).bare_type == &quot;float&quot;</span>
-<span class="sd">            KernelArg(&quot;uchar32&quot;).bare_type == &quot;uchar&quot;</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global float4* a&quot;).bare_type</span>
+<span class="sd">            &quot;float&quot;</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;const int b&quot;).bare_type</span>
+<span class="sd">            &quot;uchar&quot;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Bare type.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bare_type</span>
@@ -182,6 +327,19 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">is_const</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Kernel arg is constant.</span>
+
+<span class="sd">        Examples:</span>
+
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global float4* a&quot;).is_const</span>
+<span class="sd">            False</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;const int b&quot;).is_const</span>
+<span class="sd">            True</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if const, else False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_const</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>  <span class="c1"># set</span>
@@ -190,24 +348,48 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">is_global</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Kernel arg is global.</span>
+
+<span class="sd">        Examples:</span>
+
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global float4* a&quot;).is_global</span>
+<span class="sd">            True</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;const int b&quot;).is_global</span>
+<span class="sd">            False</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if global, else False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_global</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>  <span class="c1"># set</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_is_global</span> <span class="o">=</span> <span class="p">(</span><span class="kc">True</span> <span class="k">if</span>
-                               <span class="s1">&#39;__global&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qualifiers</span> <span class="ow">or</span>
-                               <span class="s1">&#39;global&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qualifiers</span>
-                               <span class="k">else</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_global</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="kc">True</span> <span class="k">if</span> <span class="s1">&#39;__global&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qualifiers</span> <span class="ow">or</span>
+                <span class="s1">&#39;global&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qualifiers</span> <span class="k">else</span> <span class="kc">False</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_global</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">is_local</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Kernel arg is local.</span>
+
+<span class="sd">        Examples:</span>
+
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__local float4* a&quot;).is_local</span>
+<span class="sd">            True</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;const int b&quot;).is_local</span>
+<span class="sd">            False</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if local, else False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_local</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>  <span class="c1"># set</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_is_local</span> <span class="o">=</span> <span class="p">(</span><span class="kc">True</span> <span class="k">if</span>
-                              <span class="s1">&#39;__local&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qualifiers</span> <span class="ow">or</span>
-                              <span class="s1">&#39;local&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qualifiers</span>
-                              <span class="k">else</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_local</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="kc">True</span> <span class="k">if</span> <span class="s1">&#39;__local&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qualifiers</span> <span class="ow">or</span>
+                <span class="s1">&#39;local&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qualifiers</span> <span class="k">else</span> <span class="kc">False</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_local</span>
 
     <span class="nd">@property</span>
@@ -215,9 +397,16 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the numpy data type associated with this argument.</span>
 
+<span class="sd">        Examples:</span>
+
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__local float4* a&quot;).numpy_type</span>
+<span class="sd">            np.float32</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;const int b&quot;).numpy_type</span>
+<span class="sd">            np.int32</span>
+
 <span class="sd">        Return:</span>
 
-<span class="sd">            numpy type</span>
+<span class="sd">            numpy type: Kernel type.</span>
 
 <span class="sd">        Raises:</span>
 
@@ -463,7 +652,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.1.2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.1.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>
