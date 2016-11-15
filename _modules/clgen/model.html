@@ -74,12 +74,17 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
 
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">tarfile</span>
 
 <span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">copy</span>
 <span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">glob</span><span class="p">,</span> <span class="n">iglob</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">fs</span>
+<span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">system</span>
+<span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">time</span>
+<span class="kn">from</span> <span class="nn">tempfile</span> <span class="k">import</span> <span class="n">mktemp</span>
 
 <span class="kn">import</span> <span class="nn">clgen</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
@@ -88,32 +93,70 @@
 <span class="kn">from</span> <span class="nn">clgen.corpus</span> <span class="k">import</span> <span class="n">Corpus</span>
 
 
+<div class="viewcode-block" id="ModelError"><a class="viewcode-back" href="../../api.html#clgen.model.ModelError">[docs]</a><span class="k">class</span> <span class="nc">ModelError</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Module level error</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="DistError"><a class="viewcode-back" href="../../api.html#clgen.model.DistError">[docs]</a><span class="k">class</span> <span class="nc">DistError</span><span class="p">(</span><span class="n">ModelError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dist model import or export error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="get_default_author"><a class="viewcode-back" href="../../api.html#clgen.model.get_default_author">[docs]</a><span class="k">def</span> <span class="nf">get_default_author</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{user}</span><span class="s2">@</span><span class="si">{host}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">system</span><span class="o">.</span><span class="n">USERNAME</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">system</span><span class="o">.</span><span class="n">HOSTNAME</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="Model"><a class="viewcode-back" href="../../api.html#clgen.model.Model">[docs]</a><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A CLgen Model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">corpus</span><span class="p">,</span> <span class="n">train_opts</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Instantiate model.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            corpus (Corpus): Corpus instance.</span>
+<span class="sd">            train_opts (dict): Training options.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">corpus</span><span class="p">,</span> <span class="n">Corpus</span><span class="p">))</span>
         <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">train_opts</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">corpus</span> <span class="o">=</span> <span class="n">corpus</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">train_opts</span> <span class="o">=</span> <span class="n">train_opts</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checksum</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_cache</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">hash</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash</span><span class="p">(</span><span class="n">train_opts</span><span class="p">,</span> <span class="n">corpus</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">))</span>
 
-<div class="viewcode-block" id="Model.checksum"><a class="viewcode-back" href="../../api.html#clgen.model.Model.checksum">[docs]</a>    <span class="k">def</span> <span class="nf">checksum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_opts</span><span class="p">)])</span>
-        <span class="k">return</span> <span class="n">clgen</span><span class="o">.</span><span class="n">checksum_str</span><span class="p">(</span><span class="n">string</span><span class="p">)</span></div>
+    <span class="k">def</span> <span class="nf">_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_opts</span><span class="p">,</span> <span class="n">corpus</span><span class="p">):</span>
+        <span class="n">checksum_data</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">train_opts</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span> <span class="o">+</span>
+            <span class="p">[</span><span class="n">corpus</span><span class="o">.</span><span class="n">hash</span><span class="p">])</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">checksum_data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">clgen</span><span class="o">.</span><span class="n">checksum_str</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Model.train"><a class="viewcode-back" href="../../api.html#clgen.model.Model.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Train model.</span>
+
+<span class="sd">        Invokes torch-rnn to train the model up to the specified maximum number</span>
+<span class="sd">        of epochs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># assemble training options</span>
         <span class="n">opts</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_opts</span><span class="p">)</span>
 
         <span class="n">opts</span><span class="p">[</span><span class="s2">&quot;reset_iterations&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">opts</span><span class="p">[</span><span class="s2">&quot;input_json&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">input_json</span>
         <span class="n">opts</span><span class="p">[</span><span class="s2">&quot;input_h5&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">input_h5</span>
-        <span class="n">opts</span><span class="p">[</span><span class="s2">&quot;checkpoint_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">)</span>
+        <span class="n">opts</span><span class="p">[</span><span class="s2">&quot;checkpoint_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">)</span>
 
         <span class="c1"># set default arguments</span>
+        <span class="k">if</span> <span class="n">opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_epochs&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">opts</span><span class="p">[</span><span class="s2">&quot;max_epochs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">50</span>
         <span class="k">if</span> <span class="n">opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;print_every&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">opts</span><span class="p">[</span><span class="s2">&quot;print_every&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
         <span class="k">if</span> <span class="n">opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;checkpoint_every&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -126,13 +169,116 @@
         <span class="n">torch_rnn</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="o">**</span><span class="n">opts</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get trained model metadata.</span>
+
+<span class="sd">        Format spec: https://github.com/ChrisCummins/clgen/issues/25</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Metadata.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            DistError: If model has not been trained.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dist_t7</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">most_recent_checkpoint</span>
+
+        <span class="k">if</span> <span class="n">dist_t7</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DistError</span><span class="p">(</span><span class="s2">&quot;model is untrained&quot;</span><span class="p">)</span>
+
+        <span class="n">dist_json</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">r&#39;.t7$&#39;</span><span class="p">,</span> <span class="s1">&#39;.json&#39;</span><span class="p">,</span> <span class="n">dist_t7</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">fs</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dist_json</span><span class="p">):</span>  <span class="c1"># sanity check</span>
+            <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">InternalError</span><span class="p">(</span>
+                <span class="s2">&quot;Checkpoint </span><span class="si">{t7}</span><span class="s2"> does not have corresponding json file </span><span class="si">{json}</span><span class="s2">&quot;</span>
+                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t7</span><span class="o">=</span><span class="n">dist_t7</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">dist_json</span><span class="p">))</span>
+
+        <span class="n">contents</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;model.t7&quot;</span><span class="p">:</span> <span class="n">clgen</span><span class="o">.</span><span class="n">checksum_file</span><span class="p">(</span><span class="n">dist_t7</span><span class="p">),</span>
+            <span class="s2">&quot;model.json&quot;</span><span class="p">:</span> <span class="n">clgen</span><span class="o">.</span><span class="n">checksum_file</span><span class="p">(</span><span class="n">dist_json</span><span class="p">)</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">clgen</span><span class="o">.</span><span class="n">version</span><span class="p">(),</span>
+            <span class="s2">&quot;author&quot;</span><span class="p">:</span> <span class="n">get_default_author</span><span class="p">(),</span>
+            <span class="s2">&quot;date packaged&quot;</span><span class="p">:</span> <span class="n">time</span><span class="o">.</span><span class="n">nowstr</span><span class="p">(),</span>
+            <span class="s2">&quot;train_opts&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_opts</span><span class="p">,</span>
+            <span class="s2">&quot;contents&quot;</span><span class="p">:</span> <span class="n">contents</span>
+        <span class="p">}</span>
+
+<div class="viewcode-block" id="Model.to_dist"><a class="viewcode-back" href="../../api.html#clgen.model.Model.to_dist">[docs]</a>    <span class="k">def</span> <span class="nf">to_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distpath</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a dist file.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            distpath (str): Path to dist file.</span>
+<span class="sd">            author (str, optional): Author name.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Path to generated distfile.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">outpath</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">distpath</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.tar.bz2&quot;</span>
+        <span class="k">if</span> <span class="n">fs</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outpath</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">DistError</span><span class="p">(</span><span class="s2">&quot;file </span><span class="si">{}</span><span class="s2"> exists&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outpath</span><span class="p">))</span>
+
+        <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span>
+        <span class="k">if</span> <span class="n">author</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;author&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">author</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">format_json</span><span class="p">(</span><span class="n">meta</span><span class="p">))</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">tar</span> <span class="o">=</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">outpath</span><span class="p">,</span> <span class="s1">&#39;w:bz2&#39;</span><span class="p">)</span>
+
+            <span class="c1"># write meta</span>
+            <span class="n">metapath</span> <span class="o">=</span> <span class="n">mktemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;clgen-&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.json&quot;</span><span class="p">)</span>
+            <span class="n">clgen</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="n">metapath</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">meta</span><span class="p">))</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;metafile:&quot;</span><span class="p">,</span> <span class="n">metapath</span><span class="p">)</span>
+
+            <span class="n">dist_t7</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">most_recent_checkpoint</span>
+            <span class="n">dist_json</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">r&#39;.t7$&#39;</span><span class="p">,</span> <span class="s1">&#39;.json&#39;</span><span class="p">,</span> <span class="n">dist_t7</span><span class="p">)</span>
+
+            <span class="c1"># create tarball</span>
+            <span class="n">tar</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">metapath</span><span class="p">,</span> <span class="n">arcname</span><span class="o">=</span><span class="s2">&quot;meta.json&quot;</span><span class="p">)</span>
+            <span class="n">tar</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">dist_t7</span><span class="p">,</span> <span class="n">arcname</span><span class="o">=</span><span class="s2">&quot;model.t7&quot;</span><span class="p">)</span>
+            <span class="n">tar</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">dist_json</span><span class="p">,</span> <span class="n">arcname</span><span class="o">=</span><span class="s2">&quot;model.json&quot;</span><span class="p">)</span>
+
+            <span class="c1"># tidy up</span>
+            <span class="n">fs</span><span class="o">.</span><span class="n">rm</span><span class="p">(</span><span class="n">metapath</span><span class="p">)</span>
+            <span class="n">tar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">tar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">fs</span><span class="o">.</span><span class="n">rm</span><span class="p">(</span><span class="n">metapath</span><span class="p">)</span>
+            <span class="n">fs</span><span class="o">.</span><span class="n">rm</span><span class="p">(</span><span class="n">outpath</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">e</span>
+
+        <span class="k">return</span> <span class="n">outpath</span></div>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        String representation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{hash}</span><span class="s2">: </span><span class="si">{data}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="nb">hash</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">clgen</span><span class="o">.</span><span class="n">format_json</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_opts</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">checkpoints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">glob</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;*.t7&#39;</span><span class="p">))</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Training checkpoints.</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">            str[]: List of paths to checkpoint files.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">glob</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;*.t7&#39;</span><span class="p">))</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">most_recent_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get path to most recently initialized t7</span>
+<span class="sd">        Get path to most recently created t7 checkpoint.</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">            str or None: Path to checkpoint, or None if no checkpoints.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># if there&#39;s nothing trained, then max() will raise ValueError because</span>
         <span class="c1"># of an empty sequence</span>
@@ -140,13 +286,146 @@
             <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;model_([0-9]+)\.t7&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">iglob</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;*.t7&#39;</span><span class="p">)),</span>
+            <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">iglob</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;*.t7&#39;</span><span class="p">)),</span>
                        <span class="n">key</span><span class="o">=</span><span class="n">get_checkpoint_iterations</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span></div>
 
 
+<div class="viewcode-block" id="DistModel"><a class="viewcode-back" href="../../api.html#clgen.model.DistModel">[docs]</a><span class="k">class</span> <span class="nc">DistModel</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Distributed model.</span>
+
+<span class="sd">    A distmodel is a pre-trained model, distributed without training corpus.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tarpath</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Instantiate distmodel.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            tarpath (str): Path to distmodel.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">tarpath</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash</span><span class="p">(</span><span class="n">tarpath</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">))</span>
+
+        <span class="c1"># unpack archive if necessary</span>
+        <span class="n">unpacked</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s1">&#39;model.json&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s1">&#39;model.t7&#39;</span><span class="p">]:</span>
+            <span class="n">unpacked</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;unpacking&quot;</span><span class="p">,</span> <span class="n">tarpath</span><span class="p">)</span>
+            <span class="n">clgen</span><span class="o">.</span><span class="n">unpack_archive</span><span class="p">(</span><span class="n">tarpath</span><span class="p">,</span> <span class="nb">dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s1">&#39;meta.json&#39;</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="n">DistError</span><span class="p">(</span><span class="s2">&quot;meta.json not in &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tarpath</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">load_json_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s1">&#39;meta.json&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">unpacked</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_opts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;train_opts&#39;</span><span class="p">]</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;distfile model: &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">verbose</span><span class="p">(</span><span class="s2">&quot;distfile author:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s2">&quot;author&quot;</span><span class="p">])</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">verbose</span><span class="p">(</span><span class="s2">&quot;distfile date:  &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s2">&quot;date packaged&quot;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tarpath</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">clgen</span><span class="o">.</span><span class="n">checksum_file</span><span class="p">(</span><span class="n">tarpath</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get model metadata.</span>
+
+<span class="sd">        Format spec: https://github.com/ChrisCummins/clgen/issues/25</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Metadata.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span>
+
+<div class="viewcode-block" id="DistModel.train"><a class="viewcode-back" href="../../api.html#clgen.model.DistModel.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method does nothing, distmodels are pre-tained.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">checkpoints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Training checkpoints.</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">            str[]: List of paths to checkpoint files.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">most_recent_checkpoint</span><span class="p">()]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">most_recent_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get path to pre-trained t7 checkpoint.</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">            str or None: Path to checkpoint.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s1">&#39;model.t7&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="DistModel.validate"><a class="viewcode-back" href="../../api.html#clgen.model.DistModel.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate contents of a distfile.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            DistError: In case of invalid distfile.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;version&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">version</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># before version 0.1.1, distfiles did not contain version string</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">))</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Unpackaed tar contents:</span><span class="se">\n</span><span class="s2">  &quot;</span><span class="p">,</span>
+                          <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">abspaths</span><span class="o">=</span><span class="kc">True</span><span class="p">)))</span>
+                <span class="k">raise</span> <span class="n">DistError</span><span class="p">(</span><span class="s2">&quot;Bad distfile&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s1">&#39;model.json&#39;</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="n">DistError</span><span class="p">(</span><span class="s2">&quot;model.json not in disfile&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s1">&#39;model.t7&#39;</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="n">DistError</span><span class="p">(</span><span class="s2">&quot;model.t7 not in disfile&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">version</span> <span class="o">!=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">version</span><span class="p">():</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;distfile version </span><span class="si">{}</span><span class="s2"> does not match CLgen version &quot;</span>
+                        <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">. There may be incompabilities&quot;</span>
+                        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="n">clgen</span><span class="o">.</span><span class="n">version</span><span class="p">()))</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s2">&quot;contents&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">contents</span><span class="p">:</span>
+            <span class="c1"># compare unpacked file contents to expected checksums</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="n">file</span><span class="p">]</span>
+            <span class="n">checksum</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">checksum_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">verbose</span><span class="p">(</span><span class="s2">&quot;  expected checksum:&quot;</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">contents</span><span class="p">[</span><span class="n">file</span><span class="p">])</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">verbose</span><span class="p">(</span><span class="s2">&quot;calculated checksum:&quot;</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">checksum</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">checksum</span> <span class="o">!=</span> <span class="n">contents</span><span class="p">[</span><span class="n">file</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="n">DistError</span><span class="p">(</span>
+                    <span class="s2">&quot;distfile </span><span class="si">{}</span><span class="s2"> checksum failed&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="kc">True</span></div></div>
+
+
 <div class="viewcode-block" id="from_json"><a class="viewcode-back" href="../../api.html#clgen.model.from_json">[docs]</a><span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="n">model_json</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load model from JSON.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        model_json (dict): JSON specification.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Model: Model instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">model_json</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">)</span>
+
     <span class="n">corpus</span> <span class="o">=</span> <span class="n">Corpus</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">model_json</span><span class="p">[</span><span class="s2">&quot;corpus&quot;</span><span class="p">])</span>
     <span class="n">train_opts</span> <span class="o">=</span> <span class="n">model_json</span><span class="p">[</span><span class="s2">&quot;train_opts&quot;</span><span class="p">]</span>
 
@@ -162,6 +441,29 @@
                 <span class="s2">&quot;Unrecognized training option &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">Model</span><span class="p">(</span><span class="n">corpus</span><span class="p">,</span> <span class="n">train_opts</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="from_tar"><a class="viewcode-back" href="../../api.html#clgen.model.from_tar">[docs]</a><span class="k">def</span> <span class="nf">from_tar</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load model from tarball.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        path (str): Path to tarball.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        DistModel: Model instance.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        File404: If path does not exist.</span>
+<span class="sd">        DistError: If distfile is malformed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">)</span>
+
+    <span class="n">path</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">fs</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">File404</span><span class="p">(</span><span class="s2">&quot;distfile not found &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">DistModel</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
 </pre></div>
 
           </div>

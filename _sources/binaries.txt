@@ -45,6 +45,12 @@ clgen-create-db
       -v, --verbose  increase output verbosity
       -g, --github   generate dataset with GitHub metadata
 
+clgen-dist
+-----------
+
+::
+
+
 clgen-drive
 ------------
 

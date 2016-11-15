@@ -77,6 +77,8 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sqlite3</span>
 
+<span class="kn">from</span> <span class="nn">hashlib</span> <span class="k">import</span> <span class="n">md5</span>
+
 <span class="kn">import</span> <span class="nn">clgen</span>
 
 
@@ -97,6 +99,86 @@
     <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
 
 
+<div class="viewcode-block" id="md5sum_aggregator"><a class="viewcode-back" href="../../api.html#clgen.dbutil.md5sum_aggregator">[docs]</a><span class="k">class</span> <span class="nc">md5sum_aggregator</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">md5</span> <span class="o">=</span> <span class="n">md5</span><span class="p">()</span>
+
+<div class="viewcode-block" id="md5sum_aggregator.step"><a class="viewcode-back" href="../../api.html#clgen.dbutil.md5sum_aggregator.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">md5</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="md5sum_aggregator.finalize"><a class="viewcode-back" href="../../api.html#clgen.dbutil.md5sum_aggregator.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">md5</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="linecount_aggregator"><a class="viewcode-back" href="../../api.html#clgen.dbutil.linecount_aggregator">[docs]</a><span class="k">class</span> <span class="nc">linecount_aggregator</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+
+<div class="viewcode-block" id="linecount_aggregator.step"><a class="viewcode-back" href="../../api.html#clgen.dbutil.linecount_aggregator.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="linecount_aggregator.finalize"><a class="viewcode-back" href="../../api.html#clgen.dbutil.linecount_aggregator.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span></div></div>
+
+
+<div class="viewcode-block" id="charcount_aggregator"><a class="viewcode-back" href="../../api.html#clgen.dbutil.charcount_aggregator">[docs]</a><span class="k">class</span> <span class="nc">charcount_aggregator</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+
+<div class="viewcode-block" id="charcount_aggregator.step"><a class="viewcode-back" href="../../api.html#clgen.dbutil.charcount_aggregator.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="charcount_aggregator.finalize"><a class="viewcode-back" href="../../api.html#clgen.dbutil.charcount_aggregator.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span></div></div>
+
+
+<div class="viewcode-block" id="connect"><a class="viewcode-back" href="../../api.html#clgen.dbutil.connect">[docs]</a><span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a connection to a database.</span>
+
+<span class="sd">    Database has additional aggregate functions:</span>
+
+<span class="sd">     * MD5SUM() returns md5 of column values</span>
+<span class="sd">     * LC() returns sum line count of text columns</span>
+<span class="sd">     * CC() returns sum character count of text columns</span>
+
+<span class="sd">    Arguments:</span>
+
+<span class="sd">        db_path (str): Path to database</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">        sqlite3 connection</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">create_aggregate</span><span class="p">(</span><span class="s2">&quot;MD5SUM&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">md5sum_aggregator</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">create_aggregate</span><span class="p">(</span><span class="s2">&quot;LC&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">linecount_aggregator</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">create_aggregate</span><span class="p">(</span><span class="s2">&quot;CC&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">charcount_aggregator</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">db</span></div>
+
+
+<div class="viewcode-block" id="is_modified"><a class="viewcode-back" href="../../api.html#clgen.dbutil.is_modified">[docs]</a><span class="k">def</span> <span class="nf">is_modified</span><span class="p">(</span><span class="n">db</span><span class="p">):</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT value FROM Meta WHERE key=&#39;preprocessed_checksum&#39;&quot;</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+    <span class="n">cached_checksum</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">result</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT MD5SUM(id) FROM ContentFiles&#39;</span><span class="p">)</span>
+    <span class="n">checksum</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="kc">False</span> <span class="k">if</span> <span class="n">cached_checksum</span> <span class="o">==</span> <span class="n">checksum</span> <span class="k">else</span> <span class="n">checksum</span></div>
+
+
+<div class="viewcode-block" id="set_modified_status"><a class="viewcode-back" href="../../api.html#clgen.dbutil.set_modified_status">[docs]</a><span class="k">def</span> <span class="nf">set_modified_status</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">checksum</span><span class="p">):</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;INSERT OR REPLACE INTO Meta VALUES (?,?)&quot;</span><span class="p">,</span>
+              <span class="p">(</span><span class="s1">&#39;preprocessed_checksum&#39;</span><span class="p">,</span> <span class="n">checksum</span><span class="p">))</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
 <div class="viewcode-block" id="table_exists"><a class="viewcode-back" href="../../api.html#clgen.dbutil.table_exists">[docs]</a><span class="k">def</span> <span class="nf">table_exists</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">table_name</span><span class="p">):</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
     <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT name FROM sqlite_master WHERE type=&#39;table&#39; AND name=&#39;&quot;</span> <span class="o">+</span>
@@ -111,9 +193,59 @@
 
 
 <div class="viewcode-block" id="num_good_kernels"><a class="viewcode-back" href="../../api.html#clgen.dbutil.num_good_kernels">[docs]</a><span class="k">def</span> <span class="nf">num_good_kernels</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="n">db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fetch the number of good preprocessed kernels from dataset.</span>
+
+<span class="sd">    Arguments:</span>
+
+<span class="sd">        path (str): Path to database.</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">        int: Num preprocessed kernels where status is 0.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">num_rows_in</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;PreprocessedFiles&quot;</span><span class="p">,</span> <span class="s2">&quot;WHERE status=0&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="num_rows_in"><a class="viewcode-back" href="../../api.html#clgen.dbutil.num_rows_in">[docs]</a><span class="k">def</span> <span class="nf">num_rows_in</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">condition</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fetch number of rows in table.</span>
+
+<span class="sd">    Arguments:</span>
+
+<span class="sd">        path (str): Path to database.</span>
+<span class="sd">        table (str): Table ID.</span>
+<span class="sd">        condition (str, optional): Conditional.</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">        int: Num rows.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT Count(*) FROM PreprocessedFiles WHERE status=0&#39;</span><span class="p">)</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT Count(*) FROM </span><span class="si">{table}</span><span class="s1"> </span><span class="si">{condition}</span><span class="s1">&#39;</span>
+              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">,</span> <span class="n">condition</span><span class="o">=</span><span class="n">condition</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="lc"><a class="viewcode-back" href="../../api.html#clgen.dbutil.lc">[docs]</a><span class="k">def</span> <span class="nf">lc</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="s2">&quot;Contents&quot;</span><span class="p">,</span> <span class="n">condition</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fetch line count of contents in table.</span>
+
+<span class="sd">    Arguments:</span>
+
+<span class="sd">        path (str): Path to database.</span>
+<span class="sd">        table (str): Table ID.</span>
+<span class="sd">        condition (str, optional): Conditional.</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">        int: Num lines.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT LC(</span><span class="si">{column}</span><span class="s2">) FROM </span><span class="si">{table}</span><span class="s2"> </span><span class="si">{condition}</span><span class="s2">&quot;</span>
+              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="n">column</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">,</span> <span class="n">condition</span><span class="o">=</span><span class="n">condition</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span></div>
 
 
@@ -127,7 +259,7 @@
 
 <span class="sd">        path (str): Path to database.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
     <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DELETE FROM PreprocessedFiles&quot;</span><span class="p">)</span>
     <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DELETE FROM Meta WHERE key=&#39;preprocessed_checksum&#39;&quot;</span><span class="p">)</span>

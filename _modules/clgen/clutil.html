@@ -76,9 +76,12 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">platform</span>
+<span class="kn">import</span> <span class="nn">psutil</span>
 
 <span class="kn">import</span> <span class="nn">clgen</span>
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">config</span> <span class="k">as</span> <span class="n">cfg</span>
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
 
 
 <div class="viewcode-block" id="OpenCLUtilException"><a class="viewcode-back" href="../../api.html#clgen.clutil.OpenCLUtilException">[docs]</a><span class="k">class</span> <span class="nc">OpenCLUtilException</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span> <span class="k">pass</span></div>
@@ -397,6 +400,39 @@
         <span class="k">raise</span> <span class="n">PrototypeException</span><span class="p">(</span><span class="s2">&quot;malformed seed&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">KernelPrototype</span><span class="p">(</span><span class="n">prototype</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="platform_info"><a class="viewcode-back" href="../../api.html#clgen.clutil.platform_info">[docs]</a><span class="k">def</span> <span class="nf">platform_info</span><span class="p">(</span><span class="n">printfn</span><span class="o">=</span><span class="nb">print</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Log platform information.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        printfn (fn, optional): Function to call to print output to. Default</span>
+<span class="sd">            `print()`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;Platform:  &quot;</span><span class="p">,</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">())</span>
+    <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;Memory:    &quot;</span><span class="p">,</span>
+            <span class="nb">round</span><span class="p">(</span><span class="n">psutil</span><span class="o">.</span><span class="n">virtual_memory</span><span class="p">()</span><span class="o">.</span><span class="n">total</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)),</span> <span class="s2">&quot;MB&quot;</span><span class="p">)</span>
+    <span class="n">printfn</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">cfg</span><span class="o">.</span><span class="n">USE_OPENCL</span><span class="p">:</span>
+        <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;Device:     None&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="kn">import</span> <span class="nn">pyopencl</span> <span class="k">as</span> <span class="nn">cl</span>
+    <span class="n">ctx</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span><span class="n">properties</span><span class="o">=</span><span class="p">[(</span><span class="n">cl</span><span class="o">.</span><span class="n">context_properties</span><span class="o">.</span><span class="n">PLATFORM</span><span class="p">,</span>
+                                  <span class="n">cl</span><span class="o">.</span><span class="n">get_platforms</span><span class="p">()[</span><span class="mi">0</span><span class="p">])])</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">context_info</span><span class="o">.</span><span class="n">DEVICES</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">devtype</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">device_type</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">TYPE</span><span class="p">))</span>
+    <span class="n">dev</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">NAME</span><span class="p">)</span>
+
+    <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;Device:    &quot;</span><span class="p">,</span> <span class="n">devtype</span><span class="p">,</span> <span class="n">dev</span><span class="p">)</span>
+    <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;Compute #.:&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">MAX_COMPUTE_UNITS</span><span class="p">))</span>
+    <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;Frequency: &quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span>
+        <span class="n">cl</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">MAX_CLOCK_FREQUENCY</span><span class="p">),</span> <span class="s2">&quot;HZ&quot;</span><span class="p">)</span>
+    <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;Memory:    &quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span>
+        <span class="n">device</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">GLOBAL_MEM_SIZE</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)),</span> <span class="s2">&quot;MB&quot;</span><span class="p">)</span>
+    <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;Driver:    &quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">DRIVER_VERSION</span><span class="p">))</span></div>
 </pre></div>
 
           </div>

@@ -86,6 +86,12 @@ of the module into user code.</p>
 </dd></dl>
 
 <dl class="exception">
+<dt id="clgen.InvalidFile">
+<em class="property">exception </em><code class="descclassname">clgen.</code><code class="descname">InvalidFile</code><a class="reference internal" href="_modules/clgen.html#InvalidFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.InvalidFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raised in case a file contains invalid contents.</p>
+</dd></dl>
+
+<dl class="exception">
 <dt id="clgen.NotImplementedError">
 <em class="property">exception </em><code class="descclassname">clgen.</code><code class="descname">NotImplementedError</code><a class="reference internal" href="_modules/clgen.html#NotImplementedError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.NotImplementedError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Code not found.</p>
@@ -155,6 +161,18 @@ of the module into user code.</p>
 <dt id="clgen.data_path">
 <code class="descclassname">clgen.</code><code class="descname">data_path</code><span class="sig-paren">(</span><em>*path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#data_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.data_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Path to package file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*path</strong> (<em>str[]</em>) &#8211; Path components.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Path.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -199,7 +217,29 @@ empty.</p>
 <dl class="function">
 <dt id="clgen.load_json_file">
 <code class="descclassname">clgen.</code><code class="descname">load_json_file</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#load_json_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.load_json_file" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Load a JSON data blob.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>path</strong> (<em>str</em>) &#8211; Path to file.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">JSON data.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">array or dict</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference internal" href="#clgen.File404" title="clgen.File404"><code class="xref py py-exc docutils literal"><span class="pre">File404</span></code></a> &#8211; If path does not exist.</li>
+<li><a class="reference internal" href="#clgen.InvalidFile" title="clgen.InvalidFile"><code class="xref py py-exc docutils literal"><span class="pre">InvalidFile</span></code></a> &#8211; If JSON is malformed.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="clgen.loads">
@@ -229,15 +269,15 @@ accepts.</li>
 
 <dl class="function">
 <dt id="clgen.main">
-<code class="descclassname">clgen.</code><code class="descname">main</code><span class="sig-paren">(</span><em>model_json</em>, <em>sampler_json</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.main" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.</code><code class="descname">main</code><span class="sig-paren">(</span><em>model</em>, <em>sampler</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.main" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main entry point for clgen.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>model_json</strong> (<em>dict</em>) &#8211; Model specification.</li>
-<li><strong>sample_json</strong> (<em>dict</em>) &#8211; Sample specification.</li>
+<li><strong>model</strong> (<em>str</em>) &#8211; Path to model.</li>
+<li><strong>sample</strong> (<em>str</em>) &#8211; Path to sampler.</li>
 </ul>
 </td>
 </tr>
@@ -293,6 +333,18 @@ accepts.</li>
 <dt id="clgen.package_path">
 <code class="descclassname">clgen.</code><code class="descname">package_path</code><span class="sig-paren">(</span><em>*path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#package_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.package_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Path to package file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*path</strong> (<em>str[]</em>) &#8211; Path components.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Path.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -363,8 +415,8 @@ directory of the archive.</li>
 <dt id="clgen.version">
 <code class="descclassname">clgen.</code><code class="descname">version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen.html#version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.version" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the package version.</p>
-<p>DO NOT try and parse this or derive any special major/minor version
-information from it, treat it as an opaque char array. The only valid
+<p><em>DO NOT</em> try to parse this or derive any special major/minor version
+information from it. Treat it as an opaque char array. The only valid
 operators for comparing versions are == and !=.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -458,7 +510,7 @@ from the keys used to access the cache.</p>
 <dl class="exception">
 <dt id="clgen.cache.Cache404">
 <em class="property">exception </em><code class="descclassname">clgen.cache.</code><code class="descname">Cache404</code><a class="reference internal" href="_modules/clgen/cache.html#Cache404"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cache.Cache404" title="Permalink to this definition">¶</a></dt>
-<dd><p>Error thrown for cache miss.</p>
+<dd><p>Error thrown for cache misses.</p>
 </dd></dl>
 
 </div>
@@ -468,52 +520,62 @@ from the keys used to access the cache.</p>
 <dl class="exception">
 <dt id="clgen.cldrive.CLDriveException">
 <em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">CLDriveException</code><a class="reference internal" href="_modules/clgen/cldrive.html#CLDriveException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.CLDriveException" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Module error.</p>
+</dd></dl>
 
 <dl class="exception">
 <dt id="clgen.cldrive.E_BAD_ARGS">
 <em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_BAD_ARGS</code><a class="reference internal" href="_modules/clgen/cldrive.html#E_BAD_ARGS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_BAD_ARGS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Kernel has invalid arguments.</p>
+</dd></dl>
 
 <dl class="exception">
 <dt id="clgen.cldrive.E_BAD_CODE">
 <em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_BAD_CODE</code><a class="reference internal" href="_modules/clgen/cldrive.html#E_BAD_CODE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_BAD_CODE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Thrown for bad code.</p>
+</dd></dl>
 
 <dl class="exception">
 <dt id="clgen.cldrive.E_BAD_DRIVER">
 <em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_BAD_DRIVER</code><a class="reference internal" href="_modules/clgen/cldrive.html#E_BAD_DRIVER"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_BAD_DRIVER" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Thrown in case of CLdrive errors.</p>
+</dd></dl>
 
 <dl class="exception">
 <dt id="clgen.cldrive.E_BAD_PROFILE">
 <em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_BAD_PROFILE</code><a class="reference internal" href="_modules/clgen/cldrive.html#E_BAD_PROFILE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_BAD_PROFILE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>OpenCL profiling failed.</p>
+</dd></dl>
 
 <dl class="exception">
 <dt id="clgen.cldrive.E_INPUT_INSENSITIVE">
 <em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_INPUT_INSENSITIVE</code><a class="reference internal" href="_modules/clgen/cldrive.html#E_INPUT_INSENSITIVE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_INPUT_INSENSITIVE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Kernel is input insensitive.</p>
+</dd></dl>
 
 <dl class="exception">
 <dt id="clgen.cldrive.E_NONDETERMINISTIC">
 <em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_NONDETERMINISTIC</code><a class="reference internal" href="_modules/clgen/cldrive.html#E_NONDETERMINISTIC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_NONDETERMINISTIC" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Kernel is nondeterministic.</p>
+</dd></dl>
 
 <dl class="exception">
 <dt id="clgen.cldrive.E_NON_TERMINATING">
 <em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_NON_TERMINATING</code><a class="reference internal" href="_modules/clgen/cldrive.html#E_NON_TERMINATING"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_NON_TERMINATING" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Kernel did not terminate.</p>
+</dd></dl>
 
 <dl class="exception">
 <dt id="clgen.cldrive.E_NO_OUTPUTS">
 <em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_NO_OUTPUTS</code><a class="reference internal" href="_modules/clgen/cldrive.html#E_NO_OUTPUTS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_NO_OUTPUTS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Kernel does not compute an output.</p>
+</dd></dl>
 
 <dl class="exception">
 <dt id="clgen.cldrive.E_UGLY_CODE">
 <em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_UGLY_CODE</code><a class="reference internal" href="_modules/clgen/cldrive.html#E_UGLY_CODE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_UGLY_CODE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Thrown for ugly code.</p>
+</dd></dl>
 
 <dl class="class">
 <dt id="clgen.cldrive.KernelDriver">
@@ -542,22 +604,47 @@ from the keys used to access the cache.</p>
 <dt id="clgen.cldrive.KernelDriver.build_program">
 <em class="property">static </em><code class="descname">build_program</code><span class="sig-paren">(</span><em>ctx</em>, <em>src</em>, <em>quiet=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#KernelDriver.build_program"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelDriver.build_program" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compile an OpenCL program.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ctx</strong> (<em>cl.Context</em>) &#8211; OpenCL context.</li>
+<li><strong>src</strong> (<em>str</em>) &#8211; Kernel source.</li>
+<li><strong>quiet</strong> (<em>bool, optional</em>) &#8211; suppress compiler output.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Program instance.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">cl.Program</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#clgen.cldrive.E_BAD_CODE" title="clgen.cldrive.E_BAD_CODE"><code class="xref py py-exc docutils literal"><span class="pre">E_BAD_CODE</span></code></a> &#8211; If does not build.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.cldrive.KernelDriver.context">
 <code class="descname">context</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.context" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>OpenCL context.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.cldrive.KernelDriver.kernel">
 <code class="descname">kernel</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.kernel" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Kernel instance.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.cldrive.KernelDriver.name">
 <code class="descname">name</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Kernel name.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="clgen.cldrive.KernelDriver.profile">
@@ -571,27 +658,32 @@ metaout:  &lt;error&gt; &lt;kernel&gt;</div></blockquote>
 <dl class="attribute">
 <dt id="clgen.cldrive.KernelDriver.program">
 <code class="descname">program</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.program" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>OpenCL program instance.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.cldrive.KernelDriver.prototype">
 <code class="descname">prototype</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.prototype" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Kernel prototype instance.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.cldrive.KernelDriver.runtimes">
 <code class="descname">runtimes</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.runtimes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Runtimes recorded.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.cldrive.KernelDriver.source">
 <code class="descname">source</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.source" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Kernel source code.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.cldrive.KernelDriver.transfers">
 <code class="descname">transfers</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.transfers" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Size of data transfers (in bytes).</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="clgen.cldrive.KernelDriver.validate">
@@ -601,74 +693,89 @@ metaout:  &lt;error&gt; &lt;kernel&gt;</div></blockquote>
 <dl class="attribute">
 <dt id="clgen.cldrive.KernelDriver.wgsizes">
 <code class="descname">wgsizes</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.wgsizes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Workgroup sizes used.</p>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="exception">
 <dt id="clgen.cldrive.KernelDriverException">
 <em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">KernelDriverException</code><a class="reference internal" href="_modules/clgen/cldrive.html#KernelDriverException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelDriverException" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Kernel driver exception.</p>
+</dd></dl>
 
 <dl class="class">
 <dt id="clgen.cldrive.KernelPayload">
 <em class="property">class </em><code class="descclassname">clgen.cldrive.</code><code class="descname">KernelPayload</code><span class="sig-paren">(</span><em>ctx</em>, <em>args</em>, <em>ndrange</em>, <em>transfersize</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#KernelPayload"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelPayload" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="attribute">
+<dd><p>Abstraction of data for OpenCL kernel.</p>
+<dl class="attribute">
 <dt id="clgen.cldrive.KernelPayload.args">
 <code class="descname">args</code><a class="headerlink" href="#clgen.cldrive.KernelPayload.args" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Argument instances.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.cldrive.KernelPayload.context">
 <code class="descname">context</code><a class="headerlink" href="#clgen.cldrive.KernelPayload.context" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>OpenCL context.</p>
+</dd></dl>
 
 <dl class="staticmethod">
 <dt id="clgen.cldrive.KernelPayload.create_random">
 <em class="property">static </em><code class="descname">create_random</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#KernelPayload.create_random"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelPayload.create_random" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Create a payload of random values.</p>
+</dd></dl>
 
 <dl class="staticmethod">
 <dt id="clgen.cldrive.KernelPayload.create_sequential">
 <em class="property">static </em><code class="descname">create_sequential</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#KernelPayload.create_sequential"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelPayload.create_sequential" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Create a payload of sequential values.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="clgen.cldrive.KernelPayload.device_to_host">
 <code class="descname">device_to_host</code><span class="sig-paren">(</span><em>queue</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#KernelPayload.device_to_host"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelPayload.device_to_host" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Transfer payload from device to host.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="clgen.cldrive.KernelPayload.host_to_device">
 <code class="descname">host_to_device</code><span class="sig-paren">(</span><em>queue</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#KernelPayload.host_to_device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelPayload.host_to_device" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Transfer payload from host to device.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.cldrive.KernelPayload.kargs">
 <code class="descname">kargs</code><a class="headerlink" href="#clgen.cldrive.KernelPayload.kargs" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Device data for arguments.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.cldrive.KernelPayload.ndrange">
 <code class="descname">ndrange</code><a class="headerlink" href="#clgen.cldrive.KernelPayload.ndrange" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>ND-range</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.cldrive.KernelPayload.transfersize">
 <code class="descname">transfersize</code><a class="headerlink" href="#clgen.cldrive.KernelPayload.transfersize" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns transfer size (in bytes).</p>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="exception">
 <dt id="clgen.cldrive.OpenCLDriverException">
 <em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">OpenCLDriverException</code><a class="reference internal" href="_modules/clgen/cldrive.html#OpenCLDriverException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.OpenCLDriverException" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Error from OpenCL driver.</p>
+</dd></dl>
 
 <dl class="exception">
 <dt id="clgen.cldrive.OpenCLNotSupported">
 <em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">OpenCLNotSupported</code><a class="reference internal" href="_modules/clgen/cldrive.html#OpenCLNotSupported"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.OpenCLNotSupported" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Thrown if attempting to use OpenCL, but CLgen is configured with OpenCL
+support enabled.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="clgen.cldrive.assert_device_type">
@@ -687,12 +794,14 @@ metaout:  &lt;error&gt; &lt;kernel&gt;</div></blockquote>
 <dl class="function">
 <dt id="clgen.cldrive.directory">
 <code class="descclassname">clgen.cldrive.</code><code class="descname">directory</code><span class="sig-paren">(</span><em>path</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#directory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.directory" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Drive a directory containing OpenCL kernel files.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="clgen.cldrive.file">
 <code class="descclassname">clgen.cldrive.</code><code class="descname">file</code><span class="sig-paren">(</span><em>path</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/cldrive.html#file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.file" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Read an OpenCL kernel from a file and drive it.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="clgen.cldrive.get_event_time">
@@ -762,8 +871,8 @@ metaout:  &lt;file&gt; &lt;size&gt; &lt;error&gt; &lt;kernel&gt;</div></blockquo
 <dl class="docutils">
 <dt>Differs from python argparse.ArgumentParser in the following areas:</dt>
 <dd><ul class="first last simple">
-<li>Adds an optional &#8211;verbose flag and initializes the logging engine.</li>
-<li>Adds an optional &#8211;version flag which prints version information and
+<li>Adds an optional <cite>&#8211;verbose</cite> flag and initializes the logging engine.</li>
+<li>Adds an optional <cite>&#8211;version</cite> flag which prints version information and
 quits.</li>
 <li>Defaults to using raw formatting for help strings, which disables line
 wrapping and whitespace squeezing.</li>
@@ -1035,6 +1144,21 @@ kernel.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="clgen.clutil.platform_info">
+<code class="descclassname">clgen.clutil.</code><code class="descname">platform_info</code><span class="sig-paren">(</span><em>printfn=&lt;built-in function print&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/clutil.html#platform_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.clutil.platform_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log platform information.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>printfn</strong> (<em>fn, optional</em>) &#8211; Function to call to print output to. Default
+<cite>print()</cite>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="clgen.clutil.strip_attributes">
 <code class="descclassname">clgen.clutil.</code><code class="descname">strip_attributes</code><span class="sig-paren">(</span><em>src</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/clutil.html#strip_attributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.clutil.strip_attributes" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1091,6 +1215,45 @@ tarball with the same name, unpack it.</p>
 <div class="section" id="module-clgen.dbutil">
 <span id="clgen-dbutil"></span><h2>clgen.dbutil<a class="headerlink" href="#module-clgen.dbutil" title="Permalink to this headline">¶</a></h2>
 <p>CLgen sqlite3 database utilities</p>
+<dl class="class">
+<dt id="clgen.dbutil.charcount_aggregator">
+<em class="property">class </em><code class="descclassname">clgen.dbutil.</code><code class="descname">charcount_aggregator</code><a class="reference internal" href="_modules/clgen/dbutil.html#charcount_aggregator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.charcount_aggregator" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="clgen.dbutil.charcount_aggregator.finalize">
+<code class="descname">finalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/dbutil.html#charcount_aggregator.finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.charcount_aggregator.finalize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="clgen.dbutil.charcount_aggregator.step">
+<code class="descname">step</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/dbutil.html#charcount_aggregator.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.charcount_aggregator.step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.dbutil.connect">
+<code class="descclassname">clgen.dbutil.</code><code class="descname">connect</code><span class="sig-paren">(</span><em>db_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/dbutil.html#connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a connection to a database.</p>
+<p>Database has additional aggregate functions:</p>
+<blockquote>
+<div><ul class="simple">
+<li>MD5SUM() returns md5 of column values</li>
+<li>LC() returns sum line count of text columns</li>
+<li>CC() returns sum character count of text columns</li>
+</ul>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>db_path</strong> (<em>str</em>) &#8211; Path to database</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">sqlite3 connection</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="function">
 <dt id="clgen.dbutil.create_db">
 <code class="descclassname">clgen.dbutil.</code><code class="descname">create_db</code><span class="sig-paren">(</span><em>path</em>, <em>github=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/dbutil.html#create_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.create_db" title="Permalink to this definition">¶</a></dt>
@@ -1102,9 +1265,107 @@ tarball with the same name, unpack it.</p>
 <dd></dd></dl>
 
 <dl class="function">
+<dt id="clgen.dbutil.is_modified">
+<code class="descclassname">clgen.dbutil.</code><code class="descname">is_modified</code><span class="sig-paren">(</span><em>db</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/dbutil.html#is_modified"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.is_modified" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.dbutil.lc">
+<code class="descclassname">clgen.dbutil.</code><code class="descname">lc</code><span class="sig-paren">(</span><em>path</em>, <em>table</em>, <em>column='Contents'</em>, <em>condition=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/dbutil.html#lc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.lc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch line count of contents in table.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> (<em>str</em>) &#8211; Path to database.</li>
+<li><strong>table</strong> (<em>str</em>) &#8211; Table ID.</li>
+<li><strong>condition</strong> (<em>str, optional</em>) &#8211; Conditional.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Num lines.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="clgen.dbutil.linecount_aggregator">
+<em class="property">class </em><code class="descclassname">clgen.dbutil.</code><code class="descname">linecount_aggregator</code><a class="reference internal" href="_modules/clgen/dbutil.html#linecount_aggregator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.linecount_aggregator" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="clgen.dbutil.linecount_aggregator.finalize">
+<code class="descname">finalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/dbutil.html#linecount_aggregator.finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.linecount_aggregator.finalize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="clgen.dbutil.linecount_aggregator.step">
+<code class="descname">step</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/dbutil.html#linecount_aggregator.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.linecount_aggregator.step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="clgen.dbutil.md5sum_aggregator">
+<em class="property">class </em><code class="descclassname">clgen.dbutil.</code><code class="descname">md5sum_aggregator</code><a class="reference internal" href="_modules/clgen/dbutil.html#md5sum_aggregator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.md5sum_aggregator" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="clgen.dbutil.md5sum_aggregator.finalize">
+<code class="descname">finalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/dbutil.html#md5sum_aggregator.finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.md5sum_aggregator.finalize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="clgen.dbutil.md5sum_aggregator.step">
+<code class="descname">step</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/dbutil.html#md5sum_aggregator.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.md5sum_aggregator.step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
 <dt id="clgen.dbutil.num_good_kernels">
 <code class="descclassname">clgen.dbutil.</code><code class="descname">num_good_kernels</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/dbutil.html#num_good_kernels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.num_good_kernels" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Fetch the number of good preprocessed kernels from dataset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> (<em>str</em>) &#8211; Path to database.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Num preprocessed kernels where status is 0.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.dbutil.num_rows_in">
+<code class="descclassname">clgen.dbutil.</code><code class="descname">num_rows_in</code><span class="sig-paren">(</span><em>path</em>, <em>table</em>, <em>condition=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/dbutil.html#num_rows_in"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.num_rows_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch number of rows in table.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> (<em>str</em>) &#8211; Path to database.</li>
+<li><strong>table</strong> (<em>str</em>) &#8211; Table ID.</li>
+<li><strong>condition</strong> (<em>str, optional</em>) &#8211; Conditional.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Num rows.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="clgen.dbutil.remove_preprocessed">
@@ -1120,6 +1381,11 @@ tarball with the same name, unpack it.</p>
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="function">
+<dt id="clgen.dbutil.set_modified_status">
+<code class="descclassname">clgen.dbutil.</code><code class="descname">set_modified_status</code><span class="sig-paren">(</span><em>db</em>, <em>checksum</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/dbutil.html#set_modified_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.set_modified_status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
 <dt id="clgen.dbutil.table_exists">
@@ -1484,6 +1750,12 @@ This function does not return.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="clgen.log.verbose">
+<code class="descclassname">clgen.log.</code><code class="descname">verbose</code><span class="sig-paren">(</span><em>*msg</em>, <em>**opts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/log.html#verbose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.log.verbose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls debug().</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="clgen.log.warning">
 <code class="descclassname">clgen.log.</code><code class="descname">warning</code><span class="sig-paren">(</span><em>*msg</em>, <em>**opts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/log.html#warning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.log.warning" title="Permalink to this definition">¶</a></dt>
 <dd><p>Warning message.</p>
@@ -1506,35 +1778,235 @@ This function does not return.</p>
 <div class="section" id="module-clgen.model">
 <span id="clgen-model"></span><h2>clgen.model<a class="headerlink" href="#module-clgen.model" title="Permalink to this headline">¶</a></h2>
 <p>CLgen model.</p>
+<dl class="exception">
+<dt id="clgen.model.DistError">
+<em class="property">exception </em><code class="descclassname">clgen.model.</code><code class="descname">DistError</code><a class="reference internal" href="_modules/clgen/model.html#DistError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.model.DistError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dist model import or export error.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="clgen.model.DistModel">
+<em class="property">class </em><code class="descclassname">clgen.model.</code><code class="descname">DistModel</code><span class="sig-paren">(</span><em>tarpath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/model.html#DistModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.model.DistModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Distributed model.</p>
+<p>A distmodel is a pre-trained model, distributed without training corpus.</p>
+<dl class="attribute">
+<dt id="clgen.model.DistModel.checkpoints">
+<code class="descname">checkpoints</code><a class="headerlink" href="#clgen.model.DistModel.checkpoints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Training checkpoints.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of paths to checkpoint files.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str[]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.model.DistModel.meta">
+<code class="descname">meta</code><a class="headerlink" href="#clgen.model.DistModel.meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get model metadata.</p>
+<p>Format spec: <a class="reference external" href="https://github.com/ChrisCummins/clgen/issues/25">https://github.com/ChrisCummins/clgen/issues/25</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Metadata.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.model.DistModel.most_recent_checkpoint">
+<code class="descname">most_recent_checkpoint</code><a class="headerlink" href="#clgen.model.DistModel.most_recent_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get path to pre-trained t7 checkpoint.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Path to checkpoint.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str or None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="clgen.model.DistModel.train">
+<code class="descname">train</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/model.html#DistModel.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.model.DistModel.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method does nothing, distmodels are pre-tained.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clgen.model.DistModel.validate">
+<code class="descname">validate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/model.html#DistModel.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.model.DistModel.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate contents of a distfile.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="#clgen.model.DistError" title="clgen.model.DistError"><code class="xref py py-exc docutils literal"><span class="pre">DistError</span></code></a> &#8211; In case of invalid distfile.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="class">
 <dt id="clgen.model.Model">
 <em class="property">class </em><code class="descclassname">clgen.model.</code><code class="descname">Model</code><span class="sig-paren">(</span><em>corpus</em>, <em>train_opts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/model.html#Model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.model.Model" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="attribute">
+<dd><p>A CLgen Model.</p>
+<dl class="attribute">
 <dt id="clgen.model.Model.checkpoints">
 <code class="descname">checkpoints</code><a class="headerlink" href="#clgen.model.Model.checkpoints" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Training checkpoints.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of paths to checkpoint files.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str[]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
-<dl class="method">
-<dt id="clgen.model.Model.checksum">
-<code class="descname">checksum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/model.html#Model.checksum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.model.Model.checksum" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="attribute">
+<dt id="clgen.model.Model.meta">
+<code class="descname">meta</code><a class="headerlink" href="#clgen.model.Model.meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get trained model metadata.</p>
+<p>Format spec: <a class="reference external" href="https://github.com/ChrisCummins/clgen/issues/25">https://github.com/ChrisCummins/clgen/issues/25</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Metadata.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="#clgen.model.DistError" title="clgen.model.DistError"><code class="xref py py-exc docutils literal"><span class="pre">DistError</span></code></a> &#8211; If model has not been trained.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.model.Model.most_recent_checkpoint">
 <code class="descname">most_recent_checkpoint</code><a class="headerlink" href="#clgen.model.Model.most_recent_checkpoint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get path to most recently initialized t7</p>
+<dd><p>Get path to most recently created t7 checkpoint.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Path to checkpoint, or None if no checkpoints.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str or None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="clgen.model.Model.to_dist">
+<code class="descname">to_dist</code><span class="sig-paren">(</span><em>distpath</em>, <em>author=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/model.html#Model.to_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.model.Model.to_dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a dist file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>distpath</strong> (<em>str</em>) &#8211; Path to dist file.</li>
+<li><strong>author</strong> (<em>str, optional</em>) &#8211; Author name.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Path to generated distfile.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">str</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="clgen.model.Model.train">
 <code class="descname">train</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/model.html#Model.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.model.Model.train" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Train model.</p>
+<p>Invokes torch-rnn to train the model up to the specified maximum number
+of epochs.</p>
+</dd></dl>
 
+</dd></dl>
+
+<dl class="exception">
+<dt id="clgen.model.ModelError">
+<em class="property">exception </em><code class="descclassname">clgen.model.</code><code class="descname">ModelError</code><a class="reference internal" href="_modules/clgen/model.html#ModelError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.model.ModelError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Module level error</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="clgen.model.from_json">
 <code class="descclassname">clgen.model.</code><code class="descname">from_json</code><span class="sig-paren">(</span><em>model_json</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/model.html#from_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.model.from_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load model from JSON.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model_json</strong> (<em>dict</em>) &#8211; JSON specification.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Model instance.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#clgen.model.Model" title="clgen.model.Model">Model</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.model.from_tar">
+<code class="descclassname">clgen.model.</code><code class="descname">from_tar</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/model.html#from_tar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.model.from_tar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load model from tarball.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>path</strong> (<em>str</em>) &#8211; Path to tarball.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Model instance.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference internal" href="#clgen.model.DistModel" title="clgen.model.DistModel">DistModel</a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">File404</span></code> &#8211; If path does not exist.</li>
+<li><a class="reference internal" href="#clgen.model.DistError" title="clgen.model.DistError"><code class="xref py py-exc docutils literal"><span class="pre">DistError</span></code></a> &#8211; If distfile is malformed.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.model.get_default_author">
+<code class="descclassname">clgen.model.</code><code class="descname">get_default_author</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/model.html#get_default_author"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.model.get_default_author" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -1595,24 +2067,9 @@ This function does not return.</p>
 <code class="descclassname">clgen.preprocess.</code><code class="descname">bytecode_features</code><span class="sig-paren">(</span><em>bc</em>, <em>id='anon'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#bytecode_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.bytecode_features" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="class">
-<dt id="clgen.preprocess.charcount_aggregator">
-<em class="property">class </em><code class="descclassname">clgen.preprocess.</code><code class="descname">charcount_aggregator</code><a class="reference internal" href="_modules/clgen/preprocess.html#charcount_aggregator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.charcount_aggregator" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="clgen.preprocess.charcount_aggregator.finalize">
-<code class="descname">finalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#charcount_aggregator.finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.charcount_aggregator.finalize" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="clgen.preprocess.charcount_aggregator.step">
-<code class="descname">step</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#charcount_aggregator.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.charcount_aggregator.step" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
 <dl class="function">
 <dt id="clgen.preprocess.clang_cl_args">
-<code class="descclassname">clgen.preprocess.</code><code class="descname">clang_cl_args</code><span class="sig-paren">(</span><em>target='nvptx64-nvidia-nvcl'</em>, <em>error_limit=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#clang_cl_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.clang_cl_args" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.preprocess.</code><code class="descname">clang_cl_args</code><span class="sig-paren">(</span><em>target='nvptx64-nvidia-nvcl'</em>, <em>use_shim=True</em>, <em>error_limit=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#clang_cl_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.clang_cl_args" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the Clang args to compile OpenCL.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1631,34 +2088,13 @@ This function does not return.</p>
 
 <dl class="function">
 <dt id="clgen.preprocess.compile_cl_bytecode">
-<code class="descclassname">clgen.preprocess.</code><code class="descname">compile_cl_bytecode</code><span class="sig-paren">(</span><em>src</em>, <em>id='anon'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#compile_cl_bytecode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.compile_cl_bytecode" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.preprocess.</code><code class="descname">compile_cl_bytecode</code><span class="sig-paren">(</span><em>src</em>, <em>id='anon'</em>, <em>use_shim=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#compile_cl_bytecode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.compile_cl_bytecode" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="clgen.preprocess.compiler_preprocess_cl">
-<code class="descclassname">clgen.preprocess.</code><code class="descname">compiler_preprocess_cl</code><span class="sig-paren">(</span><em>src</em>, <em>id='anon'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#compiler_preprocess_cl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.compiler_preprocess_cl" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.preprocess.</code><code class="descname">compiler_preprocess_cl</code><span class="sig-paren">(</span><em>src</em>, <em>id='anon'</em>, <em>use_shim=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#compiler_preprocess_cl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.compiler_preprocess_cl" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="function">
-<dt id="clgen.preprocess.connect">
-<code class="descclassname">clgen.preprocess.</code><code class="descname">connect</code><span class="sig-paren">(</span><em>db_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.connect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a connection to a database.</p>
-<p>Database has additional aggregate functions:</p>
-<blockquote>
-<div>MD5SUM() returns md5 of column values
-LC() returns sum line count of text columns
-CC() returns sum character count of text columns</div></blockquote>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>db_path</strong> (<em>str</em>) &#8211; Path to database</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">sqlite3 connection</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
 
 <dl class="function">
 <dt id="clgen.preprocess.escape_sql_key">
@@ -1669,41 +2105,6 @@ CC() returns sum character count of text columns</div></blockquote>
 <dt id="clgen.preprocess.instcounts2ratios">
 <code class="descclassname">clgen.preprocess.</code><code class="descname">instcounts2ratios</code><span class="sig-paren">(</span><em>counts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#instcounts2ratios"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.instcounts2ratios" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="function">
-<dt id="clgen.preprocess.is_modified">
-<code class="descclassname">clgen.preprocess.</code><code class="descname">is_modified</code><span class="sig-paren">(</span><em>db</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#is_modified"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.is_modified" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="class">
-<dt id="clgen.preprocess.linecount_aggregator">
-<em class="property">class </em><code class="descclassname">clgen.preprocess.</code><code class="descname">linecount_aggregator</code><a class="reference internal" href="_modules/clgen/preprocess.html#linecount_aggregator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.linecount_aggregator" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="clgen.preprocess.linecount_aggregator.finalize">
-<code class="descname">finalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#linecount_aggregator.finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.linecount_aggregator.finalize" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="clgen.preprocess.linecount_aggregator.step">
-<code class="descname">step</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#linecount_aggregator.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.linecount_aggregator.step" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="clgen.preprocess.md5sum_aggregator">
-<em class="property">class </em><code class="descclassname">clgen.preprocess.</code><code class="descname">md5sum_aggregator</code><a class="reference internal" href="_modules/clgen/preprocess.html#md5sum_aggregator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.md5sum_aggregator" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="clgen.preprocess.md5sum_aggregator.finalize">
-<code class="descname">finalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#md5sum_aggregator.finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.md5sum_aggregator.finalize" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="clgen.preprocess.md5sum_aggregator.step">
-<code class="descname">step</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#md5sum_aggregator.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.md5sum_aggregator.step" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
 
 <dl class="function">
 <dt id="clgen.preprocess.num_rows_in">
@@ -1717,7 +2118,7 @@ CC() returns sum character count of text columns</div></blockquote>
 
 <dl class="function">
 <dt id="clgen.preprocess.preprocess">
-<code class="descclassname">clgen.preprocess.</code><code class="descname">preprocess</code><span class="sig-paren">(</span><em>src</em>, <em>id='anon'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#preprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.preprocess" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.preprocess.</code><code class="descname">preprocess</code><span class="sig-paren">(</span><em>src</em>, <em>id='anon'</em>, <em>use_shim=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#preprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.preprocess" title="Permalink to this definition">¶</a></dt>
 <dd><p>Preprocess an OpenCL source. There are three possible outcomes:</p>
 <ol class="arabic simple">
 <li>Good. Code is preprocessed and ready to be put into a training set.</li>
@@ -1815,17 +2216,12 @@ CC() returns sum character count of text columns</div></blockquote>
 
 <dl class="function">
 <dt id="clgen.preprocess.rewrite_cl">
-<code class="descclassname">clgen.preprocess.</code><code class="descname">rewrite_cl</code><span class="sig-paren">(</span><em>src</em>, <em>id='anon'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#rewrite_cl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.rewrite_cl" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.preprocess.</code><code class="descname">rewrite_cl</code><span class="sig-paren">(</span><em>src</em>, <em>id='anon'</em>, <em>use_shim=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#rewrite_cl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.rewrite_cl" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="clgen.preprocess.sanitize_prototype">
 <code class="descclassname">clgen.preprocess.</code><code class="descname">sanitize_prototype</code><span class="sig-paren">(</span><em>src</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#sanitize_prototype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.sanitize_prototype" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="clgen.preprocess.set_modified_status">
-<code class="descclassname">clgen.preprocess.</code><code class="descname">set_modified_status</code><span class="sig-paren">(</span><em>db</em>, <em>checksum</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/preprocess.html#set_modified_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.set_modified_status" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -1846,8 +2242,8 @@ CC() returns sum character count of text columns</div></blockquote>
 <dt id="clgen.sampler.Sampler">
 <em class="property">class </em><code class="descclassname">clgen.sampler.</code><code class="descname">Sampler</code><span class="sig-paren">(</span><em>sampler_opts</em>, <em>kernel_opts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/sampler.html#Sampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.sampler.Sampler" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
-<dt id="clgen.sampler.Sampler.get_cache">
-<code class="descname">get_cache</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/sampler.html#Sampler.get_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.sampler.Sampler.get_cache" title="Permalink to this definition">¶</a></dt>
+<dt id="clgen.sampler.Sampler.cache">
+<code class="descname">cache</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/sampler.html#Sampler.cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.sampler.Sampler.cache" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">

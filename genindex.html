@@ -138,27 +138,31 @@
   </dt>
 
       
+  <dt><a href="api.html#clgen.sampler.Sampler.cache">cache() (clgen.sampler.Sampler method)</a>
+  </dt>
+
+      
   <dt><a href="api.html#clgen.cache.Cache404">Cache404</a>
   </dt>
 
       
-  <dt><a href="api.html#clgen.preprocess.charcount_aggregator">charcount_aggregator (class in clgen.preprocess)</a>
+  <dt><a href="api.html#clgen.dbutil.charcount_aggregator">charcount_aggregator (class in clgen.dbutil)</a>
   </dt>
 
       
-  <dt><a href="api.html#clgen.model.Model.checkpoints">checkpoints (clgen.model.Model attribute)</a>
-  </dt>
-
-      
-  <dt><a href="api.html#clgen.model.Model.checksum">checksum() (clgen.model.Model method)</a>
+  <dt><a href="api.html#clgen.model.DistModel.checkpoints">checkpoints (clgen.model.DistModel attribute)</a>
   </dt>
 
       <dd><dl>
         
-  <dt><a href="api.html#clgen.checksum">(in module clgen)</a>
+  <dt><a href="api.html#clgen.model.Model.checkpoints">(clgen.model.Model attribute)</a>
   </dt>
 
       </dl></dd>
+      
+  <dt><a href="api.html#clgen.checksum">checksum() (in module clgen)</a>
+  </dt>
+
       
   <dt><a href="api.html#clgen.checksum_file">checksum_file() (in module clgen)</a>
   </dt>
@@ -298,7 +302,7 @@
   </dt>
 
       
-  <dt><a href="api.html#clgen.preprocess.connect">connect() (in module clgen.preprocess)</a>
+  <dt><a href="api.html#clgen.dbutil.connect">connect() (in module clgen.dbutil)</a>
   </dt>
 
       
@@ -353,14 +357,22 @@
   <dt><a href="api.html#clgen.explore.decode">decode() (in module clgen.explore)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api.html#clgen.cldrive.KernelPayload.device_to_host">device_to_host() (clgen.cldrive.KernelPayload method)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api.html#clgen.cldrive.directory">directory() (in module clgen.cldrive)</a>
+  </dt>
+
+      
+  <dt><a href="api.html#clgen.model.DistError">DistError</a>
+  </dt>
+
+      
+  <dt><a href="api.html#clgen.model.DistModel">DistModel (class in clgen.model)</a>
   </dt>
 
       
@@ -485,22 +497,22 @@
   <dt><a href="api.html#clgen.features.files">files() (in module clgen.features)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="api.html#clgen.preprocess.charcount_aggregator.finalize">finalize() (clgen.preprocess.charcount_aggregator method)</a>
+  <dt><a href="api.html#clgen.dbutil.charcount_aggregator.finalize">finalize() (clgen.dbutil.charcount_aggregator method)</a>
   </dt>
 
       <dd><dl>
         
-  <dt><a href="api.html#clgen.preprocess.linecount_aggregator.finalize">(clgen.preprocess.linecount_aggregator method)</a>
+  <dt><a href="api.html#clgen.dbutil.linecount_aggregator.finalize">(clgen.dbutil.linecount_aggregator method)</a>
   </dt>
 
         
-  <dt><a href="api.html#clgen.preprocess.md5sum_aggregator.finalize">(clgen.preprocess.md5sum_aggregator method)</a>
+  <dt><a href="api.html#clgen.dbutil.md5sum_aggregator.finalize">(clgen.dbutil.md5sum_aggregator method)</a>
   </dt>
 
       </dl></dd>
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api.html#clgen.fetch.flatten">flatten() (in module clgen.fetch)</a>
   </dt>
@@ -527,6 +539,10 @@
   <dt><a href="api.html#clgen.clutil.KernelPrototype.from_source">from_source() (clgen.clutil.KernelPrototype static method)</a>
   </dt>
 
+      
+  <dt><a href="api.html#clgen.model.from_tar">from_tar() (in module clgen.model)</a>
+  </dt>
+
   </dl></td>
 </tr></table>
 
@@ -535,10 +551,6 @@
   <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api.html#clgen.clutil.get_attribute_range">get_attribute_range() (in module clgen.clutil)</a>
-  </dt>
-
-      
-  <dt><a href="api.html#clgen.sampler.Sampler.get_cache">get_cache() (clgen.sampler.Sampler method)</a>
   </dt>
 
       
@@ -551,6 +563,10 @@
 
       
   <dt><a href="api.html#clgen.clutil.get_cl_kernels">get_cl_kernels() (in module clgen.clutil)</a>
+  </dt>
+
+      
+  <dt><a href="api.html#clgen.model.get_default_author">get_default_author() (in module clgen.model)</a>
   </dt>
 
       
@@ -668,6 +684,10 @@
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
+  <dt><a href="api.html#clgen.InvalidFile">InvalidFile</a>
+  </dt>
+
+      
   <dt><a href="api.html#clgen.clutil.KernelArg.is_const">is_const (clgen.clutil.KernelArg attribute)</a>
   </dt>
 
@@ -692,7 +712,7 @@
   </dt>
 
       
-  <dt><a href="api.html#clgen.preprocess.is_modified">is_modified() (in module clgen.preprocess)</a>
+  <dt><a href="api.html#clgen.dbutil.is_modified">is_modified() (in module clgen.dbutil)</a>
   </dt>
 
       
@@ -762,11 +782,15 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
+  <dt><a href="api.html#clgen.dbutil.lc">lc() (in module clgen.dbutil)</a>
+  </dt>
+
+      
   <dt><a href="api.html#clgen.train.linecount">linecount() (in module clgen.train)</a>
   </dt>
 
       
-  <dt><a href="api.html#clgen.preprocess.linecount_aggregator">linecount_aggregator (class in clgen.preprocess)</a>
+  <dt><a href="api.html#clgen.dbutil.linecount_aggregator">linecount_aggregator (class in clgen.dbutil)</a>
   </dt>
 
   </dl></td>
@@ -804,23 +828,43 @@
   </dt>
 
       
-  <dt><a href="api.html#clgen.preprocess.md5sum_aggregator">md5sum_aggregator (class in clgen.preprocess)</a>
+  <dt><a href="api.html#clgen.dbutil.md5sum_aggregator">md5sum_aggregator (class in clgen.dbutil)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api.html#clgen.explore.median">median() (in module clgen.explore)</a>
   </dt>
 
       
+  <dt><a href="api.html#clgen.model.DistModel.meta">meta (clgen.model.DistModel attribute)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="api.html#clgen.model.Model.meta">(clgen.model.Model attribute)</a>
+  </dt>
+
+      </dl></dd>
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
   <dt><a href="api.html#clgen.model.Model">Model (class in clgen.model)</a>
   </dt>
 
       
-  <dt><a href="api.html#clgen.model.Model.most_recent_checkpoint">most_recent_checkpoint (clgen.model.Model attribute)</a>
+  <dt><a href="api.html#clgen.model.ModelError">ModelError</a>
   </dt>
 
+      
+  <dt><a href="api.html#clgen.model.DistModel.most_recent_checkpoint">most_recent_checkpoint (clgen.model.DistModel attribute)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="api.html#clgen.model.Model.most_recent_checkpoint">(clgen.model.Model attribute)</a>
+  </dt>
+
+      </dl></dd>
       
   <dt><a href="api.html#clgen.must_exist">must_exist() (in module clgen)</a>
   </dt>
@@ -860,9 +904,15 @@
   </dt>
 
       
-  <dt><a href="api.html#clgen.preprocess.num_rows_in">num_rows_in() (in module clgen.preprocess)</a>
+  <dt><a href="api.html#clgen.dbutil.num_rows_in">num_rows_in() (in module clgen.dbutil)</a>
   </dt>
 
+      <dd><dl>
+        
+  <dt><a href="api.html#clgen.preprocess.num_rows_in">(in module clgen.preprocess)</a>
+  </dt>
+
+      </dl></dd>
       
   <dt><a href="api.html#clgen.clutil.KernelArg.numpy_type">numpy_type (clgen.clutil.KernelArg attribute)</a>
   </dt>
@@ -918,6 +968,10 @@
   </dt>
 
       
+  <dt><a href="api.html#clgen.clutil.platform_info">platform_info() (in module clgen.clutil)</a>
+  </dt>
+
+      
   <dt><a href="api.html#clgen.preprocess.preprocess">preprocess() (in module clgen.preprocess)</a>
   </dt>
 
@@ -947,12 +1001,12 @@
   <dt><a href="api.html#clgen.torch_rnn.PreprocessError">PreprocessError</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api.html#clgen.preprocess.print_bytecode_features">print_bytecode_features() (in module clgen.preprocess)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api.html#clgen.fetch.print_clsmith_counters">print_clsmith_counters() (in module clgen.fetch)</a>
   </dt>
@@ -1088,7 +1142,7 @@
   </dt>
 
       
-  <dt><a href="api.html#clgen.preprocess.set_modified_status">set_modified_status() (in module clgen.preprocess)</a>
+  <dt><a href="api.html#clgen.dbutil.set_modified_status">set_modified_status() (in module clgen.dbutil)</a>
   </dt>
 
   </dl></td>
@@ -1110,16 +1164,16 @@
   </dt>
 
       
-  <dt><a href="api.html#clgen.preprocess.charcount_aggregator.step">step() (clgen.preprocess.charcount_aggregator method)</a>
+  <dt><a href="api.html#clgen.dbutil.charcount_aggregator.step">step() (clgen.dbutil.charcount_aggregator method)</a>
   </dt>
 
       <dd><dl>
         
-  <dt><a href="api.html#clgen.preprocess.linecount_aggregator.step">(clgen.preprocess.linecount_aggregator method)</a>
+  <dt><a href="api.html#clgen.dbutil.linecount_aggregator.step">(clgen.dbutil.linecount_aggregator method)</a>
   </dt>
 
         
-  <dt><a href="api.html#clgen.preprocess.md5sum_aggregator.step">(clgen.preprocess.md5sum_aggregator method)</a>
+  <dt><a href="api.html#clgen.dbutil.md5sum_aggregator.step">(clgen.dbutil.md5sum_aggregator method)</a>
   </dt>
 
       </dl></dd>
@@ -1150,14 +1204,22 @@
   </dt>
 
       
+  <dt><a href="api.html#clgen.model.Model.to_dist">to_dist() (clgen.model.Model method)</a>
+  </dt>
+
+      
   <dt><a href="api.html#clgen.torch_rnn.TorchRnnError">TorchRnnError</a>
   </dt>
 
       
-  <dt><a href="api.html#clgen.model.Model.train">train() (clgen.model.Model method)</a>
+  <dt><a href="api.html#clgen.model.DistModel.train">train() (clgen.model.DistModel method)</a>
   </dt>
 
       <dd><dl>
+        
+  <dt><a href="api.html#clgen.model.Model.train">(clgen.model.Model method)</a>
+  </dt>
+
         
   <dt><a href="api.html#clgen.torch_rnn.train">(in module clgen.torch_rnn)</a>
   </dt>
@@ -1223,12 +1285,22 @@
   <dt><a href="api.html#clgen.cldrive.KernelDriver.validate">validate() (clgen.cldrive.KernelDriver method)</a>
   </dt>
 
+      <dd><dl>
+        
+  <dt><a href="api.html#clgen.model.DistModel.validate">(clgen.model.DistModel method)</a>
+  </dt>
+
+      </dl></dd>
       
   <dt><a href="api.html#clgen.clutil.KernelArg.vector_width">vector_width (clgen.clutil.KernelArg attribute)</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api.html#clgen.log.verbose">verbose() (in module clgen.log)</a>
+  </dt>
+
       
   <dt><a href="api.html#clgen.preprocess.verify_bytecode_features">verify_bytecode_features() (in module clgen.preprocess)</a>
   </dt>
