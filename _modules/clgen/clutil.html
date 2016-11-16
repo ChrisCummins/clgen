@@ -446,12 +446,31 @@
 <span class="sd">    Requires source code to have been pre-processed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create OpenCL kernel prototype.</span>
+
+<span class="sd">        *Note:* requires source to have been preprocessed.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            string (str): Prototype string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_string</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_string</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;__kernel void &#39;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">PrototypeException</span><span class="p">(</span><span class="s1">&#39;malformed prototype&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_string</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Kernel function name.</span>
+
+<span class="sd">        Examples:</span>
+
+<span class="sd">            &gt;&gt;&gt; KernelPrototype(&quot;__kernel void A() {&quot;).name</span>
+<span class="sd">            &quot;A&quot;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Kernel name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>  <span class="c1"># set</span>
@@ -462,6 +481,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">args</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Kernel arguments.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            KernelArg[]: Kernel arguments.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_args</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
@@ -480,16 +505,35 @@
 
     <span class="nd">@staticmethod</span>
 <div class="viewcode-block" id="KernelPrototype.from_source"><a class="viewcode-back" href="../../api.html#clgen.clutil.KernelPrototype.from_source">[docs]</a>    <span class="k">def</span> <span class="nf">from_source</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create KernelPrototype from OpenCL kernel source.</span>
+
+<span class="sd">        Argument:</span>
+<span class="sd">            src (str): OpenCL kernel source.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            KernelPrototype: Kernel prototype.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">extract_prototype</span><span class="p">(</span><span class="n">src</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="get_attribute_range"><a class="viewcode-back" href="../../api.html#clgen.clutil.get_attribute_range">[docs]</a><span class="k">def</span> <span class="nf">get_attribute_range</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">):</span>
-    <span class="n">i</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+<div class="viewcode-block" id="get_attribute_range"><a class="viewcode-back" href="../../api.html#clgen.clutil.get_attribute_range">[docs]</a><span class="k">def</span> <span class="nf">get_attribute_range</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get string indices range of attributes.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        src (str): OpenCL kernel source.</span>
+<span class="sd">        start_idx (int): Index of attribute opening brace.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple of int: Start and end indices of attributes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
     <span class="n">d</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="ow">and</span> <span class="n">d</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;(&#39;</span><span class="p">:</span>
+    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">src</span><span class="p">)</span> <span class="ow">and</span> <span class="n">d</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">src</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;(&#39;</span><span class="p">:</span>
             <span class="n">d</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">elif</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;)&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">src</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;)&#39;</span><span class="p">:</span>
             <span class="n">d</span> <span class="o">-=</span> <span class="mi">1</span>
         <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
 
@@ -497,9 +541,23 @@
 
 
 <div class="viewcode-block" id="strip_attributes"><a class="viewcode-back" href="../../api.html#clgen.clutil.strip_attributes">[docs]</a><span class="k">def</span> <span class="nf">strip_attributes</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove attributes from OpenCL source.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        src (str): OpenCL source.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: OpenCL source, with ((attributes)) removed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get list of __attribute__ substrings</span>
     <span class="n">idxs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">get_substring_idxs</span><span class="p">(</span><span class="s1">&#39;__attribute__&#39;</span><span class="p">,</span> <span class="n">src</span><span class="p">))</span>
-    <span class="n">ranges</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_attribute_range</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idxs</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">ranges</span><span class="p">):</span>
+
+    <span class="c1"># get ((attribute)) ranges</span>
+    <span class="n">attribute_ranges</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_attribute_range</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idxs</span><span class="p">]</span>
+
+    <span class="c1"># remove ((atribute)) ranges</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">attribute_ranges</span><span class="p">):</span>
         <span class="n">src</span> <span class="o">=</span> <span class="n">src</span><span class="p">[:</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="n">src</span><span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]:]</span>
     <span class="k">return</span> <span class="n">src</span></div>
 

@@ -1303,17 +1303,59 @@ wrapping and whitespace squeezing.</li>
 <dl class="attribute">
 <dt id="clgen.clutil.KernelPrototype.args">
 <code class="descname">args</code><a class="headerlink" href="#clgen.clutil.KernelPrototype.args" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Kernel arguments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Kernel arguments.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">KernelArg[]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="staticmethod">
 <dt id="clgen.clutil.KernelPrototype.from_source">
 <em class="property">static </em><code class="descname">from_source</code><span class="sig-paren">(</span><em>src</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/clutil.html#KernelPrototype.from_source"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.clutil.KernelPrototype.from_source" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Create KernelPrototype from OpenCL kernel source.</p>
+<dl class="docutils">
+<dt>Argument:</dt>
+<dd>src (str): OpenCL kernel source.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Kernel prototype.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#clgen.clutil.KernelPrototype" title="clgen.clutil.KernelPrototype">KernelPrototype</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.clutil.KernelPrototype.name">
 <code class="descname">name</code><a class="headerlink" href="#clgen.clutil.KernelPrototype.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Kernel function name.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">KernelPrototype</span><span class="p">(</span><span class="s2">&quot;__kernel void A() {&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+<span class="go">&quot;A&quot;</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Kernel name.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 
@@ -1355,8 +1397,27 @@ wrapping and whitespace squeezing.</li>
 
 <dl class="function">
 <dt id="clgen.clutil.get_attribute_range">
-<code class="descclassname">clgen.clutil.</code><code class="descname">get_attribute_range</code><span class="sig-paren">(</span><em>s</em>, <em>start_idx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/clutil.html#get_attribute_range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.clutil.get_attribute_range" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">clgen.clutil.</code><code class="descname">get_attribute_range</code><span class="sig-paren">(</span><em>src</em>, <em>start_idx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/clutil.html#get_attribute_range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.clutil.get_attribute_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get string indices range of attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>src</strong> (<em>str</em>) &#8211; OpenCL kernel source.</li>
+<li><strong>start_idx</strong> (<em>int</em>) &#8211; Index of attribute opening brace.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Start and end indices of attributes.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple of int</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="clgen.clutil.get_cl_kernel">
@@ -1445,7 +1506,20 @@ kernel.</p>
 <dl class="function">
 <dt id="clgen.clutil.strip_attributes">
 <code class="descclassname">clgen.clutil.</code><code class="descname">strip_attributes</code><span class="sig-paren">(</span><em>src</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/clutil.html#strip_attributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.clutil.strip_attributes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Remove attributes from OpenCL source.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>src</strong> (<em>str</em>) &#8211; OpenCL source.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">OpenCL source, with ((attributes)) removed.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 <div class="section" id="module-clgen.config">
@@ -1462,17 +1536,51 @@ kernel.</p>
 <dt id="clgen.corpus.Corpus.from_json">
 <em class="property">static </em><code class="descname">from_json</code><span class="sig-paren">(</span><em>corpus_json</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/corpus.html#Corpus.from_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.corpus.Corpus.from_json" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiate Corpus from JSON.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>corpus_json</strong> (<em>dict</em>) &#8211; Specification.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Insantiated corpus.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#clgen.corpus.Corpus" title="clgen.corpus.Corpus">Corpus</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.corpus.Corpus.input_h5">
 <code class="descname">input_h5</code><a class="headerlink" href="#clgen.corpus.Corpus.input_h5" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Path to input h5.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Path.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen.corpus.Corpus.input_json">
 <code class="descname">input_json</code><a class="headerlink" href="#clgen.corpus.Corpus.input_json" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Path to input JSON.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Path.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 
@@ -2291,7 +2399,20 @@ of epochs.</p>
 <dl class="function">
 <dt id="clgen.model.get_default_author">
 <code class="descclassname">clgen.model.</code><code class="descname">get_default_author</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/clgen/model.html#get_default_author"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.model.get_default_author" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the default author name for CLgen dist models.</p>
+<p>If CLGEN_AUTHOR environment variable is set, use that. Else, author
+is <a class="reference external" href="mailto:$USER&#37;&#52;&#48;$HOSTNAME">$USER<span>&#64;</span>$HOSTNAME</a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Author name.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 <div class="section" id="module-clgen.native">

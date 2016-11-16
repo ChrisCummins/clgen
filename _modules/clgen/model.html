@@ -109,7 +109,18 @@
 
 
 <div class="viewcode-block" id="get_default_author"><a class="viewcode-back" href="../../api.html#clgen.model.get_default_author">[docs]</a><span class="k">def</span> <span class="nf">get_default_author</span><span class="p">():</span>
-    <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{user}</span><span class="s2">@</span><span class="si">{host}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">system</span><span class="o">.</span><span class="n">USERNAME</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">system</span><span class="o">.</span><span class="n">HOSTNAME</span><span class="p">)</span></div>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the default author name for CLgen dist models.</span>
+
+<span class="sd">    If CLGEN_AUTHOR environment variable is set, use that. Else, author</span>
+<span class="sd">    is $USER@$HOSTNAME.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Author name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="s2">&quot;CLGEN_AUTHOR&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;</span><span class="si">{user}</span><span class="s2">@</span><span class="si">{host}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">system</span><span class="o">.</span><span class="n">USERNAME</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">system</span><span class="o">.</span><span class="n">HOSTNAME</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="Model"><a class="viewcode-back" href="../../api.html#clgen.model.Model">[docs]</a><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
