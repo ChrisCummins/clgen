@@ -89,13 +89,32 @@
 
 
 <div class="viewcode-block" id="serialize_argspec"><a class="viewcode-back" href="../../api.html#clgen.sampler.serialize_argspec">[docs]</a><span class="k">def</span> <span class="nf">serialize_argspec</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Serializes an argument spec to a kernel prototype.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        args (str[]): Argument specification.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Kernel prototype.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">names</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">chr</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">97</span><span class="p">,</span> <span class="mi">97</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)))</span>
     <span class="n">strings</span> <span class="o">=</span> <span class="p">[</span><span class="n">arg</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">name</span> <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">names</span><span class="p">)]</span>
     <span class="k">return</span> <span class="s2">&quot;__kernel void A(</span><span class="si">{args}</span><span class="s2">) {{&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">strings</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="Sampler"><a class="viewcode-back" href="../../api.html#clgen.sampler.Sampler">[docs]</a><span class="k">class</span> <span class="nc">Sampler</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CLgen sampler for models.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler_opts</span><span class="p">,</span> <span class="n">kernel_opts</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Instantiate a sampler.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            sampler_opts (dict): Sampler options.</span>
+<span class="sd">            kernel_opts (dict): Kernel options.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">sampler_opts</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">)</span>
         <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">kernel_opts</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">)</span>
 
@@ -115,6 +134,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">kernel_opts</span> <span class="o">=</span> <span class="n">kernel_opts</span>
 
     <span class="k">def</span> <span class="nf">_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler_opts</span><span class="p">,</span> <span class="n">kernel_opts</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;compute sampler checksum&quot;&quot;&quot;</span>
         <span class="n">checksum_data</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
             <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sampler_opts</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span> <span class="o">+</span>
             <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">kernel_opts</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
@@ -122,10 +142,25 @@
         <span class="k">return</span> <span class="n">clgen</span><span class="o">.</span><span class="n">checksum_str</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Sampler.cache"><a class="viewcode-back" href="../../api.html#clgen.sampler.Sampler.cache">[docs]</a>    <span class="k">def</span> <span class="nf">cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return sampler cache.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            model (Model): CLgen model.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Cache: Cache.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sampler_model_hash</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">checksum_str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hash</span> <span class="o">+</span> <span class="n">model</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Cache</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="s2">&quot;sampler&quot;</span><span class="p">,</span> <span class="n">sampler_model_hash</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Sampler.sample_iteration"><a class="viewcode-back" href="../../api.html#clgen.sampler.Sampler.sample_iteration">[docs]</a>    <span class="k">def</span> <span class="nf">sample_iteration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run one sample iteration.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            model (Model): CLgen model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">Model</span><span class="p">))</span>
 
         <span class="n">cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
@@ -163,6 +198,12 @@
         <span class="n">fs</span><span class="o">.</span><span class="n">rm</span><span class="p">(</span><span class="n">tmppath</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Sampler.sample"><a class="viewcode-back" href="../../api.html#clgen.sampler.Sampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sample CLgen model.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            model (Model): CLgen model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 
         <span class="c1"># create samples database if it doesn&#39;t exist</span>
@@ -192,6 +233,15 @@
 
 
 <div class="viewcode-block" id="from_json"><a class="viewcode-back" href="../../api.html#clgen.sampler.from_json">[docs]</a><span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="n">sampler_json</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Instantiate sampler from JSON.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        sampler_json (dict): JSON data.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Sampler: Instantiate sampler.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">sampler_opts</span> <span class="o">=</span> <span class="n">sampler_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sampler&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">sampler_opts</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s2">&quot;no sampler section in sampler specification&quot;</span><span class="p">)</span>

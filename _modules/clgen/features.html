@@ -70,7 +70,7 @@
 <span class="c1"># along with CLgen.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
 <span class="c1">#</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">OpenCL feature extraction</span>
+<span class="sd">OpenCL feature extraction.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
@@ -91,30 +91,43 @@
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">native</span>
 
 
-<div class="viewcode-block" id="extra_args"><a class="viewcode-back" href="../../api.html#clgen.features.extra_args">[docs]</a><span class="k">def</span> <span class="nf">extra_args</span><span class="p">(</span><span class="n">use_shim</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_shim_args</span><span class="p">(</span><span class="n">use_shim</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;get shim header args&quot;&quot;&quot;</span>
     <span class="n">args</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="n">use_shim</span><span class="p">:</span>
         <span class="n">args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;-DCLGEN_FEATURES&quot;</span><span class="p">,</span> <span class="s2">&quot;-include&quot;</span><span class="p">,</span> <span class="n">native</span><span class="o">.</span><span class="n">SHIMFILE</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">args</span></div>
+    <span class="k">return</span> <span class="n">args</span>
 
 
-<div class="viewcode-block" id="is_features"><a class="viewcode-back" href="../../api.html#clgen.features.is_features">[docs]</a><span class="k">def</span> <span class="nf">is_features</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
-    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">==</span> <span class="mi">10</span></div>
+<span class="k">def</span> <span class="nf">_is_features</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;true if features&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">==</span> <span class="mi">10</span>
 
 
-<div class="viewcode-block" id="is_good_features"><a class="viewcode-back" href="../../api.html#clgen.features.is_good_features">[docs]</a><span class="k">def</span> <span class="nf">is_good_features</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">stderr</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">is_features</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_is_good_features</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">stderr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;true if feature extractor worked&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">_is_features</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
         <span class="n">has_err</span> <span class="o">=</span> <span class="kc">False</span> <span class="k">if</span> <span class="n">stderr</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39; error: &#39;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="k">else</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="ow">not</span> <span class="n">has_err</span>
-    <span class="k">return</span> <span class="kc">False</span></div>
+    <span class="k">return</span> <span class="kc">False</span>
 
 
 <div class="viewcode-block" id="features"><a class="viewcode-back" href="../../api.html#clgen.features.features">[docs]</a><span class="k">def</span> <span class="nf">features</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">fatal_errors</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_shim</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Print CSV format features of file.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        path (str): Path.</span>
+<span class="sd">        file (pipe, optional): Target to print to.</span>
+<span class="sd">        fatal_errors (bool, optional): Exit on error.</span>
+<span class="sd">        use_shim (bool, optional): Inject shim header.</span>
+<span class="sd">        quiet (bool, optional): Don&#39;t print compiler output on errors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
 
-    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="n">native</span><span class="o">.</span><span class="n">CLGEN_FEATURES</span><span class="p">,</span> <span class="n">path</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;-extra-arg=&#39;</span> <span class="o">+</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span>
-                                           <span class="n">extra_args</span><span class="p">(</span><span class="n">use_shim</span><span class="o">=</span><span class="n">use_shim</span><span class="p">)]</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="n">native</span><span class="o">.</span><span class="n">CLGEN_FEATURES</span><span class="p">,</span> <span class="n">path</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span>
+        <span class="s1">&#39;-extra-arg=&#39;</span> <span class="o">+</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">_shim_args</span><span class="p">(</span><span class="n">use_shim</span><span class="o">=</span><span class="n">use_shim</span><span class="p">)]</span>
 
     <span class="n">process</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">PIPE</span><span class="p">)</span>
     <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
@@ -138,11 +151,17 @@
         <span class="k">return</span>
 
     <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-        <span class="k">if</span> <span class="n">is_good_features</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">stderr</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">_is_good_features</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">stderr</span><span class="p">):</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="p">),</span> <span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="feature_headers"><a class="viewcode-back" href="../../api.html#clgen.features.feature_headers">[docs]</a><span class="k">def</span> <span class="nf">feature_headers</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Print CSV format feature header.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        file (pipe, optional): Target to print to.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="n">native</span><span class="o">.</span><span class="n">CLGEN_FEATURES</span><span class="p">,</span> <span class="s1">&#39;-header-only&#39;</span><span class="p">]</span>
     <span class="n">process</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">PIPE</span><span class="p">)</span>
     <span class="n">stdout</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
@@ -152,6 +171,15 @@
 
 
 <div class="viewcode-block" id="files"><a class="viewcode-back" href="../../api.html#clgen.features.files">[docs]</a><span class="k">def</span> <span class="nf">files</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Print feature values of files in CSV format.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        paths (str[]): Files.</span>
+<span class="sd">        header (bool, optional): Include CSV format header.</span>
+<span class="sd">        file (pipe, optional): Target to print to.</span>
+<span class="sd">        **kwargs (optional): Additional arguments to features().</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">npaths</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
@@ -161,6 +189,15 @@
 
 
 <div class="viewcode-block" id="summarize"><a class="viewcode-back" href="../../api.html#clgen.features.summarize">[docs]</a><span class="k">def</span> <span class="nf">summarize</span><span class="p">(</span><span class="n">csv_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Summarize a CSV file of feature values.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        csv_path (str): Path to csv.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: Summary values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">csv_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
         <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
         <span class="n">table</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">]</span>

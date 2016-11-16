@@ -83,6 +83,13 @@
 
 
 <div class="viewcode-block" id="create_db"><a class="viewcode-back" href="../../api.html#clgen.dbutil.create_db">[docs]</a><span class="k">def</span> <span class="nf">create_db</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">github</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create an empty OpenCL kernel database.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        path (str): Path to database to create.</span>
+<span class="sd">        github (bool, optional): Add tables for GitHub metadata.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
@@ -96,10 +103,14 @@
         <span class="n">script</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">sql_script</span><span class="p">(</span><span class="s1">&#39;create-samples-db&#39;</span><span class="p">)</span>
     <span class="n">c</span><span class="o">.</span><span class="n">executescript</span><span class="p">(</span><span class="n">script</span><span class="p">)</span>
     <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="md5sum_aggregator"><a class="viewcode-back" href="../../api.html#clgen.dbutil.md5sum_aggregator">[docs]</a><span class="k">class</span> <span class="nc">md5sum_aggregator</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    sqlite3 aggregator for computing checksum of column values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">md5</span> <span class="o">=</span> <span class="n">md5</span><span class="p">()</span>
 
@@ -111,6 +122,9 @@
 
 
 <div class="viewcode-block" id="linecount_aggregator"><a class="viewcode-back" href="../../api.html#clgen.dbutil.linecount_aggregator">[docs]</a><span class="k">class</span> <span class="nc">linecount_aggregator</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    sqlite3 aggregator for computing line count of column values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -122,6 +136,9 @@
 
 
 <div class="viewcode-block" id="charcount_aggregator"><a class="viewcode-back" href="../../api.html#clgen.dbutil.charcount_aggregator">[docs]</a><span class="k">class</span> <span class="nc">charcount_aggregator</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    sqlite3 aggregator for computing character count of column values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -158,6 +175,15 @@
 
 
 <div class="viewcode-block" id="is_modified"><a class="viewcode-back" href="../../api.html#clgen.dbutil.is_modified">[docs]</a><span class="k">def</span> <span class="nf">is_modified</span><span class="p">(</span><span class="n">db</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns whether database is preprocessed.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        db (sqlite3.Connection): Database.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if database is modified, else False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
 
     <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT value FROM Meta WHERE key=&#39;preprocessed_checksum&#39;&quot;</span><span class="p">)</span>
@@ -172,6 +198,13 @@
 
 
 <div class="viewcode-block" id="set_modified_status"><a class="viewcode-back" href="../../api.html#clgen.dbutil.set_modified_status">[docs]</a><span class="k">def</span> <span class="nf">set_modified_status</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">checksum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set database preprocessed checksum.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        db (sqlite3.Connection): Database.</span>
+<span class="sd">        checksum (str): New preprocessed checksum.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
     <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;INSERT OR REPLACE INTO Meta VALUES (?,?)&quot;</span><span class="p">,</span>
               <span class="p">(</span><span class="s1">&#39;preprocessed_checksum&#39;</span><span class="p">,</span> <span class="n">checksum</span><span class="p">))</span>
@@ -180,6 +213,16 @@
 
 
 <div class="viewcode-block" id="table_exists"><a class="viewcode-back" href="../../api.html#clgen.dbutil.table_exists">[docs]</a><span class="k">def</span> <span class="nf">table_exists</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">table_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    SQL table exists.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        db (sqlite3.Connection): Database.</span>
+<span class="sd">        table_name (str): Name of table.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if table with name exists.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
     <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT name FROM sqlite_master WHERE type=&#39;table&#39; AND name=&#39;&quot;</span> <span class="o">+</span>
               <span class="n">table_name</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">)</span>
@@ -189,6 +232,15 @@
 
 
 <div class="viewcode-block" id="is_github"><a class="viewcode-back" href="../../api.html#clgen.dbutil.is_github">[docs]</a><span class="k">def</span> <span class="nf">is_github</span><span class="p">(</span><span class="n">db</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    SQL table has GitHub metadata tables.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        db (sqlite3.Connection): Database.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if GitHub tables in database.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">table_exists</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="s1">&#39;Repositories&#39;</span><span class="p">)</span></div>
 
 

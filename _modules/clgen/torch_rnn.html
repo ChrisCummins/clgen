@@ -86,20 +86,34 @@
 
 
 <div class="viewcode-block" id="TorchRnnError"><a class="viewcode-back" href="../../api.html#clgen.torch_rnn.TorchRnnError">[docs]</a><span class="k">class</span> <span class="nc">TorchRnnError</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Module error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="PreprocessError"><a class="viewcode-back" href="../../api.html#clgen.torch_rnn.PreprocessError">[docs]</a><span class="k">class</span> <span class="nc">PreprocessError</span><span class="p">(</span><span class="n">TorchRnnError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Preprocess error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="TrainError"><a class="viewcode-back" href="../../api.html#clgen.torch_rnn.TrainError">[docs]</a><span class="k">class</span> <span class="nc">TrainError</span><span class="p">(</span><span class="n">TorchRnnError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Training error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="preprocess"><a class="viewcode-back" href="../../api.html#clgen.torch_rnn.preprocess">[docs]</a><span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="n">input_txt</span><span class="p">,</span> <span class="n">output_json</span><span class="p">,</span> <span class="n">output_h5</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper around preprocess script.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        input_txt (str): Path to input text file.</span>
+<span class="sd">        output_json (str): Path to output JSON.</span>
+<span class="sd">        output_h5 (str): Path to output h5.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="n">native</span><span class="o">.</span><span class="n">TORCH_RNN_PREPROCESS</span><span class="p">,</span> <span class="s1">&#39;--input_txt&#39;</span><span class="p">,</span> <span class="n">input_txt</span><span class="p">,</span>
@@ -118,6 +132,12 @@
 
 
 <div class="viewcode-block" id="get_device_flags"><a class="viewcode-back" href="../../api.html#clgen.torch_rnn.get_device_flags">[docs]</a><span class="k">def</span> <span class="nf">get_device_flags</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get torch-rnn device flags.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: Key value pairs for arguments.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># TODO: This should be runtime configurable</span>
     <span class="n">gpu_id</span> <span class="o">=</span> <span class="mi">0</span>
 

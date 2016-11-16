@@ -70,7 +70,7 @@
 <span class="c1"># along with CLgen.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
 <span class="c1">#</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Training utils</span>
+<span class="sd">Training utils.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">with_statement</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
@@ -88,11 +88,34 @@
 
 
 <div class="viewcode-block" id="sanitize_id"><a class="viewcode-back" href="../../api.html#clgen.train.sanitize_id">[docs]</a><span class="k">def</span> <span class="nf">sanitize_id</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sanitize ID.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        id (str): ID.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: ID.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;[/:\.]+&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="create_corpus"><a class="viewcode-back" href="../../api.html#clgen.train.create_corpus">[docs]</a><span class="k">def</span> <span class="nf">create_corpus</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">out_path</span><span class="p">,</span> <span class="n">gh</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fileid</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                   <span class="n">input_samples</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">eof</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">dir</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create CLgen training corpus.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        db (slite3.Connection): Dataset.</span>
+<span class="sd">        out_path (str): Path to output.</span>
+<span class="sd">        gh (bool, optional): Dataset is GitHub.</span>
+<span class="sd">        fileid (bool, optional): Include file IDs.</span>
+<span class="sd">        reverse (bool, optional): Reverse ordering of output.</span>
+<span class="sd">        input_samples (bool, optional): If True, use un-preprocessed files.</span>
+<span class="sd">        status (int, optional): Filter preprocess status.</span>
+<span class="sd">        eof (bool, optional): Include EOF separators.</span>
+<span class="sd">        dir (bool, optional): Write output to directory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Dump all the preprocessed OpenCL files</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;creating DNN corpus&#39;</span><span class="p">,</span> <span class="n">out_path</span><span class="p">,</span> <span class="s1">&#39;...&#39;</span><span class="p">)</span>
 
@@ -155,10 +178,27 @@
 
 
 <div class="viewcode-block" id="linecount"><a class="viewcode-back" href="../../api.html#clgen.train.linecount">[docs]</a><span class="k">def</span> <span class="nf">linecount</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Line count.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        t (str): String.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        int: Line count.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="train"><a class="viewcode-back" href="../../api.html#clgen.train.train">[docs]</a><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">out_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate corpus.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        db_path (str): Dataset.</span>
+<span class="sd">        out_path (str): Corpus path.</span>
+<span class="sd">        **kwargs (dict): Additional arguments to create_corpus().</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
     <span class="n">db</span><span class="o">.</span><span class="n">create_function</span><span class="p">(</span><span class="s2">&quot;LC&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">linecount</span><span class="p">)</span>
 

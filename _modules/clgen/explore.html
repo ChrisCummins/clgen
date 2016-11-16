@@ -91,9 +91,18 @@
 <span class="n">IMG_DIR</span> <span class="o">=</span> <span class="s1">&#39;img&#39;</span>
 
 
-<div class="viewcode-block" id="decode"><a class="viewcode-back" href="../../api.html#clgen.explore.decode">[docs]</a><span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="n">code</span><span class="p">):</span>
+<div class="viewcode-block" id="decode"><a class="viewcode-back" href="../../api.html#clgen.explore.decode">[docs]</a><span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decode Unicode string.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        string (str): Unicode encoded string.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Decoded string, or empty string if decode fails.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">code</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">string</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">UnicodeDecodeError</span><span class="p">:</span>
         <span class="k">return</span> <span class="s1">&#39;&#39;</span></div>
 
@@ -102,9 +111,12 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Zero-safe division.</span>
 
-<span class="sd">    :param x: Numerator</span>
-<span class="sd">    :param y: Denominator</span>
-<span class="sd">    :return: x / y</span>
+<span class="sd">    Arguments:</span>
+<span class="sd">        x (Number): Numerator</span>
+<span class="sd">        y (Number): Denominator</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Number: x / y</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span>
@@ -113,6 +125,15 @@
 
 
 <div class="viewcode-block" id="median"><a class="viewcode-back" href="../../api.html#clgen.explore.median">[docs]</a><span class="k">def</span> <span class="nf">median</span><span class="p">(</span><span class="n">sorted_arr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the median of a sorted sequence.</span>
+
+<span class="sd">    Arugments:</span>
+<span class="sd">        sorted_arr (Number[]): Sequence.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Number: Median value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_arr</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">n</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">0</span>
@@ -125,10 +146,28 @@
 
 
 <div class="viewcode-block" id="bigint"><a class="viewcode-back" href="../../api.html#clgen.explore.bigint">[docs]</a><span class="k">def</span> <span class="nf">bigint</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return comma seperated big numbers.</span>
+
+<span class="sd">    Arugments:</span>
+<span class="sd">        n (Number): Value.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Comma separated value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">locale</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">grouping</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="seq_stats"><a class="viewcode-back" href="../../api.html#clgen.explore.seq_stats">[docs]</a><span class="k">def</span> <span class="nf">seq_stats</span><span class="p">(</span><span class="n">sorted_arr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return stats on a sequence.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        sorted_arr (Number[]): Sequence.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Sequnece stats.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">sorted_arr</span> <span class="o">=</span> <span class="n">sorted_arr</span> <span class="ow">or</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">avg</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">sorted_arr</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_arr</span><span class="p">)</span>
     <span class="n">midpoint</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sorted_arr</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
@@ -142,9 +181,10 @@
             <span class="n">bigint</span><span class="p">(</span><span class="n">sorted_arr</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">sorted_arr</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])))</span></div>
 
 
-<span class="c1"># Generate dataset stats.</span>
-<span class="c1">#</span>
 <div class="viewcode-block" id="stats_worker"><a class="viewcode-back" href="../../api.html#clgen.explore.stats_worker">[docs]</a><span class="k">def</span> <span class="nf">stats_worker</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate dataset stats.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;stats worker ...&quot;</span><span class="p">)</span>
     <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
@@ -198,9 +238,10 @@
     <span class="k">return</span> <span class="n">stats</span></div>
 
 
-<span class="c1"># Generate dataset stats.</span>
-<span class="c1">#</span>
 <div class="viewcode-block" id="gh_stats_worker"><a class="viewcode-back" href="../../api.html#clgen.explore.gh_stats_worker">[docs]</a><span class="k">def</span> <span class="nf">gh_stats_worker</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate github dataset stats.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;stats worker ...&quot;</span><span class="p">)</span>
     <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
@@ -276,9 +317,10 @@
     <span class="k">return</span> <span class="n">stats</span></div>
 
 
-<span class="c1"># Plot distribution of OpenCL file line counts.</span>
-<span class="c1">#</span>
 <div class="viewcode-block" id="graph_ocl_lc"><a class="viewcode-back" href="../../api.html#clgen.explore.graph_ocl_lc">[docs]</a><span class="k">def</span> <span class="nf">graph_ocl_lc</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot distribution of OpenCL file line counts.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
     <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
     <span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">color_codes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -302,9 +344,10 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span></div>
 
 
-<span class="c1"># Plot distribution of Bytecode line counts.</span>
-<span class="c1">#</span>
 <div class="viewcode-block" id="graph_bc_lc"><a class="viewcode-back" href="../../api.html#clgen.explore.graph_bc_lc">[docs]</a><span class="k">def</span> <span class="nf">graph_bc_lc</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot distribution of bytecode line counts.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
     <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
     <span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">color_codes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -328,9 +371,10 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span></div>
 
 
-<span class="c1"># Plot distribution of stargazers per file.</span>
-<span class="c1">#</span>
 <div class="viewcode-block" id="graph_ocl_stars"><a class="viewcode-back" href="../../api.html#clgen.explore.graph_ocl_stars">[docs]</a><span class="k">def</span> <span class="nf">graph_ocl_stars</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot distribution of stargazers per file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
     <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
     <span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">color_codes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -355,6 +399,13 @@
 
 
 <div class="viewcode-block" id="explore"><a class="viewcode-back" href="../../api.html#clgen.explore.explore">[docs]</a><span class="k">def</span> <span class="nf">explore</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run exploratory analysis on dataset.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        db_path (str): Path to dataset.</span>
+<span class="sd">        graph (bool, optional): Render graphs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">LC_ALL</span><span class="p">,</span> <span class="s1">&#39;en_GB.utf-8&#39;</span><span class="p">)</span>
 
     <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
@@ -393,6 +444,13 @@
 
 
 <div class="viewcode-block" id="explore_gh"><a class="viewcode-back" href="../../api.html#clgen.explore.explore_gh">[docs]</a><span class="k">def</span> <span class="nf">explore_gh</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run exploratory analysis on GitHub dataset.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        db_path (str): Path to dataset.</span>
+<span class="sd">        graph (bool, optional): Render graphs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">LC_ALL</span><span class="p">,</span> <span class="s1">&#39;en_GB.utf-8&#39;</span><span class="p">)</span>
 
     <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
