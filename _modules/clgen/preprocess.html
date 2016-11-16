@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.preprocess &#8212; clgen 0.1.5 documentation</title>
+    <title>clgen.preprocess &#8212; clgen 0.1.6 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.5',
+        VERSION:     '0.1.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="top" title="clgen 0.1.5 documentation" href="../../index.html" />
+    <link rel="top" title="clgen 0.1.6 documentation" href="../../index.html" />
     <link rel="up" title="clgen" href="../clgen.html" /> 
   </head>
   <body role="document">
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.1.5 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.1.6 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -699,10 +699,8 @@
         <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">cache</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span>
 
-    <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
-    <span class="n">num_contentfiles</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">num_rows_in</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="s1">&#39;ContentFiles&#39;</span><span class="p">)</span>
-    <span class="n">num_preprocessedfiles</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">num_rows_in</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="s1">&#39;PreprocessedFiles&#39;</span><span class="p">)</span>
-    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">num_contentfiles</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">num_rows_in</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="s1">&#39;ContentFiles&#39;</span><span class="p">)</span>
+    <span class="n">num_preprocessedfiles</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">num_rows_in</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="s1">&#39;PreprocessedFiles&#39;</span><span class="p">)</span>
 
     <span class="n">num_workers</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">num_contentfiles</span><span class="p">,</span> <span class="n">max_num_workers</span><span class="p">)</span>
     <span class="n">files_per_worker</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">num_contentfiles</span> <span class="o">/</span> <span class="n">num_workers</span><span class="p">)</span>
@@ -858,7 +856,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.1.5 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.1.6 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>
