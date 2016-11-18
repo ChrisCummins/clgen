@@ -86,28 +86,28 @@
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
 
 
-<div class="viewcode-block" id="OpenCLUtilException"><a class="viewcode-back" href="../../api.html#clgen.clutil.OpenCLUtilException">[docs]</a><span class="k">class</span> <span class="nc">OpenCLUtilException</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
+<div class="viewcode-block" id="OpenCLUtilException"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.OpenCLUtilException">[docs]</a><span class="k">class</span> <span class="nc">OpenCLUtilException</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Module error.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="PrototypeException"><a class="viewcode-back" href="../../api.html#clgen.clutil.PrototypeException">[docs]</a><span class="k">class</span> <span class="nc">PrototypeException</span><span class="p">(</span><span class="n">OpenCLUtilException</span><span class="p">):</span>
+<div class="viewcode-block" id="PrototypeException"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.PrototypeException">[docs]</a><span class="k">class</span> <span class="nc">PrototypeException</span><span class="p">(</span><span class="n">OpenCLUtilException</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Kernel prototype error.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="UnknownTypeException"><a class="viewcode-back" href="../../api.html#clgen.clutil.UnknownTypeException">[docs]</a><span class="k">class</span> <span class="nc">UnknownTypeException</span><span class="p">(</span><span class="n">PrototypeException</span><span class="p">):</span>
+<div class="viewcode-block" id="UnknownTypeException"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.UnknownTypeException">[docs]</a><span class="k">class</span> <span class="nc">UnknownTypeException</span><span class="p">(</span><span class="n">PrototypeException</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Bad or unsupported type.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="KernelArg"><a class="viewcode-back" href="../../api.html#clgen.clutil.KernelArg">[docs]</a><span class="k">class</span> <span class="nc">KernelArg</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
+<div class="viewcode-block" id="KernelArg"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.KernelArg">[docs]</a><span class="k">class</span> <span class="nc">KernelArg</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    OpenCL Kernel Argument.</span>
 
@@ -439,7 +439,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_string</span></div>
 
 
-<div class="viewcode-block" id="KernelPrototype"><a class="viewcode-back" href="../../api.html#clgen.clutil.KernelPrototype">[docs]</a><span class="k">class</span> <span class="nc">KernelPrototype</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
+<div class="viewcode-block" id="KernelPrototype"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.KernelPrototype">[docs]</a><span class="k">class</span> <span class="nc">KernelPrototype</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    OpenCL Kernel Prototype.</span>
 
@@ -504,7 +504,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_string</span>
 
     <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="KernelPrototype.from_source"><a class="viewcode-back" href="../../api.html#clgen.clutil.KernelPrototype.from_source">[docs]</a>    <span class="k">def</span> <span class="nf">from_source</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
+<div class="viewcode-block" id="KernelPrototype.from_source"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.KernelPrototype.from_source">[docs]</a>    <span class="k">def</span> <span class="nf">from_source</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create KernelPrototype from OpenCL kernel source.</span>
 
@@ -517,7 +517,7 @@
         <span class="k">return</span> <span class="n">extract_prototype</span><span class="p">(</span><span class="n">src</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="get_attribute_range"><a class="viewcode-back" href="../../api.html#clgen.clutil.get_attribute_range">[docs]</a><span class="k">def</span> <span class="nf">get_attribute_range</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">):</span>
+<div class="viewcode-block" id="get_attribute_range"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.get_attribute_range">[docs]</a><span class="k">def</span> <span class="nf">get_attribute_range</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get string indices range of attributes.</span>
 
@@ -540,7 +540,7 @@
     <span class="k">return</span> <span class="p">(</span><span class="n">start_idx</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="strip_attributes"><a class="viewcode-back" href="../../api.html#clgen.clutil.strip_attributes">[docs]</a><span class="k">def</span> <span class="nf">strip_attributes</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
+<div class="viewcode-block" id="strip_attributes"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.strip_attributes">[docs]</a><span class="k">def</span> <span class="nf">strip_attributes</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Remove attributes from OpenCL source.</span>
 
@@ -562,7 +562,7 @@
     <span class="k">return</span> <span class="n">src</span></div>
 
 
-<div class="viewcode-block" id="get_cl_kernel_end_idx"><a class="viewcode-back" href="../../api.html#clgen.clutil.get_cl_kernel_end_idx">[docs]</a><span class="k">def</span> <span class="nf">get_cl_kernel_end_idx</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">start_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_len</span><span class="o">=</span><span class="mi">5000</span><span class="p">):</span>
+<div class="viewcode-block" id="get_cl_kernel_end_idx"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.get_cl_kernel_end_idx">[docs]</a><span class="k">def</span> <span class="nf">get_cl_kernel_end_idx</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">start_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_len</span><span class="o">=</span><span class="mi">5000</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the index of the character after the end of the OpenCL</span>
 <span class="sd">    kernel.</span>
@@ -588,7 +588,7 @@
     <span class="k">return</span> <span class="n">i</span></div>
 
 
-<div class="viewcode-block" id="get_cl_kernel"><a class="viewcode-back" href="../../api.html#clgen.clutil.get_cl_kernel">[docs]</a><span class="k">def</span> <span class="nf">get_cl_kernel</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">,</span> <span class="n">max_len</span><span class="o">=</span><span class="mi">5000</span><span class="p">):</span>
+<div class="viewcode-block" id="get_cl_kernel"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.get_cl_kernel">[docs]</a><span class="k">def</span> <span class="nf">get_cl_kernel</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">,</span> <span class="n">max_len</span><span class="o">=</span><span class="mi">5000</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the OpenCL kernel.</span>
 
@@ -605,7 +605,7 @@
     <span class="k">return</span> <span class="n">src</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">get_cl_kernel_end_idx</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">)]</span></div>
 
 
-<div class="viewcode-block" id="get_cl_kernels"><a class="viewcode-back" href="../../api.html#clgen.clutil.get_cl_kernels">[docs]</a><span class="k">def</span> <span class="nf">get_cl_kernels</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
+<div class="viewcode-block" id="get_cl_kernels"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.get_cl_kernels">[docs]</a><span class="k">def</span> <span class="nf">get_cl_kernels</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return OpenCL kernels.</span>
 
@@ -622,7 +622,7 @@
     <span class="k">return</span> <span class="n">kernels</span></div>
 
 
-<div class="viewcode-block" id="extract_prototype"><a class="viewcode-back" href="../../api.html#clgen.clutil.extract_prototype">[docs]</a><span class="k">def</span> <span class="nf">extract_prototype</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
+<div class="viewcode-block" id="extract_prototype"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.extract_prototype">[docs]</a><span class="k">def</span> <span class="nf">extract_prototype</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extract OpenCL kernel prototype from preprocessed file.</span>
 
@@ -649,7 +649,7 @@
     <span class="k">return</span> <span class="n">KernelPrototype</span><span class="p">(</span><span class="n">prototype</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="platform_info"><a class="viewcode-back" href="../../api.html#clgen.clutil.platform_info">[docs]</a><span class="k">def</span> <span class="nf">platform_info</span><span class="p">(</span><span class="n">printfn</span><span class="o">=</span><span class="nb">print</span><span class="p">):</span>
+<div class="viewcode-block" id="platform_info"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.platform_info">[docs]</a><span class="k">def</span> <span class="nf">platform_info</span><span class="p">(</span><span class="n">printfn</span><span class="o">=</span><span class="nb">print</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Log platform information.</span>
 

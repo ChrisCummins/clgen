@@ -87,7 +87,7 @@
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">dbutil</span>
 
 
-<div class="viewcode-block" id="sanitize_id"><a class="viewcode-back" href="../../api.html#clgen.train.sanitize_id">[docs]</a><span class="k">def</span> <span class="nf">sanitize_id</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
+<div class="viewcode-block" id="sanitize_id"><a class="viewcode-back" href="../../api/index.html#clgen.train.sanitize_id">[docs]</a><span class="k">def</span> <span class="nf">sanitize_id</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sanitize ID.</span>
 
@@ -100,7 +100,7 @@
     <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;[/:\.]+&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_corpus"><a class="viewcode-back" href="../../api.html#clgen.train.create_corpus">[docs]</a><span class="k">def</span> <span class="nf">create_corpus</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">out_path</span><span class="p">,</span> <span class="n">gh</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fileid</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<div class="viewcode-block" id="create_corpus"><a class="viewcode-back" href="../../api/index.html#clgen.train.create_corpus">[docs]</a><span class="k">def</span> <span class="nf">create_corpus</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">out_path</span><span class="p">,</span> <span class="n">gh</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fileid</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                   <span class="n">input_samples</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">eof</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">dir</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create CLgen training corpus.</span>
@@ -177,7 +177,7 @@
         <span class="k">return</span> <span class="mi">0</span></div>
 
 
-<div class="viewcode-block" id="linecount"><a class="viewcode-back" href="../../api.html#clgen.train.linecount">[docs]</a><span class="k">def</span> <span class="nf">linecount</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+<div class="viewcode-block" id="linecount"><a class="viewcode-back" href="../../api/index.html#clgen.train.linecount">[docs]</a><span class="k">def</span> <span class="nf">linecount</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Line count.</span>
 
@@ -190,7 +190,7 @@
     <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="train"><a class="viewcode-back" href="../../api.html#clgen.train.train">[docs]</a><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">out_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="train"><a class="viewcode-back" href="../../api/index.html#clgen.train.train">[docs]</a><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">out_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate corpus.</span>
 

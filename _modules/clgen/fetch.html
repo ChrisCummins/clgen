@@ -100,7 +100,7 @@
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">explore</span>
 
 
-<div class="viewcode-block" id="FetchError"><a class="viewcode-back" href="../../api.html#clgen.fetch.FetchError">[docs]</a><span class="k">class</span> <span class="nc">FetchError</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
+<div class="viewcode-block" id="FetchError"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.FetchError">[docs]</a><span class="k">class</span> <span class="nc">FetchError</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Module error.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -118,7 +118,7 @@
 <span class="n">status_string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 
 
-<div class="viewcode-block" id="print_repo_details"><a class="viewcode-back" href="../../api.html#clgen.fetch.print_repo_details">[docs]</a><span class="k">def</span> <span class="nf">print_repo_details</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+<div class="viewcode-block" id="print_repo_details"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.print_repo_details">[docs]</a><span class="k">def</span> <span class="nf">print_repo_details</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print GitHub repo details.</span>
 
@@ -136,7 +136,7 @@
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;updated_at:&#39;</span><span class="p">,</span> <span class="n">repo</span><span class="o">.</span><span class="n">updated_at</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="print_file_details"><a class="viewcode-back" href="../../api.html#clgen.fetch.print_file_details">[docs]</a><span class="k">def</span> <span class="nf">print_file_details</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+<div class="viewcode-block" id="print_file_details"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.print_file_details">[docs]</a><span class="k">def</span> <span class="nf">print_file_details</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print GitHub file details.</span>
 
@@ -149,7 +149,7 @@
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;size:&#39;</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">size</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="print_counters"><a class="viewcode-back" href="../../api.html#clgen.fetch.print_counters">[docs]</a><span class="k">def</span> <span class="nf">print_counters</span><span class="p">():</span>
+<div class="viewcode-block" id="print_counters"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.print_counters">[docs]</a><span class="k">def</span> <span class="nf">print_counters</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print analytics counters.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -161,7 +161,7 @@
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="rate_limit"><a class="viewcode-back" href="../../api.html#clgen.fetch.rate_limit">[docs]</a><span class="k">def</span> <span class="nf">rate_limit</span><span class="p">(</span><span class="n">g</span><span class="p">):</span>
+<div class="viewcode-block" id="rate_limit"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.rate_limit">[docs]</a><span class="k">def</span> <span class="nf">rate_limit</span><span class="p">(</span><span class="n">g</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Block on GitHub rate limit.</span>
 
@@ -177,7 +177,7 @@
         <span class="n">remaining</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">get_rate_limit</span><span class="p">()</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">remaining</span></div>
 
 
-<div class="viewcode-block" id="process_repo"><a class="viewcode-back" href="../../api.html#clgen.fetch.process_repo">[docs]</a><span class="k">def</span> <span class="nf">process_repo</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">repo</span><span class="p">):</span>
+<div class="viewcode-block" id="process_repo"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.process_repo">[docs]</a><span class="k">def</span> <span class="nf">process_repo</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">repo</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    GitHub repository handler.</span>
 
@@ -239,7 +239,7 @@
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="is_opencl_path"><a class="viewcode-back" href="../../api.html#clgen.fetch.is_opencl_path">[docs]</a><span class="k">def</span> <span class="nf">is_opencl_path</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<div class="viewcode-block" id="is_opencl_path"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.is_opencl_path">[docs]</a><span class="k">def</span> <span class="nf">is_opencl_path</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return whether file is opencl.</span>
 
@@ -251,7 +251,7 @@
 <span class="n">_include_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;\w*#include [&quot;&lt;](.*)[&quot;&gt;]&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="download_file"><a class="viewcode-back" href="../../api.html#clgen.fetch.download_file">[docs]</a><span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span><span class="n">github_token</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">stack</span><span class="p">):</span>
+<div class="viewcode-block" id="download_file"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.download_file">[docs]</a><span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span><span class="n">github_token</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">stack</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fetch file from GitHub.</span>
 
@@ -308,7 +308,7 @@
     <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outlines</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="process_file"><a class="viewcode-back" href="../../api.html#clgen.fetch.process_file">[docs]</a><span class="k">def</span> <span class="nf">process_file</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">github_token</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
+<div class="viewcode-block" id="process_file"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.process_file">[docs]</a><span class="k">def</span> <span class="nf">process_file</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">github_token</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    GitHub file handler.</span>
 
@@ -366,7 +366,7 @@
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="github"><a class="viewcode-back" href="../../api.html#clgen.fetch.github">[docs]</a><span class="k">def</span> <span class="nf">github</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">github_username</span><span class="p">,</span> <span class="n">github_pw</span><span class="p">,</span> <span class="n">github_token</span><span class="p">):</span>
+<div class="viewcode-block" id="github"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.github">[docs]</a><span class="k">def</span> <span class="nf">github</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">github_username</span><span class="p">,</span> <span class="n">github_pw</span><span class="p">,</span> <span class="n">github_token</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Download all of the OpenCL on GitHub (!)</span>
 
@@ -440,7 +440,7 @@
     <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="inline_fs_headers"><a class="viewcode-back" href="../../api.html#clgen.fetch.inline_fs_headers">[docs]</a><span class="k">def</span> <span class="nf">inline_fs_headers</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">stack</span><span class="p">):</span>
+<div class="viewcode-block" id="inline_fs_headers"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.inline_fs_headers">[docs]</a><span class="k">def</span> <span class="nf">inline_fs_headers</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">stack</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Recursively inline headers in file.</span>
 
@@ -485,7 +485,7 @@
     <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outlines</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="flatten"><a class="viewcode-back" href="../../api.html#clgen.fetch.flatten">[docs]</a><span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+<div class="viewcode-block" id="flatten"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.flatten">[docs]</a><span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Flattens a list of lists.</span>
 
@@ -498,7 +498,7 @@
     <span class="k">return</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">l</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="process_cl_file"><a class="viewcode-back" href="../../api.html#clgen.fetch.process_cl_file">[docs]</a><span class="k">def</span> <span class="nf">process_cl_file</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<div class="viewcode-block" id="process_cl_file"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.process_cl_file">[docs]</a><span class="k">def</span> <span class="nf">process_cl_file</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Process OpenCL file.</span>
 
@@ -522,7 +522,7 @@
     <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="content_db"><a class="viewcode-back" href="../../api.html#clgen.fetch.content_db">[docs]</a><span class="k">def</span> <span class="nf">content_db</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">in_db_path</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="s1">&#39;PreprocessedFiles&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="content_db"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.content_db">[docs]</a><span class="k">def</span> <span class="nf">content_db</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">in_db_path</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="s1">&#39;PreprocessedFiles&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fetch kernels from a content database.</span>
 
@@ -549,7 +549,7 @@
             <span class="n">odb</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="fetch_fs"><a class="viewcode-back" href="../../api.html#clgen.fetch.fetch_fs">[docs]</a><span class="k">def</span> <span class="nf">fetch_fs</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">paths</span><span class="o">=</span><span class="p">[]):</span>
+<div class="viewcode-block" id="fetch_fs"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.fetch_fs">[docs]</a><span class="k">def</span> <span class="nf">fetch_fs</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">paths</span><span class="o">=</span><span class="p">[]):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fetch from a list of files.</span>
 
@@ -565,7 +565,7 @@
 <span class="n">kernel_counter</span> <span class="o">=</span> <span class="mi">0</span>
 
 
-<div class="viewcode-block" id="process_sample_file"><a class="viewcode-back" href="../../api.html#clgen.fetch.process_sample_file">[docs]</a><span class="k">def</span> <span class="nf">process_sample_file</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">sample_path</span><span class="p">,</span> <span class="n">first_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<div class="viewcode-block" id="process_sample_file"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.process_sample_file">[docs]</a><span class="k">def</span> <span class="nf">process_sample_file</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">sample_path</span><span class="p">,</span> <span class="n">first_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                         <span class="n">max_kernel_len</span><span class="o">=</span><span class="mi">5000</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fetch from a CLgen sample file.</span>
@@ -620,7 +620,7 @@
     <span class="n">explore</span><span class="o">.</span><span class="n">explore</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="clgen_sample"><a class="viewcode-back" href="../../api.html#clgen.fetch.clgen_sample">[docs]</a><span class="k">def</span> <span class="nf">clgen_sample</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">samples_dir</span><span class="p">,</span> <span class="n">sample_path</span><span class="p">,</span> <span class="n">first_only</span><span class="p">):</span>
+<div class="viewcode-block" id="clgen_sample"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.clgen_sample">[docs]</a><span class="k">def</span> <span class="nf">clgen_sample</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">samples_dir</span><span class="p">,</span> <span class="n">sample_path</span><span class="p">,</span> <span class="n">first_only</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fetch from CLgen.</span>
 
@@ -647,21 +647,21 @@
 <span class="n">errors_counter</span> <span class="o">=</span> <span class="mi">0</span>
 
 
-<div class="viewcode-block" id="CLSmithException"><a class="viewcode-back" href="../../api.html#clgen.fetch.CLSmithException">[docs]</a><span class="k">class</span> <span class="nc">CLSmithException</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
+<div class="viewcode-block" id="CLSmithException"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.CLSmithException">[docs]</a><span class="k">class</span> <span class="nc">CLSmithException</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    CLSmith error.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="HeaderNotFoundException"><a class="viewcode-back" href="../../api.html#clgen.fetch.HeaderNotFoundException">[docs]</a><span class="k">class</span> <span class="nc">HeaderNotFoundException</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
+<div class="viewcode-block" id="HeaderNotFoundException"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.HeaderNotFoundException">[docs]</a><span class="k">class</span> <span class="nc">HeaderNotFoundException</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Unable to locate header file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="print_clsmith_counters"><a class="viewcode-back" href="../../api.html#clgen.fetch.print_clsmith_counters">[docs]</a><span class="k">def</span> <span class="nf">print_clsmith_counters</span><span class="p">():</span>
+<div class="viewcode-block" id="print_clsmith_counters"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.print_clsmith_counters">[docs]</a><span class="k">def</span> <span class="nf">print_clsmith_counters</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print CLSmith counters.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -671,7 +671,7 @@
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="include_clsmith_path"><a class="viewcode-back" href="../../api.html#clgen.fetch.include_clsmith_path">[docs]</a><span class="k">def</span> <span class="nf">include_clsmith_path</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">header_paths</span><span class="p">):</span>
+<div class="viewcode-block" id="include_clsmith_path"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.include_clsmith_path">[docs]</a><span class="k">def</span> <span class="nf">include_clsmith_path</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">header_paths</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fetch path to CLSmith header.</span>
 
@@ -689,7 +689,7 @@
     <span class="k">raise</span> <span class="n">HeaderNotFoundException</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="inline_clsmith_headers"><a class="viewcode-back" href="../../api.html#clgen.fetch.inline_clsmith_headers">[docs]</a><span class="k">def</span> <span class="nf">inline_clsmith_headers</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">header_paths</span><span class="p">):</span>
+<div class="viewcode-block" id="inline_clsmith_headers"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.inline_clsmith_headers">[docs]</a><span class="k">def</span> <span class="nf">inline_clsmith_headers</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">header_paths</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Inline CLSmith headers.</span>
 
@@ -716,7 +716,7 @@
     <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outlines</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="get_clsmith_program"><a class="viewcode-back" href="../../api.html#clgen.fetch.get_clsmith_program">[docs]</a><span class="k">def</span> <span class="nf">get_clsmith_program</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span>
+<div class="viewcode-block" id="get_clsmith_program"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.get_clsmith_program">[docs]</a><span class="k">def</span> <span class="nf">get_clsmith_program</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span>
                         <span class="n">header_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;~/clsmith/runtime&quot;</span><span class="p">,</span> <span class="s2">&quot;~/clsmith/build&quot;</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate a program using CLSmith and add to dataset.</span>
@@ -756,7 +756,7 @@
     <span class="n">print_clsmith_counters</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="clsmith"><a class="viewcode-back" href="../../api.html#clgen.fetch.clsmith">[docs]</a><span class="k">def</span> <span class="nf">clsmith</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">target_num_kernels</span><span class="p">):</span>
+<div class="viewcode-block" id="clsmith"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.clsmith">[docs]</a><span class="k">def</span> <span class="nf">clsmith</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">target_num_kernels</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate kernels using CLSmith.</span>
 

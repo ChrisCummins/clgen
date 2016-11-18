@@ -84,14 +84,14 @@
 <span class="n">ROOT</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">,</span> <span class="s2">&quot;.cache&quot;</span><span class="p">,</span> <span class="s2">&quot;clgen&quot;</span><span class="p">,</span> <span class="n">clgen</span><span class="o">.</span><span class="n">version</span><span class="p">())</span>
 
 
-<div class="viewcode-block" id="Cache404"><a class="viewcode-back" href="../../api.html#clgen.cache.Cache404">[docs]</a><span class="k">class</span> <span class="nc">Cache404</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">File404</span><span class="p">):</span>
+<div class="viewcode-block" id="Cache404"><a class="viewcode-back" href="../../api/index.html#clgen.cache.Cache404">[docs]</a><span class="k">class</span> <span class="nc">Cache404</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">File404</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Error thrown for cache misses.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="Cache"><a class="viewcode-back" href="../../api.html#clgen.cache.Cache">[docs]</a><span class="k">class</span> <span class="nc">Cache</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
+<div class="viewcode-block" id="Cache"><a class="viewcode-back" href="../../api/index.html#clgen.cache.Cache">[docs]</a><span class="k">class</span> <span class="nc">Cache</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Persistent filesystem cache.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -104,14 +104,14 @@
 
         <span class="n">fs</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Cache.empty"><a class="viewcode-back" href="../../api.html#clgen.cache.Cache.empty">[docs]</a>    <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Cache.empty"><a class="viewcode-back" href="../../api/index.html#clgen.cache.Cache.empty">[docs]</a>    <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Empty the filesystem cache.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;empty cache </span><span class="si">{path}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">))</span>
         <span class="n">fs</span><span class="o">.</span><span class="n">rm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Cache.mapkey"><a class="viewcode-back" href="../../api.html#clgen.cache.Cache.mapkey">[docs]</a>    <span class="k">def</span> <span class="nf">mapkey</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<div class="viewcode-block" id="Cache.mapkey"><a class="viewcode-back" href="../../api/index.html#clgen.cache.Cache.mapkey">[docs]</a>    <span class="k">def</span> <span class="nf">mapkey</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Map a key to an internal key.</span>
 
@@ -126,7 +126,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">key</span></div>
 
-<div class="viewcode-block" id="Cache.escape"><a class="viewcode-back" href="../../api.html#clgen.cache.Cache.escape">[docs]</a>    <span class="k">def</span> <span class="nf">escape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<div class="viewcode-block" id="Cache.escape"><a class="viewcode-back" href="../../api/index.html#clgen.cache.Cache.escape">[docs]</a>    <span class="k">def</span> <span class="nf">escape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Escape key to path.</span>
 
@@ -138,7 +138,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">r&#39;[ </span><span class="se">\\</span><span class="s1">/]+&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Cache.keypath"><a class="viewcode-back" href="../../api.html#clgen.cache.Cache.keypath">[docs]</a>    <span class="k">def</span> <span class="nf">keypath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<div class="viewcode-block" id="Cache.keypath"><a class="viewcode-back" href="../../api/index.html#clgen.cache.Cache.keypath">[docs]</a>    <span class="k">def</span> <span class="nf">keypath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return path to key in cache.</span>
 

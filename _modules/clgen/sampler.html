@@ -88,7 +88,7 @@
 <span class="kn">from</span> <span class="nn">clgen.model</span> <span class="k">import</span> <span class="n">Model</span>
 
 
-<div class="viewcode-block" id="serialize_argspec"><a class="viewcode-back" href="../../api.html#clgen.sampler.serialize_argspec">[docs]</a><span class="k">def</span> <span class="nf">serialize_argspec</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="serialize_argspec"><a class="viewcode-back" href="../../api/index.html#clgen.sampler.serialize_argspec">[docs]</a><span class="k">def</span> <span class="nf">serialize_argspec</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Serializes an argument spec to a kernel prototype.</span>
 
@@ -103,7 +103,7 @@
     <span class="k">return</span> <span class="s2">&quot;__kernel void A(</span><span class="si">{args}</span><span class="s2">) {{&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">strings</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="Sampler"><a class="viewcode-back" href="../../api.html#clgen.sampler.Sampler">[docs]</a><span class="k">class</span> <span class="nc">Sampler</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
+<div class="viewcode-block" id="Sampler"><a class="viewcode-back" href="../../api/index.html#clgen.sampler.Sampler">[docs]</a><span class="k">class</span> <span class="nc">Sampler</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    CLgen sampler for models.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -141,7 +141,7 @@
         <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">checksum_data</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">clgen</span><span class="o">.</span><span class="n">checksum_str</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Sampler.cache"><a class="viewcode-back" href="../../api.html#clgen.sampler.Sampler.cache">[docs]</a>    <span class="k">def</span> <span class="nf">cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+<div class="viewcode-block" id="Sampler.cache"><a class="viewcode-back" href="../../api/index.html#clgen.sampler.Sampler.cache">[docs]</a>    <span class="k">def</span> <span class="nf">cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return sampler cache.</span>
 
@@ -154,7 +154,7 @@
         <span class="n">sampler_model_hash</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">checksum_str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hash</span> <span class="o">+</span> <span class="n">model</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Cache</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="s2">&quot;sampler&quot;</span><span class="p">,</span> <span class="n">sampler_model_hash</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="Sampler.sample_iteration"><a class="viewcode-back" href="../../api.html#clgen.sampler.Sampler.sample_iteration">[docs]</a>    <span class="k">def</span> <span class="nf">sample_iteration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+<div class="viewcode-block" id="Sampler.sample_iteration"><a class="viewcode-back" href="../../api/index.html#clgen.sampler.Sampler.sample_iteration">[docs]</a>    <span class="k">def</span> <span class="nf">sample_iteration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run one sample iteration.</span>
 
@@ -197,7 +197,7 @@
             <span class="n">preprocess</span><span class="o">.</span><span class="n">preprocess_db</span><span class="p">(</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span>
         <span class="n">fs</span><span class="o">.</span><span class="n">rm</span><span class="p">(</span><span class="n">tmppath</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Sampler.sample"><a class="viewcode-back" href="../../api.html#clgen.sampler.Sampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+<div class="viewcode-block" id="Sampler.sample"><a class="viewcode-back" href="../../api/index.html#clgen.sampler.Sampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sample CLgen model.</span>
 
@@ -232,7 +232,7 @@
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;samples database:&quot;</span><span class="p">,</span> <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span></div></div>
 
 
-<div class="viewcode-block" id="from_json"><a class="viewcode-back" href="../../api.html#clgen.sampler.from_json">[docs]</a><span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="n">sampler_json</span><span class="p">):</span>
+<div class="viewcode-block" id="from_json"><a class="viewcode-back" href="../../api/index.html#clgen.sampler.from_json">[docs]</a><span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="n">sampler_json</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Instantiate sampler from JSON.</span>
 

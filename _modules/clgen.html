@@ -91,14 +91,14 @@
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">config</span> <span class="k">as</span> <span class="n">cfg</span>
 
 
-<div class="viewcode-block" id="CLgenError"><a class="viewcode-back" href="../api.html#clgen.CLgenError">[docs]</a><span class="k">class</span> <span class="nc">CLgenError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="CLgenError"><a class="viewcode-back" href="../api/index.html#clgen.CLgenError">[docs]</a><span class="k">class</span> <span class="nc">CLgenError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Module error.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="InternalError"><a class="viewcode-back" href="../api.html#clgen.InternalError">[docs]</a><span class="k">class</span> <span class="nc">InternalError</span><span class="p">(</span><span class="n">CLgenError</span><span class="p">):</span>
+<div class="viewcode-block" id="InternalError"><a class="viewcode-back" href="../api/index.html#clgen.InternalError">[docs]</a><span class="k">class</span> <span class="nc">InternalError</span><span class="p">(</span><span class="n">CLgenError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    An internal module error. This class of errors should not leak outside</span>
 <span class="sd">    of the module into user code.</span>
@@ -106,42 +106,42 @@
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="UserError"><a class="viewcode-back" href="../api.html#clgen.UserError">[docs]</a><span class="k">class</span> <span class="nc">UserError</span><span class="p">(</span><span class="n">CLgenError</span><span class="p">):</span>
+<div class="viewcode-block" id="UserError"><a class="viewcode-back" href="../api/index.html#clgen.UserError">[docs]</a><span class="k">class</span> <span class="nc">UserError</span><span class="p">(</span><span class="n">CLgenError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Raised in case of bad user interaction, e.g. an invalid argument.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="NotImplementedError"><a class="viewcode-back" href="../api.html#clgen.NotImplementedError">[docs]</a><span class="k">class</span> <span class="nc">NotImplementedError</span><span class="p">(</span><span class="n">InternalError</span><span class="p">):</span>
+<div class="viewcode-block" id="NotImplementedError"><a class="viewcode-back" href="../api/index.html#clgen.NotImplementedError">[docs]</a><span class="k">class</span> <span class="nc">NotImplementedError</span><span class="p">(</span><span class="n">InternalError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Code not found.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="File404"><a class="viewcode-back" href="../api.html#clgen.File404">[docs]</a><span class="k">class</span> <span class="nc">File404</span><span class="p">(</span><span class="n">InternalError</span><span class="p">):</span>
+<div class="viewcode-block" id="File404"><a class="viewcode-back" href="../api/index.html#clgen.File404">[docs]</a><span class="k">class</span> <span class="nc">File404</span><span class="p">(</span><span class="n">InternalError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Data not found.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="InvalidFile"><a class="viewcode-back" href="../api.html#clgen.InvalidFile">[docs]</a><span class="k">class</span> <span class="nc">InvalidFile</span><span class="p">(</span><span class="n">UserError</span><span class="p">):</span>
+<div class="viewcode-block" id="InvalidFile"><a class="viewcode-back" href="../api/index.html#clgen.InvalidFile">[docs]</a><span class="k">class</span> <span class="nc">InvalidFile</span><span class="p">(</span><span class="n">UserError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Raised in case a file contains invalid contents.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="CLgenObject"><a class="viewcode-back" href="../api.html#clgen.CLgenObject">[docs]</a><span class="k">class</span> <span class="nc">CLgenObject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="CLgenObject"><a class="viewcode-back" href="../api/index.html#clgen.CLgenObject">[docs]</a><span class="k">class</span> <span class="nc">CLgenObject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base object for CLgen classes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="version"><a class="viewcode-back" href="../api.html#clgen.version">[docs]</a><span class="k">def</span> <span class="nf">version</span><span class="p">():</span>
+<div class="viewcode-block" id="version"><a class="viewcode-back" href="../api/index.html#clgen.version">[docs]</a><span class="k">def</span> <span class="nf">version</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the package version.</span>
 
@@ -155,7 +155,7 @@
     <span class="k">return</span> <span class="n">require</span><span class="p">(</span><span class="s2">&quot;clgen&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">version</span></div>
 
 
-<div class="viewcode-block" id="must_exist"><a class="viewcode-back" href="../api.html#clgen.must_exist">[docs]</a><span class="k">def</span> <span class="nf">must_exist</span><span class="p">(</span><span class="o">*</span><span class="n">path_components</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="must_exist"><a class="viewcode-back" href="../api/index.html#clgen.must_exist">[docs]</a><span class="k">def</span> <span class="nf">must_exist</span><span class="p">(</span><span class="o">*</span><span class="n">path_components</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Require that a file exists.</span>
 
@@ -177,7 +177,7 @@
     <span class="k">return</span> <span class="n">path</span></div>
 
 
-<div class="viewcode-block" id="checksum"><a class="viewcode-back" href="../api.html#clgen.checksum">[docs]</a><span class="k">def</span> <span class="nf">checksum</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="checksum"><a class="viewcode-back" href="../api/index.html#clgen.checksum">[docs]</a><span class="k">def</span> <span class="nf">checksum</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Checksum a byte stream.</span>
 
@@ -193,7 +193,7 @@
         <span class="k">raise</span> <span class="n">InternalError</span><span class="p">(</span><span class="s2">&quot;failed to checksum &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">[:</span><span class="mi">100</span><span class="p">]))</span></div>
 
 
-<div class="viewcode-block" id="checksum_str"><a class="viewcode-back" href="../api.html#clgen.checksum_str">[docs]</a><span class="k">def</span> <span class="nf">checksum_str</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+<div class="viewcode-block" id="checksum_str"><a class="viewcode-back" href="../api/index.html#clgen.checksum_str">[docs]</a><span class="k">def</span> <span class="nf">checksum_str</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Checksum a string.</span>
 
@@ -209,7 +209,7 @@
         <span class="k">raise</span> <span class="n">InternalError</span><span class="p">(</span><span class="s2">&quot;failed to encode &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">string</span><span class="p">[:</span><span class="mi">100</span><span class="p">]))</span></div>
 
 
-<div class="viewcode-block" id="checksum_file"><a class="viewcode-back" href="../api.html#clgen.checksum_file">[docs]</a><span class="k">def</span> <span class="nf">checksum_file</span><span class="p">(</span><span class="o">*</span><span class="n">path_components</span><span class="p">):</span>
+<div class="viewcode-block" id="checksum_file"><a class="viewcode-back" href="../api/index.html#clgen.checksum_file">[docs]</a><span class="k">def</span> <span class="nf">checksum_file</span><span class="p">(</span><span class="o">*</span><span class="n">path_components</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Checksum a file.</span>
 
@@ -228,7 +228,7 @@
         <span class="k">raise</span> <span class="n">CLgenError</span><span class="p">(</span><span class="s2">&quot;failed to read &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="unpack_archive"><a class="viewcode-back" href="../api.html#clgen.unpack_archive">[docs]</a><span class="k">def</span> <span class="nf">unpack_archive</span><span class="p">(</span><span class="o">*</span><span class="n">components</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="unpack_archive"><a class="viewcode-back" href="../api/index.html#clgen.unpack_archive">[docs]</a><span class="k">def</span> <span class="nf">unpack_archive</span><span class="p">(</span><span class="o">*</span><span class="n">components</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Unpack a compressed archive.</span>
 
@@ -251,7 +251,7 @@
     <span class="k">return</span> <span class="nb">dir</span></div>
 
 
-<div class="viewcode-block" id="get_substring_idxs"><a class="viewcode-back" href="../api.html#clgen.get_substring_idxs">[docs]</a><span class="k">def</span> <span class="nf">get_substring_idxs</span><span class="p">(</span><span class="n">substr</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+<div class="viewcode-block" id="get_substring_idxs"><a class="viewcode-back" href="../api/index.html#clgen.get_substring_idxs">[docs]</a><span class="k">def</span> <span class="nf">get_substring_idxs</span><span class="p">(</span><span class="n">substr</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return a list of indexes of substr. If substr not found, list is</span>
 <span class="sd">    empty.</span>
@@ -266,7 +266,7 @@
     <span class="k">return</span> <span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">substr</span><span class="p">,</span> <span class="n">s</span><span class="p">)]</span></div>
 
 
-<div class="viewcode-block" id="package_path"><a class="viewcode-back" href="../api.html#clgen.package_path">[docs]</a><span class="k">def</span> <span class="nf">package_path</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">):</span>
+<div class="viewcode-block" id="package_path"><a class="viewcode-back" href="../api/index.html#clgen.package_path">[docs]</a><span class="k">def</span> <span class="nf">package_path</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Path to package file.</span>
 
@@ -283,7 +283,7 @@
     <span class="k">return</span> <span class="n">must_exist</span><span class="p">(</span><span class="n">abspath</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="data_path"><a class="viewcode-back" href="../api.html#clgen.data_path">[docs]</a><span class="k">def</span> <span class="nf">data_path</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">):</span>
+<div class="viewcode-block" id="data_path"><a class="viewcode-back" href="../api/index.html#clgen.data_path">[docs]</a><span class="k">def</span> <span class="nf">data_path</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Path to package file.</span>
 
@@ -298,7 +298,7 @@
     <span class="k">return</span> <span class="n">package_path</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">path</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="package_data"><a class="viewcode-back" href="../api.html#clgen.package_data">[docs]</a><span class="k">def</span> <span class="nf">package_data</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">):</span>
+<div class="viewcode-block" id="package_data"><a class="viewcode-back" href="../api/index.html#clgen.package_data">[docs]</a><span class="k">def</span> <span class="nf">package_data</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read package data file.</span>
 
@@ -320,7 +320,7 @@
         <span class="k">raise</span> <span class="n">InternalError</span><span class="p">(</span><span class="s2">&quot;failed to read package data &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="package_str"><a class="viewcode-back" href="../api.html#clgen.package_str">[docs]</a><span class="k">def</span> <span class="nf">package_str</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">):</span>
+<div class="viewcode-block" id="package_str"><a class="viewcode-back" href="../api/index.html#clgen.package_str">[docs]</a><span class="k">def</span> <span class="nf">package_str</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read package data file as a string.</span>
 
@@ -339,7 +339,7 @@
         <span class="k">raise</span> <span class="n">InternalError</span><span class="p">(</span><span class="s2">&quot;failed to decode package data &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="sql_script"><a class="viewcode-back" href="../api.html#clgen.sql_script">[docs]</a><span class="k">def</span> <span class="nf">sql_script</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="sql_script"><a class="viewcode-back" href="../api/index.html#clgen.sql_script">[docs]</a><span class="k">def</span> <span class="nf">sql_script</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read SQL script to string.</span>
 
@@ -353,7 +353,7 @@
     <span class="k">return</span> <span class="n">package_str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="format_json"><a class="viewcode-back" href="../api.html#clgen.format_json">[docs]</a><span class="k">def</span> <span class="nf">format_json</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="format_json"><a class="viewcode-back" href="../api/index.html#clgen.format_json">[docs]</a><span class="k">def</span> <span class="nf">format_json</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Pretty print JSON.</span>
 
@@ -363,7 +363,7 @@
     <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;: &#39;</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="loads"><a class="viewcode-back" href="../api.html#clgen.loads">[docs]</a><span class="k">def</span> <span class="nf">loads</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="loads"><a class="viewcode-back" href="../api/index.html#clgen.loads">[docs]</a><span class="k">def</span> <span class="nf">loads</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Deserialize `text` (a `str` or `unicode` instance containing a JSON</span>
 <span class="sd">    document with Python or JavaScript like comments) to a Python object.</span>
@@ -393,7 +393,7 @@
     <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="load_json_file"><a class="viewcode-back" href="../api.html#clgen.load_json_file">[docs]</a><span class="k">def</span> <span class="nf">load_json_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<div class="viewcode-block" id="load_json_file"><a class="viewcode-back" href="../api/index.html#clgen.load_json_file">[docs]</a><span class="k">def</span> <span class="nf">load_json_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load a JSON data blob.</span>
 
@@ -417,7 +417,7 @@
 
 
 <span class="nd">@contextmanager</span>
-<div class="viewcode-block" id="terminating"><a class="viewcode-back" href="../api.html#clgen.terminating">[docs]</a><span class="k">def</span> <span class="nf">terminating</span><span class="p">(</span><span class="n">thing</span><span class="p">):</span>
+<div class="viewcode-block" id="terminating"><a class="viewcode-back" href="../api/index.html#clgen.terminating">[docs]</a><span class="k">def</span> <span class="nf">terminating</span><span class="p">(</span><span class="n">thing</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Context manager to terminate object at end of scope.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -427,13 +427,13 @@
         <span class="n">thing</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="write_file"><a class="viewcode-back" href="../api.html#clgen.write_file">[docs]</a><span class="k">def</span> <span class="nf">write_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">contents</span><span class="p">):</span>
+<div class="viewcode-block" id="write_file"><a class="viewcode-back" href="../api/index.html#clgen.write_file">[docs]</a><span class="k">def</span> <span class="nf">write_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">contents</span><span class="p">):</span>
     <span class="n">fs</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
         <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../api.html#clgen.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">sampler</span><span class="p">):</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../api/index.html#clgen.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">sampler</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Main entry point for clgen.</span>
 

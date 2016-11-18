@@ -85,28 +85,28 @@
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">native</span>
 
 
-<div class="viewcode-block" id="TorchRnnError"><a class="viewcode-back" href="../../api.html#clgen.torch_rnn.TorchRnnError">[docs]</a><span class="k">class</span> <span class="nc">TorchRnnError</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
+<div class="viewcode-block" id="TorchRnnError"><a class="viewcode-back" href="../../api/index.html#clgen.torch_rnn.TorchRnnError">[docs]</a><span class="k">class</span> <span class="nc">TorchRnnError</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Module error.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="PreprocessError"><a class="viewcode-back" href="../../api.html#clgen.torch_rnn.PreprocessError">[docs]</a><span class="k">class</span> <span class="nc">PreprocessError</span><span class="p">(</span><span class="n">TorchRnnError</span><span class="p">):</span>
+<div class="viewcode-block" id="PreprocessError"><a class="viewcode-back" href="../../api/index.html#clgen.torch_rnn.PreprocessError">[docs]</a><span class="k">class</span> <span class="nc">PreprocessError</span><span class="p">(</span><span class="n">TorchRnnError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Preprocess error.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="TrainError"><a class="viewcode-back" href="../../api.html#clgen.torch_rnn.TrainError">[docs]</a><span class="k">class</span> <span class="nc">TrainError</span><span class="p">(</span><span class="n">TorchRnnError</span><span class="p">):</span>
+<div class="viewcode-block" id="TrainError"><a class="viewcode-back" href="../../api/index.html#clgen.torch_rnn.TrainError">[docs]</a><span class="k">class</span> <span class="nc">TrainError</span><span class="p">(</span><span class="n">TorchRnnError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Training error.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="preprocess"><a class="viewcode-back" href="../../api.html#clgen.torch_rnn.preprocess">[docs]</a><span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="n">input_txt</span><span class="p">,</span> <span class="n">output_json</span><span class="p">,</span> <span class="n">output_h5</span><span class="p">):</span>
+<div class="viewcode-block" id="preprocess"><a class="viewcode-back" href="../../api/index.html#clgen.torch_rnn.preprocess">[docs]</a><span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="n">input_txt</span><span class="p">,</span> <span class="n">output_json</span><span class="p">,</span> <span class="n">output_h5</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper around preprocess script.</span>
 
@@ -131,7 +131,7 @@
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">output</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="get_device_flags"><a class="viewcode-back" href="../../api.html#clgen.torch_rnn.get_device_flags">[docs]</a><span class="k">def</span> <span class="nf">get_device_flags</span><span class="p">():</span>
+<div class="viewcode-block" id="get_device_flags"><a class="viewcode-back" href="../../api/index.html#clgen.torch_rnn.get_device_flags">[docs]</a><span class="k">def</span> <span class="nf">get_device_flags</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get torch-rnn device flags.</span>
 
@@ -156,7 +156,7 @@
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;gpu&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">}</span></div>
 
 
-<div class="viewcode-block" id="train"><a class="viewcode-back" href="../../api.html#clgen.torch_rnn.train">[docs]</a><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="o">**</span><span class="n">train_opts</span><span class="p">):</span>
+<div class="viewcode-block" id="train"><a class="viewcode-back" href="../../api/index.html#clgen.torch_rnn.train">[docs]</a><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="o">**</span><span class="n">train_opts</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper around torch-rnn train script.</span>
 
@@ -189,7 +189,7 @@
     <span class="n">fs</span><span class="o">.</span><span class="n">cdpop</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="sample"><a class="viewcode-back" href="../../api.html#clgen.torch_rnn.sample">[docs]</a><span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="o">**</span><span class="n">sample_opts</span><span class="p">):</span>
+<div class="viewcode-block" id="sample"><a class="viewcode-back" href="../../api/index.html#clgen.torch_rnn.sample">[docs]</a><span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="o">**</span><span class="n">sample_opts</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper around torch-rnn sample script.</span>
 

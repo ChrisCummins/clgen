@@ -107,61 +107,61 @@
 <span class="c1">#</span>
 
 <span class="c1"># Internal exceptions:</span>
-<div class="viewcode-block" id="LlvmException"><a class="viewcode-back" href="../../api.html#clgen.preprocess.LlvmException">[docs]</a><span class="k">class</span> <span class="nc">LlvmException</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
+<div class="viewcode-block" id="LlvmException"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.LlvmException">[docs]</a><span class="k">class</span> <span class="nc">LlvmException</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;LLVM Error&quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="ClangFormatException"><a class="viewcode-back" href="../../api.html#clgen.preprocess.ClangFormatException">[docs]</a><span class="k">class</span> <span class="nc">ClangFormatException</span><span class="p">(</span><span class="n">LlvmException</span><span class="p">):</span>
+<div class="viewcode-block" id="ClangFormatException"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.ClangFormatException">[docs]</a><span class="k">class</span> <span class="nc">ClangFormatException</span><span class="p">(</span><span class="n">LlvmException</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    clang-format error.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="OptException"><a class="viewcode-back" href="../../api.html#clgen.preprocess.OptException">[docs]</a><span class="k">class</span> <span class="nc">OptException</span><span class="p">(</span><span class="n">LlvmException</span><span class="p">):</span>
+<div class="viewcode-block" id="OptException"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.OptException">[docs]</a><span class="k">class</span> <span class="nc">OptException</span><span class="p">(</span><span class="n">LlvmException</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    LLVM opt error.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="BadCodeException"><a class="viewcode-back" href="../../api.html#clgen.preprocess.BadCodeException">[docs]</a><span class="k">class</span> <span class="nc">BadCodeException</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
+<div class="viewcode-block" id="BadCodeException"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.BadCodeException">[docs]</a><span class="k">class</span> <span class="nc">BadCodeException</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Code is bad.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="ClangException"><a class="viewcode-back" href="../../api.html#clgen.preprocess.ClangException">[docs]</a><span class="k">class</span> <span class="nc">ClangException</span><span class="p">(</span><span class="n">BadCodeException</span><span class="p">):</span>
+<div class="viewcode-block" id="ClangException"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.ClangException">[docs]</a><span class="k">class</span> <span class="nc">ClangException</span><span class="p">(</span><span class="n">BadCodeException</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    clang error.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="CodeAnalysisException"><a class="viewcode-back" href="../../api.html#clgen.preprocess.CodeAnalysisException">[docs]</a><span class="k">class</span> <span class="nc">CodeAnalysisException</span><span class="p">(</span><span class="n">BadCodeException</span><span class="p">):</span>
+<div class="viewcode-block" id="CodeAnalysisException"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.CodeAnalysisException">[docs]</a><span class="k">class</span> <span class="nc">CodeAnalysisException</span><span class="p">(</span><span class="n">BadCodeException</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Code analysis error.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="UglyCodeException"><a class="viewcode-back" href="../../api.html#clgen.preprocess.UglyCodeException">[docs]</a><span class="k">class</span> <span class="nc">UglyCodeException</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
+<div class="viewcode-block" id="UglyCodeException"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.UglyCodeException">[docs]</a><span class="k">class</span> <span class="nc">UglyCodeException</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Code is ugly.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="InstructionCountException"><a class="viewcode-back" href="../../api.html#clgen.preprocess.InstructionCountException">[docs]</a><span class="k">class</span> <span class="nc">InstructionCountException</span><span class="p">(</span><span class="n">UglyCodeException</span><span class="p">):</span>
+<div class="viewcode-block" id="InstructionCountException"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.InstructionCountException">[docs]</a><span class="k">class</span> <span class="nc">InstructionCountException</span><span class="p">(</span><span class="n">UglyCodeException</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Instruction count error.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="RewriterException"><a class="viewcode-back" href="../../api.html#clgen.preprocess.RewriterException">[docs]</a><span class="k">class</span> <span class="nc">RewriterException</span><span class="p">(</span><span class="n">UglyCodeException</span><span class="p">):</span>
+<div class="viewcode-block" id="RewriterException"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.RewriterException">[docs]</a><span class="k">class</span> <span class="nc">RewriterException</span><span class="p">(</span><span class="n">UglyCodeException</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Program rewriter error.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -174,7 +174,7 @@
 <span class="p">]</span>
 
 
-<div class="viewcode-block" id="clang_cl_args"><a class="viewcode-back" href="../../api.html#clgen.preprocess.clang_cl_args">[docs]</a><span class="k">def</span> <span class="nf">clang_cl_args</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">CLANG_CL_TARGETS</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+<div class="viewcode-block" id="clang_cl_args"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.clang_cl_args">[docs]</a><span class="k">def</span> <span class="nf">clang_cl_args</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">CLANG_CL_TARGETS</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
                   <span class="n">use_shim</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">error_limit</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the Clang args to compile OpenCL.</span>
@@ -208,7 +208,7 @@
     <span class="k">return</span> <span class="n">args</span></div>
 
 
-<div class="viewcode-block" id="compiler_preprocess_cl"><a class="viewcode-back" href="../../api.html#clgen.preprocess.compiler_preprocess_cl">[docs]</a><span class="k">def</span> <span class="nf">compiler_preprocess_cl</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">,</span> <span class="n">use_shim</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="compiler_preprocess_cl"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.compiler_preprocess_cl">[docs]</a><span class="k">def</span> <span class="nf">compiler_preprocess_cl</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">,</span> <span class="n">use_shim</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Preprocess OpenCL file.</span>
 
@@ -251,7 +251,7 @@
     <span class="k">return</span> <span class="n">src</span></div>
 
 
-<div class="viewcode-block" id="rewrite_cl"><a class="viewcode-back" href="../../api.html#clgen.preprocess.rewrite_cl">[docs]</a><span class="k">def</span> <span class="nf">rewrite_cl</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">,</span> <span class="n">use_shim</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="rewrite_cl"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.rewrite_cl">[docs]</a><span class="k">def</span> <span class="nf">rewrite_cl</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">,</span> <span class="n">use_shim</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Rewrite OpenCL sources.</span>
 
@@ -298,7 +298,7 @@
     <span class="k">return</span> <span class="n">stripped</span></div>
 
 
-<div class="viewcode-block" id="compile_cl_bytecode"><a class="viewcode-back" href="../../api.html#clgen.preprocess.compile_cl_bytecode">[docs]</a><span class="k">def</span> <span class="nf">compile_cl_bytecode</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">,</span> <span class="n">use_shim</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="compile_cl_bytecode"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.compile_cl_bytecode">[docs]</a><span class="k">def</span> <span class="nf">compile_cl_bytecode</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">,</span> <span class="n">use_shim</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compile OpenCL kernel to LLVM bytecode.</span>
 
@@ -329,7 +329,7 @@
     <span class="s2">r&quot;^(?P&lt;count&gt;\d+) instcount - Number of (?P&lt;type&gt;.+)&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="parse_instcounts"><a class="viewcode-back" href="../../api.html#clgen.preprocess.parse_instcounts">[docs]</a><span class="k">def</span> <span class="nf">parse_instcounts</span><span class="p">(</span><span class="n">txt</span><span class="p">):</span>
+<div class="viewcode-block" id="parse_instcounts"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.parse_instcounts">[docs]</a><span class="k">def</span> <span class="nf">parse_instcounts</span><span class="p">(</span><span class="n">txt</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parse LLVM opt instruction counts pass.</span>
 
@@ -365,7 +365,7 @@
 <span class="n">_sql_sub_chars</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;-&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="escape_sql_key"><a class="viewcode-back" href="../../api.html#clgen.preprocess.escape_sql_key">[docs]</a><span class="k">def</span> <span class="nf">escape_sql_key</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+<div class="viewcode-block" id="escape_sql_key"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.escape_sql_key">[docs]</a><span class="k">def</span> <span class="nf">escape_sql_key</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Escape SQL key.</span>
 
@@ -379,7 +379,7 @@
                   <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">_sql_rm_chars</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">))))</span></div>
 
 
-<div class="viewcode-block" id="instcounts2ratios"><a class="viewcode-back" href="../../api.html#clgen.preprocess.instcounts2ratios">[docs]</a><span class="k">def</span> <span class="nf">instcounts2ratios</span><span class="p">(</span><span class="n">counts</span><span class="p">):</span>
+<div class="viewcode-block" id="instcounts2ratios"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.instcounts2ratios">[docs]</a><span class="k">def</span> <span class="nf">instcounts2ratios</span><span class="p">(</span><span class="n">counts</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert instruction counts to instruction densities.</span>
 
@@ -415,7 +415,7 @@
     <span class="k">return</span> <span class="n">ratios</span></div>
 
 
-<div class="viewcode-block" id="sql_insert_dict"><a class="viewcode-back" href="../../api.html#clgen.preprocess.sql_insert_dict">[docs]</a><span class="k">def</span> <span class="nf">sql_insert_dict</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="sql_insert_dict"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.sql_insert_dict">[docs]</a><span class="k">def</span> <span class="nf">sql_insert_dict</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Insert a dict of key value pairs into an SQL table.</span>
 
@@ -434,7 +434,7 @@
     <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span></div>
 
 
-<div class="viewcode-block" id="bytecode_features"><a class="viewcode-back" href="../../api.html#clgen.preprocess.bytecode_features">[docs]</a><span class="k">def</span> <span class="nf">bytecode_features</span><span class="p">(</span><span class="n">bc</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="bytecode_features"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.bytecode_features">[docs]</a><span class="k">def</span> <span class="nf">bytecode_features</span><span class="p">(</span><span class="n">bc</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extract features from bytecode.</span>
 
@@ -481,7 +481,7 @@
 <span class="p">}</span>
 
 
-<div class="viewcode-block" id="clangformat_ocl"><a class="viewcode-back" href="../../api.html#clgen.preprocess.clangformat_ocl">[docs]</a><span class="k">def</span> <span class="nf">clangformat_ocl</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="clangformat_ocl"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.clangformat_ocl">[docs]</a><span class="k">def</span> <span class="nf">clangformat_ocl</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Enforce code style on OpenCL file.</span>
 
@@ -508,7 +508,7 @@
     <span class="k">return</span> <span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="print_bytecode_features"><a class="viewcode-back" href="../../api.html#clgen.preprocess.print_bytecode_features">[docs]</a><span class="k">def</span> <span class="nf">print_bytecode_features</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
+<div class="viewcode-block" id="print_bytecode_features"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.print_bytecode_features">[docs]</a><span class="k">def</span> <span class="nf">print_bytecode_features</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print Bytecode features.</span>
 
@@ -536,7 +536,7 @@
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;        &#39;</span><span class="p">,</span> <span class="n">feature</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="verify_bytecode_features"><a class="viewcode-back" href="../../api.html#clgen.preprocess.verify_bytecode_features">[docs]</a><span class="k">def</span> <span class="nf">verify_bytecode_features</span><span class="p">(</span><span class="n">bc_features</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="verify_bytecode_features"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.verify_bytecode_features">[docs]</a><span class="k">def</span> <span class="nf">verify_bytecode_features</span><span class="p">(</span><span class="n">bc_features</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Verify LLVM bytecode features.</span>
 
@@ -561,7 +561,7 @@
             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_instructions</span><span class="p">,</span> <span class="n">min_num_instructions</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="sanitize_prototype"><a class="viewcode-back" href="../../api.html#clgen.preprocess.sanitize_prototype">[docs]</a><span class="k">def</span> <span class="nf">sanitize_prototype</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
+<div class="viewcode-block" id="sanitize_prototype"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.sanitize_prototype">[docs]</a><span class="k">def</span> <span class="nf">sanitize_prototype</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sanitize OpenCL prototype.</span>
 
@@ -588,7 +588,7 @@
         <span class="k">return</span> <span class="n">src</span></div>
 
 
-<div class="viewcode-block" id="preprocess"><a class="viewcode-back" href="../../api.html#clgen.preprocess.preprocess">[docs]</a><span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">,</span> <span class="n">use_shim</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="preprocess"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.preprocess">[docs]</a><span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">,</span> <span class="n">use_shim</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Preprocess an OpenCL source. There are three possible outcomes:</span>
 
@@ -672,7 +672,7 @@
     <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="preprocess_contentfiles"><a class="viewcode-back" href="../../api.html#clgen.preprocess.preprocess_contentfiles">[docs]</a><span class="k">def</span> <span class="nf">preprocess_contentfiles</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">max_num_workers</span><span class="o">=</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">*</span> <span class="mi">4</span><span class="p">):</span>
+<div class="viewcode-block" id="preprocess_contentfiles"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.preprocess_contentfiles">[docs]</a><span class="k">def</span> <span class="nf">preprocess_contentfiles</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">max_num_workers</span><span class="o">=</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">*</span> <span class="mi">4</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Preprocess OpenCL dataset.</span>
 
@@ -728,7 +728,7 @@
     <span class="n">_finalize</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">cache</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="preprocess_file"><a class="viewcode-back" href="../../api.html#clgen.preprocess.preprocess_file">[docs]</a><span class="k">def</span> <span class="nf">preprocess_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="preprocess_file"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.preprocess_file">[docs]</a><span class="k">def</span> <span class="nf">preprocess_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Preprocess a file.</span>
 
@@ -760,7 +760,7 @@
     <span class="n">preprocess_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="preprocess_inplace"><a class="viewcode-back" href="../../api.html#clgen.preprocess.preprocess_inplace">[docs]</a><span class="k">def</span> <span class="nf">preprocess_inplace</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">max_num_workers</span><span class="o">=</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">*</span> <span class="mi">4</span><span class="p">):</span>
+<div class="viewcode-block" id="preprocess_inplace"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.preprocess_inplace">[docs]</a><span class="k">def</span> <span class="nf">preprocess_inplace</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">max_num_workers</span><span class="o">=</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">*</span> <span class="mi">4</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Preprocess a list of files in place.</span>
 
@@ -775,7 +775,7 @@
         <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">_preprocess_inplace_worker</span><span class="p">,</span> <span class="n">paths</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="preprocess_db"><a class="viewcode-back" href="../../api.html#clgen.preprocess.preprocess_db">[docs]</a><span class="k">def</span> <span class="nf">preprocess_db</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
+<div class="viewcode-block" id="preprocess_db"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.preprocess_db">[docs]</a><span class="k">def</span> <span class="nf">preprocess_db</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Preprocess database contents.</span>
 
@@ -796,7 +796,7 @@
         <span class="k">return</span> <span class="kc">False</span></div>
 
 
-<div class="viewcode-block" id="remove_bad_preprocessed"><a class="viewcode-back" href="../../api.html#clgen.preprocess.remove_bad_preprocessed">[docs]</a><span class="k">def</span> <span class="nf">remove_bad_preprocessed</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
+<div class="viewcode-block" id="remove_bad_preprocessed"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.remove_bad_preprocessed">[docs]</a><span class="k">def</span> <span class="nf">remove_bad_preprocessed</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Remove all ugly and bad contents from PreprocessedFiles table.</span>
 

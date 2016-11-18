@@ -107,21 +107,21 @@
     <span class="kn">import</span> <span class="nn">pyopencl</span> <span class="k">as</span> <span class="nn">cl</span>
 
 
-<div class="viewcode-block" id="CLDriveException"><a class="viewcode-back" href="../../api.html#clgen.cldrive.CLDriveException">[docs]</a><span class="k">class</span> <span class="nc">CLDriveException</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
+<div class="viewcode-block" id="CLDriveException"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.CLDriveException">[docs]</a><span class="k">class</span> <span class="nc">CLDriveException</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Module error.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="OpenCLDriverException"><a class="viewcode-back" href="../../api.html#clgen.cldrive.OpenCLDriverException">[docs]</a><span class="k">class</span> <span class="nc">OpenCLDriverException</span><span class="p">(</span><span class="n">CLDriveException</span><span class="p">):</span>
+<div class="viewcode-block" id="OpenCLDriverException"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.OpenCLDriverException">[docs]</a><span class="k">class</span> <span class="nc">OpenCLDriverException</span><span class="p">(</span><span class="n">CLDriveException</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Error from OpenCL driver.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="OpenCLNotSupported"><a class="viewcode-back" href="../../api.html#clgen.cldrive.OpenCLNotSupported">[docs]</a><span class="k">class</span> <span class="nc">OpenCLNotSupported</span><span class="p">(</span><span class="n">OpenCLDriverException</span><span class="p">):</span>
+<div class="viewcode-block" id="OpenCLNotSupported"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.OpenCLNotSupported">[docs]</a><span class="k">class</span> <span class="nc">OpenCLNotSupported</span><span class="p">(</span><span class="n">OpenCLDriverException</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Thrown if attempting to use OpenCL, but CLgen is configured with OpenCL</span>
 <span class="sd">    support enabled.</span>
@@ -129,77 +129,77 @@
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="KernelDriverException"><a class="viewcode-back" href="../../api.html#clgen.cldrive.KernelDriverException">[docs]</a><span class="k">class</span> <span class="nc">KernelDriverException</span><span class="p">(</span><span class="n">CLDriveException</span><span class="p">):</span>
+<div class="viewcode-block" id="KernelDriverException"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelDriverException">[docs]</a><span class="k">class</span> <span class="nc">KernelDriverException</span><span class="p">(</span><span class="n">CLDriveException</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Kernel driver exception.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="E_BAD_CODE"><a class="viewcode-back" href="../../api.html#clgen.cldrive.E_BAD_CODE">[docs]</a><span class="k">class</span> <span class="nc">E_BAD_CODE</span><span class="p">(</span><span class="n">KernelDriverException</span><span class="p">):</span>
+<div class="viewcode-block" id="E_BAD_CODE"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.E_BAD_CODE">[docs]</a><span class="k">class</span> <span class="nc">E_BAD_CODE</span><span class="p">(</span><span class="n">KernelDriverException</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Thrown for bad code.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="E_UGLY_CODE"><a class="viewcode-back" href="../../api.html#clgen.cldrive.E_UGLY_CODE">[docs]</a><span class="k">class</span> <span class="nc">E_UGLY_CODE</span><span class="p">(</span><span class="n">KernelDriverException</span><span class="p">):</span>
+<div class="viewcode-block" id="E_UGLY_CODE"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.E_UGLY_CODE">[docs]</a><span class="k">class</span> <span class="nc">E_UGLY_CODE</span><span class="p">(</span><span class="n">KernelDriverException</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Thrown for ugly code.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="E_BAD_DRIVER"><a class="viewcode-back" href="../../api.html#clgen.cldrive.E_BAD_DRIVER">[docs]</a><span class="k">class</span> <span class="nc">E_BAD_DRIVER</span><span class="p">(</span><span class="n">KernelDriverException</span><span class="p">):</span>
+<div class="viewcode-block" id="E_BAD_DRIVER"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.E_BAD_DRIVER">[docs]</a><span class="k">class</span> <span class="nc">E_BAD_DRIVER</span><span class="p">(</span><span class="n">KernelDriverException</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Thrown in case of CLdrive errors.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="E_BAD_ARGS"><a class="viewcode-back" href="../../api.html#clgen.cldrive.E_BAD_ARGS">[docs]</a><span class="k">class</span> <span class="nc">E_BAD_ARGS</span><span class="p">(</span><span class="n">E_BAD_DRIVER</span><span class="p">):</span>
+<div class="viewcode-block" id="E_BAD_ARGS"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.E_BAD_ARGS">[docs]</a><span class="k">class</span> <span class="nc">E_BAD_ARGS</span><span class="p">(</span><span class="n">E_BAD_DRIVER</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Kernel has invalid arguments.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="E_BAD_PROFILE"><a class="viewcode-back" href="../../api.html#clgen.cldrive.E_BAD_PROFILE">[docs]</a><span class="k">class</span> <span class="nc">E_BAD_PROFILE</span><span class="p">(</span><span class="n">E_BAD_DRIVER</span><span class="p">):</span>
+<div class="viewcode-block" id="E_BAD_PROFILE"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.E_BAD_PROFILE">[docs]</a><span class="k">class</span> <span class="nc">E_BAD_PROFILE</span><span class="p">(</span><span class="n">E_BAD_DRIVER</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    OpenCL profiling failed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="E_NON_TERMINATING"><a class="viewcode-back" href="../../api.html#clgen.cldrive.E_NON_TERMINATING">[docs]</a><span class="k">class</span> <span class="nc">E_NON_TERMINATING</span><span class="p">(</span><span class="n">E_BAD_CODE</span><span class="p">):</span>
+<div class="viewcode-block" id="E_NON_TERMINATING"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.E_NON_TERMINATING">[docs]</a><span class="k">class</span> <span class="nc">E_NON_TERMINATING</span><span class="p">(</span><span class="n">E_BAD_CODE</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Kernel did not terminate.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="E_INPUT_INSENSITIVE"><a class="viewcode-back" href="../../api.html#clgen.cldrive.E_INPUT_INSENSITIVE">[docs]</a><span class="k">class</span> <span class="nc">E_INPUT_INSENSITIVE</span><span class="p">(</span><span class="n">E_UGLY_CODE</span><span class="p">):</span>
+<div class="viewcode-block" id="E_INPUT_INSENSITIVE"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.E_INPUT_INSENSITIVE">[docs]</a><span class="k">class</span> <span class="nc">E_INPUT_INSENSITIVE</span><span class="p">(</span><span class="n">E_UGLY_CODE</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Kernel is input insensitive.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="E_NO_OUTPUTS"><a class="viewcode-back" href="../../api.html#clgen.cldrive.E_NO_OUTPUTS">[docs]</a><span class="k">class</span> <span class="nc">E_NO_OUTPUTS</span><span class="p">(</span><span class="n">E_UGLY_CODE</span><span class="p">):</span>
+<div class="viewcode-block" id="E_NO_OUTPUTS"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.E_NO_OUTPUTS">[docs]</a><span class="k">class</span> <span class="nc">E_NO_OUTPUTS</span><span class="p">(</span><span class="n">E_UGLY_CODE</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Kernel does not compute an output.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="E_NONDETERMINISTIC"><a class="viewcode-back" href="../../api.html#clgen.cldrive.E_NONDETERMINISTIC">[docs]</a><span class="k">class</span> <span class="nc">E_NONDETERMINISTIC</span><span class="p">(</span><span class="n">E_UGLY_CODE</span><span class="p">):</span>
+<div class="viewcode-block" id="E_NONDETERMINISTIC"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.E_NONDETERMINISTIC">[docs]</a><span class="k">class</span> <span class="nc">E_NONDETERMINISTIC</span><span class="p">(</span><span class="n">E_UGLY_CODE</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Kernel is nondeterministic.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="assert_device_type"><a class="viewcode-back" href="../../api.html#clgen.cldrive.assert_device_type">[docs]</a><span class="k">def</span> <span class="nf">assert_device_type</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">devtype</span><span class="p">):</span>
+<div class="viewcode-block" id="assert_device_type"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.assert_device_type">[docs]</a><span class="k">def</span> <span class="nf">assert_device_type</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">devtype</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check that device type matches.</span>
 
@@ -216,7 +216,7 @@
                                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">received</span><span class="p">,</span> <span class="n">requested</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="hang_requires_restart"><a class="viewcode-back" href="../../api.html#clgen.cldrive.hang_requires_restart">[docs]</a><span class="k">def</span> <span class="nf">hang_requires_restart</span><span class="p">():</span>
+<div class="viewcode-block" id="hang_requires_restart"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.hang_requires_restart">[docs]</a><span class="k">def</span> <span class="nf">hang_requires_restart</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Does an OpenCL kernel hang require a system restart?</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -224,7 +224,7 @@
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="init_opencl"><a class="viewcode-back" href="../../api.html#clgen.cldrive.init_opencl">[docs]</a><span class="k">def</span> <span class="nf">init_opencl</span><span class="p">(</span><span class="n">devtype</span><span class="o">=</span><span class="s2">&quot;__placeholder__&quot;</span><span class="p">,</span> <span class="n">queue_flags</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="init_opencl"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.init_opencl">[docs]</a><span class="k">def</span> <span class="nf">init_opencl</span><span class="p">(</span><span class="n">devtype</span><span class="o">=</span><span class="s2">&quot;__placeholder__&quot;</span><span class="p">,</span> <span class="n">queue_flags</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Initialise an OpenCL context with some command queue.</span>
 
@@ -268,7 +268,7 @@
     <span class="k">return</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">queue</span></div>
 
 
-<div class="viewcode-block" id="get_event_time"><a class="viewcode-back" href="../../api.html#clgen.cldrive.get_event_time">[docs]</a><span class="k">def</span> <span class="nf">get_event_time</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="get_event_time"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.get_event_time">[docs]</a><span class="k">def</span> <span class="nf">get_event_time</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Block until OpenCL event has completed and return time delta</span>
 <span class="sd">    between event submission and end, in milliseconds.</span>
@@ -291,7 +291,7 @@
         <span class="k">raise</span> <span class="n">E_BAD_PROFILE</span></div>
 
 
-<div class="viewcode-block" id="KernelDriver"><a class="viewcode-back" href="../../api.html#clgen.cldrive.KernelDriver">[docs]</a><span class="k">class</span> <span class="nc">KernelDriver</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
+<div class="viewcode-block" id="KernelDriver"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelDriver">[docs]</a><span class="k">class</span> <span class="nc">KernelDriver</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    OpenCL Kernel driver. Drives a single OpenCL kernel.</span>
 
@@ -375,7 +375,7 @@
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span>
 
-<div class="viewcode-block" id="KernelDriver.validate"><a class="viewcode-back" href="../../api.html#clgen.cldrive.KernelDriver.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">16</span><span class="p">):</span>
+<div class="viewcode-block" id="KernelDriver.validate"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelDriver.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">16</span><span class="p">):</span>
         <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">queue</span><span class="p">)</span> <span class="o">==</span> <span class="n">cl</span><span class="o">.</span><span class="n">CommandQueue</span><span class="p">)</span>
 
         <span class="k">def</span> <span class="nf">assert_constraint</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">err</span><span class="o">=</span><span class="n">CLDriveException</span><span class="p">):</span>
@@ -412,7 +412,7 @@
         <span class="n">assert_constraint</span><span class="p">(</span><span class="n">A1in</span> <span class="o">!=</span> <span class="n">A1out</span><span class="p">,</span> <span class="n">E_NO_OUTPUTS</span><span class="p">)</span>
         <span class="n">assert_constraint</span><span class="p">(</span><span class="n">B1in</span> <span class="o">!=</span> <span class="n">B1out</span><span class="p">,</span> <span class="n">E_NO_OUTPUTS</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="KernelDriver.profile"><a class="viewcode-back" href="../../api.html#clgen.cldrive.KernelDriver.profile">[docs]</a>    <span class="k">def</span> <span class="nf">profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">must_validate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<div class="viewcode-block" id="KernelDriver.profile"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelDriver.profile">[docs]</a>    <span class="k">def</span> <span class="nf">profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">must_validate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                 <span class="n">out</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">metaout</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="n">min_num_iterations</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Output format (CSV):</span>
@@ -505,7 +505,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_runtimes</span>
 
     <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="KernelDriver.build_program"><a class="viewcode-back" href="../../api.html#clgen.cldrive.KernelDriver.build_program">[docs]</a>    <span class="k">def</span> <span class="nf">build_program</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="KernelDriver.build_program"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelDriver.build_program">[docs]</a>    <span class="k">def</span> <span class="nf">build_program</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compile an OpenCL program.</span>
 
@@ -534,7 +534,7 @@
             <span class="k">raise</span> <span class="n">E_BAD_CODE</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="KernelPayload"><a class="viewcode-back" href="../../api.html#clgen.cldrive.KernelPayload">[docs]</a><span class="k">class</span> <span class="nc">KernelPayload</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
+<div class="viewcode-block" id="KernelPayload"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelPayload">[docs]</a><span class="k">class</span> <span class="nc">KernelPayload</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstraction of data for OpenCL kernel.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -632,7 +632,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
 
-<div class="viewcode-block" id="KernelPayload.device_to_host"><a class="viewcode-back" href="../../api.html#clgen.cldrive.KernelPayload.device_to_host">[docs]</a>    <span class="k">def</span> <span class="nf">device_to_host</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
+<div class="viewcode-block" id="KernelPayload.device_to_host"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelPayload.device_to_host">[docs]</a>    <span class="k">def</span> <span class="nf">device_to_host</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Transfer payload from device to host.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -649,7 +649,7 @@
 
         <span class="k">return</span> <span class="n">elapsed</span></div>
 
-<div class="viewcode-block" id="KernelPayload.host_to_device"><a class="viewcode-back" href="../../api.html#clgen.cldrive.KernelPayload.host_to_device">[docs]</a>    <span class="k">def</span> <span class="nf">host_to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
+<div class="viewcode-block" id="KernelPayload.host_to_device"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelPayload.host_to_device">[docs]</a>    <span class="k">def</span> <span class="nf">host_to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Transfer payload from host to device.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -778,7 +778,7 @@
         <span class="k">return</span> <span class="n">KernelPayload</span><span class="p">(</span><span class="n">driver</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="p">(</span><span class="n">size</span><span class="p">,),</span> <span class="n">transfer</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="KernelPayload.create_sequential"><a class="viewcode-back" href="../../api.html#clgen.cldrive.KernelPayload.create_sequential">[docs]</a>    <span class="k">def</span> <span class="nf">create_sequential</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+<div class="viewcode-block" id="KernelPayload.create_sequential"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelPayload.create_sequential">[docs]</a>    <span class="k">def</span> <span class="nf">create_sequential</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a payload of sequential values.</span>
 
@@ -792,7 +792,7 @@
         <span class="k">return</span> <span class="n">KernelPayload</span><span class="o">.</span><span class="n">_create_payload</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">,</span> <span class="n">driver</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span></div>
 
     <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="KernelPayload.create_random"><a class="viewcode-back" href="../../api.html#clgen.cldrive.KernelPayload.create_random">[docs]</a>    <span class="k">def</span> <span class="nf">create_random</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+<div class="viewcode-block" id="KernelPayload.create_random"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelPayload.create_random">[docs]</a>    <span class="k">def</span> <span class="nf">create_random</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a payload of random values.</span>
 
@@ -806,7 +806,7 @@
         <span class="k">return</span> <span class="n">KernelPayload</span><span class="o">.</span><span class="n">_create_payload</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">,</span> <span class="n">driver</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="kernel"><a class="viewcode-back" href="../../api.html#clgen.cldrive.kernel">[docs]</a><span class="k">def</span> <span class="nf">kernel</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;&lt;stdin&gt;&#39;</span><span class="p">,</span> <span class="n">devtype</span><span class="o">=</span><span class="s2">&quot;__placeholder__&quot;</span><span class="p">,</span>
+<div class="viewcode-block" id="kernel"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.kernel">[docs]</a><span class="k">def</span> <span class="nf">kernel</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;&lt;stdin&gt;&#39;</span><span class="p">,</span> <span class="n">devtype</span><span class="o">=</span><span class="s2">&quot;__placeholder__&quot;</span><span class="p">,</span>
            <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">must_validate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fatal_errors</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Drive a kernel.</span>
@@ -849,7 +849,7 @@
      <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stderr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">line</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="file"><a class="viewcode-back" href="../../api.html#clgen.cldrive.file">[docs]</a><span class="k">def</span> <span class="nf">file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="file"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.file">[docs]</a><span class="k">def</span> <span class="nf">file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Drive an OpenCL kernel file.</span>
 

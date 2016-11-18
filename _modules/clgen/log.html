@@ -86,7 +86,7 @@
     <span class="k">return</span> <span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">])</span>
 
 
-<div class="viewcode-block" id="init"><a class="viewcode-back" href="../../api.html#clgen.log.init">[docs]</a><span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="init"><a class="viewcode-back" href="../../api/index.html#clgen.log.init">[docs]</a><span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Initialiaze the logging engine.</span>
 
@@ -97,7 +97,7 @@
     <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="debug"><a class="viewcode-back" href="../../api.html#clgen.log.debug">[docs]</a><span class="k">def</span> <span class="nf">debug</span><span class="p">(</span><span class="o">*</span><span class="n">msg</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
+<div class="viewcode-block" id="debug"><a class="viewcode-back" href="../../api/index.html#clgen.log.debug">[docs]</a><span class="k">def</span> <span class="nf">debug</span><span class="p">(</span><span class="o">*</span><span class="n">msg</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Debug message.</span>
 
@@ -111,14 +111,14 @@
     <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">_fmt</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">opts</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="verbose"><a class="viewcode-back" href="../../api.html#clgen.log.verbose">[docs]</a><span class="k">def</span> <span class="nf">verbose</span><span class="p">(</span><span class="o">*</span><span class="n">msg</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
+<div class="viewcode-block" id="verbose"><a class="viewcode-back" href="../../api/index.html#clgen.log.verbose">[docs]</a><span class="k">def</span> <span class="nf">verbose</span><span class="p">(</span><span class="o">*</span><span class="n">msg</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calls debug().</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">debug</span><span class="p">(</span><span class="o">*</span><span class="n">msg</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="info"><a class="viewcode-back" href="../../api.html#clgen.log.info">[docs]</a><span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="o">*</span><span class="n">msg</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
+<div class="viewcode-block" id="info"><a class="viewcode-back" href="../../api/index.html#clgen.log.info">[docs]</a><span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="o">*</span><span class="n">msg</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Info message.</span>
 
@@ -131,7 +131,7 @@
     <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">_fmt</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">opts</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="warning"><a class="viewcode-back" href="../../api.html#clgen.log.warning">[docs]</a><span class="k">def</span> <span class="nf">warning</span><span class="p">(</span><span class="o">*</span><span class="n">msg</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
+<div class="viewcode-block" id="warning"><a class="viewcode-back" href="../../api/index.html#clgen.log.warning">[docs]</a><span class="k">def</span> <span class="nf">warning</span><span class="p">(</span><span class="o">*</span><span class="n">msg</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Warning message.</span>
 
@@ -144,7 +144,7 @@
     <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;warning: &quot;</span> <span class="o">+</span> <span class="n">_fmt</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">opts</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="error"><a class="viewcode-back" href="../../api.html#clgen.log.error">[docs]</a><span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="o">*</span><span class="n">msg</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
+<div class="viewcode-block" id="error"><a class="viewcode-back" href="../../api/index.html#clgen.log.error">[docs]</a><span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="o">*</span><span class="n">msg</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Error message.</span>
 
@@ -157,7 +157,7 @@
     <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;error: &quot;</span> <span class="o">+</span> <span class="n">_fmt</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">opts</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="fatal"><a class="viewcode-back" href="../../api.html#clgen.log.fatal">[docs]</a><span class="k">def</span> <span class="nf">fatal</span><span class="p">(</span><span class="o">*</span><span class="n">msg</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
+<div class="viewcode-block" id="fatal"><a class="viewcode-back" href="../../api/index.html#clgen.log.fatal">[docs]</a><span class="k">def</span> <span class="nf">fatal</span><span class="p">(</span><span class="o">*</span><span class="n">msg</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fatal error.</span>
 
