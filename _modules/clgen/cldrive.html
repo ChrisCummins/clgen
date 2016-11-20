@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.cldrive &#8212; clgen 0.1.6 documentation</title>
+    <title>clgen.cldrive &#8212; clgen 0.1.7 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.6',
+        VERSION:     '0.1.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="top" title="clgen 0.1.6 documentation" href="../../index.html" />
+    <link rel="top" title="clgen 0.1.7 documentation" href="../../index.html" />
     <link rel="up" title="clgen" href="../clgen.html" /> 
   </head>
   <body role="document">
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.1.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.1.7 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -129,6 +129,13 @@
     <span class="k">pass</span></div>
 
 
+<div class="viewcode-block" id="OpenCLDeviceNotFound"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.OpenCLDeviceNotFound">[docs]</a><span class="k">class</span> <span class="nc">OpenCLDeviceNotFound</span><span class="p">(</span><span class="n">OpenCLDriverException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Could not find a matching device.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
 <div class="viewcode-block" id="KernelDriverException"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelDriverException">[docs]</a><span class="k">class</span> <span class="nc">KernelDriverException</span><span class="p">(</span><span class="n">CLDriveException</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Kernel driver exception.</span>
@@ -199,21 +206,19 @@
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="assert_device_type"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.assert_device_type">[docs]</a><span class="k">def</span> <span class="nf">assert_device_type</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">devtype</span><span class="p">):</span>
+<div class="viewcode-block" id="device_type_matches"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.device_type_matches">[docs]</a><span class="k">def</span> <span class="nf">device_type_matches</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">devtype</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check that device type matches.</span>
 
-<span class="sd">    Raises:</span>
+<span class="sd">    Arguments:</span>
+<span class="sd">        device (pyopencl.Device): Device.</span>
+<span class="sd">        devtype (cl.device_info.TYPE): Requested device type.</span>
 
-<span class="sd">        OpenCLDriverException: If device type does not match argument.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if device is of type devtype, else False.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">actual</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">TYPE</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">actual</span> <span class="o">!=</span> <span class="n">devtype</span><span class="p">:</span>
-        <span class="n">requested</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">device_type</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">devtype</span><span class="p">)</span>
-        <span class="n">received</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">device_type</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">actual</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="n">OpenCLDriverException</span><span class="p">(</span><span class="s2">&quot;Device type &#39;</span><span class="si">{}</span><span class="s2">&#39; does not match &quot;</span>
-                                    <span class="s2">&quot;requested &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span>
-                                    <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">received</span><span class="p">,</span> <span class="n">requested</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="n">actual</span> <span class="o">==</span> <span class="n">devtype</span></div>
 
 
 <div class="viewcode-block" id="hang_requires_restart"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.hang_requires_restart">[docs]</a><span class="k">def</span> <span class="nf">hang_requires_restart</span><span class="p">():</span>
@@ -239,6 +244,7 @@
 
 <span class="sd">        OpenCLNotSupported: If host does not support OpenCL.</span>
 <span class="sd">        OpenCLDriverException: In case of error.</span>
+<span class="sd">        OpenCLDeviceNotFound: If no matching type found.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">cfg</span><span class="o">.</span><span class="n">USE_OPENCL</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">OpenCLNotSupported</span>
@@ -249,23 +255,18 @@
         <span class="n">devtype</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">device_type</span><span class="o">.</span><span class="n">GPU</span>
 
     <span class="n">platforms</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">get_platforms</span><span class="p">()</span>
-    <span class="k">try</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">platform</span> <span class="ow">in</span> <span class="n">platforms</span><span class="p">:</span>
         <span class="n">ctx</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span>
-            <span class="n">dev_type</span><span class="o">=</span><span class="n">devtype</span><span class="p">,</span>
-            <span class="n">properties</span><span class="o">=</span><span class="p">[(</span><span class="n">cl</span><span class="o">.</span><span class="n">context_properties</span><span class="o">.</span><span class="n">PLATFORM</span><span class="p">,</span> <span class="n">platforms</span><span class="p">[</span><span class="mi">0</span><span class="p">])])</span>
-    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">ctx</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">create_some_context</span><span class="p">(</span><span class="n">interactive</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">OpenCLDriverException</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">properties</span><span class="o">=</span><span class="p">[(</span><span class="n">cl</span><span class="o">.</span><span class="n">context_properties</span><span class="o">.</span><span class="n">PLATFORM</span><span class="p">,</span> <span class="n">platform</span><span class="p">)])</span>
+        <span class="n">devices</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">context_info</span><span class="o">.</span><span class="n">DEVICES</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">devices</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">device_type_matches</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">devtype</span><span class="p">):</span>
+                <span class="n">queue_flags</span> <span class="o">|=</span> <span class="n">cl</span><span class="o">.</span><span class="n">command_queue_properties</span><span class="o">.</span><span class="n">PROFILING_ENABLE</span>
+                <span class="n">queue</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">CommandQueue</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="n">queue_flags</span><span class="p">)</span>
 
-    <span class="c1"># Check that device type is what we expected:</span>
-    <span class="n">device</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">context_info</span><span class="o">.</span><span class="n">DEVICES</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">assert_device_type</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">devtype</span><span class="p">)</span>
-    <span class="n">queue_flags</span> <span class="o">|=</span> <span class="n">cl</span><span class="o">.</span><span class="n">command_queue_properties</span><span class="o">.</span><span class="n">PROFILING_ENABLE</span>
-    <span class="n">queue</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">CommandQueue</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="n">queue_flags</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">queue</span>
 
-    <span class="k">return</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">queue</span></div>
+    <span class="k">raise</span> <span class="n">OpenCLDeviceNotFound</span><span class="p">(</span><span class="s2">&quot;Could not find a suitable device&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="get_event_time"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.get_event_time">[docs]</a><span class="k">def</span> <span class="nf">get_event_time</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
@@ -901,7 +902,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.1.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.1.7 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

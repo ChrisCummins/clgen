@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.fetch &#8212; clgen 0.1.6 documentation</title>
+    <title>clgen.fetch &#8212; clgen 0.1.7 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.6',
+        VERSION:     '0.1.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="top" title="clgen 0.1.6 documentation" href="../../index.html" />
+    <link rel="top" title="clgen 0.1.7 documentation" href="../../index.html" />
     <link rel="up" title="clgen" href="../clgen.html" /> 
   </head>
   <body role="document">
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.1.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.1.7 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -97,7 +97,6 @@
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">clutil</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">dbutil</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">explore</span>
 
 
 <div class="viewcode-block" id="FetchError"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.FetchError">[docs]</a><span class="k">class</span> <span class="nc">FetchError</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
@@ -566,7 +565,7 @@
 
 
 <div class="viewcode-block" id="process_sample_file"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.process_sample_file">[docs]</a><span class="k">def</span> <span class="nf">process_sample_file</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">sample_path</span><span class="p">,</span> <span class="n">first_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                        <span class="n">max_kernel_len</span><span class="o">=</span><span class="mi">5000</span><span class="p">):</span>
+                        <span class="n">max_kernel_len</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fetch from a CLgen sample file.</span>
 
@@ -587,8 +586,9 @@
     <span class="n">tail</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">offset</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="s1">&#39;__kernel void &#39;</span><span class="p">)</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\r\033</span><span class="s1">[Kkernel&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\r\033</span><span class="s1">[Kkernel&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
 
         <span class="c1"># Find the starting index of the next kernel.</span>
         <span class="n">tail</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;__kernel void &#39;</span><span class="p">,</span> <span class="n">tail</span><span class="p">)</span>
@@ -614,10 +614,10 @@
         <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="n">first_only</span><span class="p">:</span>
             <span class="k">break</span>
-    <span class="nb">print</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">()</span>
     <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-    <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="n">explore</span><span class="o">.</span><span class="n">explore</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span></div>
+    <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="clgen_sample"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.clgen_sample">[docs]</a><span class="k">def</span> <span class="nf">clgen_sample</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">samples_dir</span><span class="p">,</span> <span class="n">sample_path</span><span class="p">,</span> <span class="n">first_only</span><span class="p">):</span>
@@ -810,7 +810,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.1.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.1.7 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

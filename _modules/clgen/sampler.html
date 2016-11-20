@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.sampler &#8212; clgen 0.1.6 documentation</title>
+    <title>clgen.sampler &#8212; clgen 0.1.7 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.6',
+        VERSION:     '0.1.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="top" title="clgen 0.1.6 documentation" href="../../index.html" />
+    <link rel="top" title="clgen 0.1.7 documentation" href="../../index.html" />
     <link rel="up" title="clgen" href="../clgen.html" /> 
   </head>
   <body role="document">
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.1.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.1.7 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -85,6 +85,7 @@
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">preprocess</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">torch_rnn</span>
 <span class="kn">from</span> <span class="nn">clgen.cache</span> <span class="k">import</span> <span class="n">Cache</span>
+<span class="kn">from</span> <span class="nn">clgen.explore</span> <span class="k">import</span> <span class="n">explore</span>
 <span class="kn">from</span> <span class="nn">clgen.model</span> <span class="k">import</span> <span class="n">Model</span>
 
 
@@ -190,7 +191,7 @@
         <span class="n">tmppath</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;sample.tmp.cl&quot;</span><span class="p">)</span>
         <span class="n">torch_rnn</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">tmppath</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span>
         <span class="n">fetch</span><span class="o">.</span><span class="n">process_sample_file</span><span class="p">(</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">],</span> <span class="n">tmppath</span><span class="p">,</span>
-                                  <span class="n">max_kernel_len</span><span class="o">=</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;length&quot;</span><span class="p">])</span>
+                                  <span class="n">max_kernel_len</span><span class="o">=</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;length&quot;</span><span class="p">],</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">static_checker</span><span class="p">:</span>
             <span class="c1"># TODO: Parse dynamic checker requirement</span>
@@ -215,11 +216,12 @@
         <span class="n">batch_i</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">batch_i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;beginning batch&quot;</span><span class="p">,</span> <span class="n">batch_i</span><span class="p">,</span> <span class="s2">&quot;...&quot;</span><span class="p">)</span>
 
             <span class="c1"># stop if we have enough kernels</span>
             <span class="n">has_max_kernels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_kernels</span> <span class="o">&gt;=</span> <span class="mi">0</span>
             <span class="n">num_good_kernels</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">num_good_kernels</span><span class="p">(</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span>
-            <span class="k">if</span> <span class="n">has_max_kernels</span> <span class="ow">and</span> <span class="n">num_good_kernels</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_kernels</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">has_max_kernels</span> <span class="ow">and</span> <span class="n">num_good_kernels</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_kernels</span><span class="p">:</span>
                 <span class="k">return</span>
 
             <span class="c1"># stop if we&#39;ve done enough batches</span>
@@ -228,6 +230,9 @@
                 <span class="k">return</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">sample_iteration</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+            <span class="nb">print</span><span class="p">()</span>
+            <span class="n">explore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">(</span><span class="n">model</span><span class="p">)[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;samples database:&quot;</span><span class="p">,</span> <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span></div></div>
 
@@ -281,7 +286,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.1.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.1.7 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

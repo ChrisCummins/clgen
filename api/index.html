@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Python API &#8212; clgen 0.1.6 documentation</title>
+    <title>Python API &#8212; clgen 0.1.7 documentation</title>
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.6',
+        VERSION:     '0.1.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="clgen 0.1.6 documentation" href="../index.html" />
+    <link rel="top" title="clgen 0.1.7 documentation" href="../index.html" />
     <link rel="next" title="Command Line Interface" href="../bin/index.html" />
     <link rel="prev" title="Building the Development Version" href="../installation.html" /> 
   </head>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../installation.html" title="Building the Development Version"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.1.6 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.1.7 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -801,6 +801,12 @@ metaout:  &lt;error&gt; &lt;kernel&gt;</div></blockquote>
 </dd></dl>
 
 <dl class="exception">
+<dt id="clgen.cldrive.OpenCLDeviceNotFound">
+<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">OpenCLDeviceNotFound</code><a class="reference internal" href="../_modules/clgen/cldrive.html#OpenCLDeviceNotFound"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.OpenCLDeviceNotFound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Could not find a matching device.</p>
+</dd></dl>
+
+<dl class="exception">
 <dt id="clgen.cldrive.OpenCLDriverException">
 <em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">OpenCLDriverException</code><a class="reference internal" href="../_modules/clgen/cldrive.html#OpenCLDriverException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.OpenCLDriverException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Error from OpenCL driver.</p>
@@ -814,14 +820,24 @@ support enabled.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="clgen.cldrive.assert_device_type">
-<code class="descclassname">clgen.cldrive.</code><code class="descname">assert_device_type</code><span class="sig-paren">(</span><em>device</em>, <em>devtype</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cldrive.html#assert_device_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.assert_device_type" title="Permalink to this definition">¶</a></dt>
+<dt id="clgen.cldrive.device_type_matches">
+<code class="descclassname">clgen.cldrive.</code><code class="descname">device_type_matches</code><span class="sig-paren">(</span><em>device</em>, <em>devtype</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cldrive.html#device_type_matches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.device_type_matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check that device type matches.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="#clgen.cldrive.OpenCLDriverException" title="clgen.cldrive.OpenCLDriverException"><code class="xref py py-exc docutils literal"><span class="pre">OpenCLDriverException</span></code></a> &#8211; If device type does not match argument.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>device</strong> (<em>pyopencl.Device</em>) &#8211; Device.</li>
+<li><strong>devtype</strong> (<em>cl.device_info.TYPE</em>) &#8211; Requested device type.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True if device is of type devtype, else False.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -885,6 +901,7 @@ OpenCL queue constructor options.</li>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
 <li><a class="reference internal" href="#clgen.cldrive.OpenCLNotSupported" title="clgen.cldrive.OpenCLNotSupported"><code class="xref py py-exc docutils literal"><span class="pre">OpenCLNotSupported</span></code></a> &#8211; If host does not support OpenCL.</li>
 <li><a class="reference internal" href="#clgen.cldrive.OpenCLDriverException" title="clgen.cldrive.OpenCLDriverException"><code class="xref py py-exc docutils literal"><span class="pre">OpenCLDriverException</span></code></a> &#8211; In case of error.</li>
+<li><a class="reference internal" href="#clgen.cldrive.OpenCLDeviceNotFound" title="clgen.cldrive.OpenCLDeviceNotFound"><code class="xref py py-exc docutils literal"><span class="pre">OpenCLDeviceNotFound</span></code></a> &#8211; If no matching type found.</li>
 </ul>
 </td>
 </tr>
@@ -1483,6 +1500,22 @@ kernel.</p>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">OpenCL kernels.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str[]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.clutil.get_contexts_and_devices">
+<code class="descclassname">clgen.clutil.</code><code class="descname">get_contexts_and_devices</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/clutil.html#get_contexts_and_devices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.clutil.get_contexts_and_devices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiate OpenCL contexts for all platforms and return devices.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">pyopencl.Context as key, pyopencl.Device[] as value</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
 </tr>
 </tbody>
 </table>
@@ -2500,7 +2533,7 @@ this:</p>
 
 <dl class="function">
 <dt id="clgen.fetch.process_sample_file">
-<code class="descclassname">clgen.fetch.</code><code class="descname">process_sample_file</code><span class="sig-paren">(</span><em>db_path</em>, <em>sample_path</em>, <em>first_only=False</em>, <em>max_kernel_len=5000</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/fetch.html#process_sample_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.process_sample_file" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.fetch.</code><code class="descname">process_sample_file</code><span class="sig-paren">(</span><em>db_path</em>, <em>sample_path</em>, <em>first_only=False</em>, <em>max_kernel_len=5000</em>, <em>quiet=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/fetch.html#process_sample_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.process_sample_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetch from a CLgen sample file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -3748,7 +3781,7 @@ exits.</p>
         <li class="right" >
           <a href="../installation.html" title="Building the Development Version"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.1.6 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.1.7 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
