@@ -280,6 +280,27 @@
     <span class="k">return</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span></div>
 
 
+<div class="viewcode-block" id="cc"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.cc">[docs]</a><span class="k">def</span> <span class="nf">cc</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="s2">&quot;Contents&quot;</span><span class="p">,</span> <span class="n">condition</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fetch character count of contents in table.</span>
+
+<span class="sd">    Arguments:</span>
+
+<span class="sd">        path (str): Path to database.</span>
+<span class="sd">        table (str): Table ID.</span>
+<span class="sd">        condition (str, optional): Conditional.</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">        int: Num lines.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT CC(</span><span class="si">{column}</span><span class="s2">) FROM </span><span class="si">{table}</span><span class="s2"> </span><span class="si">{condition}</span><span class="s2">&quot;</span>
+              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="n">column</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">,</span> <span class="n">condition</span><span class="o">=</span><span class="n">condition</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="mi">0</span></div>
+
+
 <div class="viewcode-block" id="lc"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.lc">[docs]</a><span class="k">def</span> <span class="nf">lc</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="s2">&quot;Contents&quot;</span><span class="p">,</span> <span class="n">condition</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fetch line count of contents in table.</span>
@@ -298,7 +319,7 @@
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
     <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT LC(</span><span class="si">{column}</span><span class="s2">) FROM </span><span class="si">{table}</span><span class="s2"> </span><span class="si">{condition}</span><span class="s2">&quot;</span>
               <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="n">column</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">,</span> <span class="n">condition</span><span class="o">=</span><span class="n">condition</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span></div>
+    <span class="k">return</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="mi">0</span></div>
 
 
 <div class="viewcode-block" id="remove_preprocessed"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.remove_preprocessed">[docs]</a><span class="k">def</span> <span class="nf">remove_preprocessed</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>

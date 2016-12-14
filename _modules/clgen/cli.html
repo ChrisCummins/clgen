@@ -181,10 +181,12 @@
     <span class="k">except</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="n">__name__</span>  <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">keyboard interrupt, terminating&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># TODO: Print limited stack trace</span>
         <span class="n">log</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="n">__name__</span>  <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">,</span>
                   <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Please report bugs at &lt;&quot;</span>
                   <span class="s2">&quot;https://github.com/ChrisCummins/clgen/issues&gt;&quot;</span><span class="p">)</span></div>

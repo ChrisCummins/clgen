@@ -103,7 +103,9 @@
 </div>
 <div class="section" id="clgen">
 <h2>clgen<a class="headerlink" href="#clgen" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">clgen</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="o">&lt;</span><span class="n">model</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">sampler</span><span class="o">&gt;</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">clgen</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">corpus</span><span class="o">-</span><span class="nb">dir</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">model</span><span class="o">-</span><span class="nb">dir</span><span class="p">]</span>
+             <span class="p">[</span><span class="o">--</span><span class="n">sampler</span><span class="o">-</span><span class="nb">dir</span><span class="p">]</span>
+             <span class="o">&lt;</span><span class="n">model</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">sampler</span><span class="o">&gt;</span>
 
 <span class="n">Generate</span> <span class="n">OpenCL</span> <span class="n">programs</span> <span class="n">using</span> <span class="n">Deep</span> <span class="n">Learning</span><span class="o">.</span>
 
@@ -115,7 +117,8 @@
    <span class="mf">5.</span> <span class="n">The</span> <span class="n">trained</span> <span class="n">model</span> <span class="ow">is</span> <span class="n">sampled</span> <span class="k">for</span> <span class="n">new</span> <span class="n">kernels</span><span class="o">.</span>
 
 <span class="n">This</span> <span class="n">program</span> <span class="n">automates</span> <span class="n">the</span> <span class="n">execution</span> <span class="n">of</span> <span class="nb">all</span> <span class="n">five</span> <span class="n">stages</span> <span class="n">of</span> <span class="n">the</span> <span class="n">pipeline</span><span class="o">.</span>
-<span class="n">The</span> <span class="n">pipeline</span> <span class="n">can</span> <span class="n">be</span> <span class="n">interrupted</span> <span class="ow">and</span> <span class="n">resumed</span> <span class="n">at</span> <span class="nb">any</span> <span class="n">time</span><span class="o">.</span>
+<span class="n">The</span> <span class="n">pipeline</span> <span class="n">can</span> <span class="n">be</span> <span class="n">interrupted</span> <span class="ow">and</span> <span class="n">resumed</span> <span class="n">at</span> <span class="nb">any</span> <span class="n">time</span><span class="o">.</span> <span class="n">Results</span> <span class="n">are</span> <span class="n">cached</span>
+<span class="n">across</span> <span class="n">runs</span><span class="o">.</span>
 
 <span class="n">Copyright</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span> <span class="mi">2016</span> <span class="n">Chris</span> <span class="n">Cummins</span> <span class="o">&lt;</span><span class="n">chrisc</span><span class="o">.</span><span class="mi">101</span><span class="nd">@gmail</span><span class="o">.</span><span class="n">com</span><span class="o">&gt;.</span>
 <span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">chriscummins</span><span class="o">.</span><span class="n">cc</span><span class="o">/</span><span class="n">clgen</span><span class="o">&gt;</span>
@@ -128,6 +131,30 @@
   <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>     <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
   <span class="o">--</span><span class="n">version</span>      <span class="n">show</span> <span class="n">version</span> <span class="n">information</span> <span class="ow">and</span> <span class="n">exit</span>
   <span class="o">-</span><span class="n">v</span><span class="p">,</span> <span class="o">--</span><span class="n">verbose</span>  <span class="n">increase</span> <span class="n">output</span> <span class="n">verbosity</span>
+  <span class="o">--</span><span class="n">corpus</span><span class="o">-</span><span class="nb">dir</span>   <span class="nb">print</span> <span class="n">path</span> <span class="n">to</span> <span class="n">corpus</span> <span class="n">cache</span>
+  <span class="o">--</span><span class="n">model</span><span class="o">-</span><span class="nb">dir</span>    <span class="nb">print</span> <span class="n">path</span> <span class="n">to</span> <span class="n">model</span> <span class="n">cache</span>
+  <span class="o">--</span><span class="n">sampler</span><span class="o">-</span><span class="nb">dir</span>  <span class="nb">print</span> <span class="n">path</span> <span class="n">to</span> <span class="n">sampler</span> <span class="n">cache</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="clgen-atomize">
+<h2>clgen-atomize<a class="headerlink" href="#clgen-atomize" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">clgen</span><span class="o">-</span><span class="n">atomize</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">t</span> <span class="n">TYPE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">s</span><span class="p">]</span> <span class="nb">input</span>
+
+<span class="n">Extract</span> <span class="ow">and</span> <span class="nb">print</span> <span class="n">corpus</span> <span class="n">vocabulary</span><span class="o">.</span>
+
+<span class="n">Copyright</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span> <span class="mi">2016</span> <span class="n">Chris</span> <span class="n">Cummins</span> <span class="o">&lt;</span><span class="n">chrisc</span><span class="o">.</span><span class="mi">101</span><span class="nd">@gmail</span><span class="o">.</span><span class="n">com</span><span class="o">&gt;.</span>
+<span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">chriscummins</span><span class="o">.</span><span class="n">cc</span><span class="o">/</span><span class="n">clgen</span><span class="o">&gt;</span>
+
+<span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="nb">input</span>                 <span class="n">path</span> <span class="n">to</span> <span class="nb">input</span> <span class="n">text</span> <span class="n">file</span>
+
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">--</span><span class="n">version</span>             <span class="n">show</span> <span class="n">version</span> <span class="n">information</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">-</span><span class="n">v</span><span class="p">,</span> <span class="o">--</span><span class="n">verbose</span>         <span class="n">increase</span> <span class="n">output</span> <span class="n">verbosity</span>
+  <span class="o">-</span><span class="n">t</span> <span class="n">TYPE</span><span class="p">,</span> <span class="o">--</span><span class="nb">type</span> <span class="n">TYPE</span>  <span class="n">vocabulary</span> <span class="nb">type</span>
+  <span class="o">-</span><span class="n">s</span><span class="p">,</span> <span class="o">--</span><span class="n">size</span>            <span class="nb">print</span> <span class="n">vocabulary</span> <span class="n">size</span>
 </pre></div>
 </div>
 </div>
@@ -443,6 +470,7 @@ optional arguments:
 <li><a class="reference internal" href="#">Command Line Interface</a><ul>
 <li><a class="reference internal" href="#cldrive">cldrive</a></li>
 <li><a class="reference internal" href="#clgen">clgen</a></li>
+<li><a class="reference internal" href="#clgen-atomize">clgen-atomize</a></li>
 <li><a class="reference internal" href="#clgen-create-db">clgen-create-db</a></li>
 <li><a class="reference internal" href="#clgen-dist">clgen-dist</a></li>
 <li><a class="reference internal" href="#clgen-explore">clgen-explore</a></li>
