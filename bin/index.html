@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Command Line Interface &#8212; clgen 0.2.1 documentation</title>
+    <title>Command Line Interface &#8212; clgen 0.2.2 documentation</title>
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.1',
+        VERSION:     '0.2.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="clgen 0.2.1 documentation" href="../index.html" />
+    <link rel="top" title="clgen 0.2.2 documentation" href="../index.html" />
     <link rel="next" title="License" href="../license.html" />
     <link rel="prev" title="Python API" href="../api/index.html" /> 
   </head>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../api/index.html" title="Python API"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.2 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -391,6 +391,26 @@ optional arguments:
 </pre></div>
 </div>
 </div>
+<div class="section" id="clgen-merge">
+<h2>clgen-merge<a class="headerlink" href="#clgen-merge" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">clgen</span><span class="o">-</span><span class="n">merge</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="n">dataset</span> <span class="p">[</span><span class="n">inputs</span> <span class="p">[</span><span class="n">inputs</span> <span class="o">...</span><span class="p">]]</span>
+
+<span class="n">Merge</span> <span class="n">kernel</span> <span class="n">datasets</span><span class="o">.</span>
+
+<span class="n">Copyright</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span> <span class="mi">2016</span> <span class="n">Chris</span> <span class="n">Cummins</span> <span class="o">&lt;</span><span class="n">chrisc</span><span class="o">.</span><span class="mi">101</span><span class="nd">@gmail</span><span class="o">.</span><span class="n">com</span><span class="o">&gt;.</span>
+<span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">chriscummins</span><span class="o">.</span><span class="n">cc</span><span class="o">/</span><span class="n">clgen</span><span class="o">&gt;</span>
+
+<span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="n">dataset</span>        <span class="n">path</span> <span class="n">to</span> <span class="n">output</span> <span class="n">dataset</span>
+  <span class="n">inputs</span>         <span class="n">path</span> <span class="n">to</span> <span class="nb">input</span> <span class="n">datasets</span>
+
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>     <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">--</span><span class="n">version</span>      <span class="n">show</span> <span class="n">version</span> <span class="n">information</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">-</span><span class="n">v</span><span class="p">,</span> <span class="o">--</span><span class="n">verbose</span>  <span class="n">increase</span> <span class="n">output</span> <span class="n">verbosity</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="clgen-preprocess">
 <h2>clgen-preprocess<a class="headerlink" href="#clgen-preprocess" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">clgen</span><span class="o">-</span><span class="n">preprocess</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">f</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">i</span><span class="p">]</span>
@@ -480,6 +500,7 @@ optional arguments:
 <li><a class="reference internal" href="#clgen-fetch-clsmith">clgen-fetch-clsmith</a></li>
 <li><a class="reference internal" href="#clgen-fetch-db">clgen-fetch-db</a></li>
 <li><a class="reference internal" href="#clgen-fetch-github">clgen-fetch-github</a></li>
+<li><a class="reference internal" href="#clgen-merge">clgen-merge</a></li>
 <li><a class="reference internal" href="#clgen-preprocess">clgen-preprocess</a></li>
 <li><a class="reference internal" href="#clgen-train">clgen-train</a></li>
 </ul>
@@ -528,7 +549,7 @@ optional arguments:
         <li class="right" >
           <a href="../api/index.html" title="Python API"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.2 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

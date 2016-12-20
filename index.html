@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Requirements &#8212; clgen 0.2.1 documentation</title>
+    <title>Requirements &#8212; clgen 0.2.2 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.1',
+        VERSION:     '0.2.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="clgen 0.2.1 documentation" href="#" />
+    <link rel="top" title="clgen 0.2.2 documentation" href="#" />
     <link rel="next" title="Building the Development Version" href="installation.html" /> 
   </head>
   <body role="document">
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="installation.html" title="Building the Development Version"
              accesskey="N">next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">clgen 0.2.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">clgen 0.2.2 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -56,7 +56,7 @@
 </div>
 <hr class="docutils" />
 <p class="centered">
-<strong><a class="reference external" href="http://chriscummins.cc/clgen/"><img alt="Documentation Status" src="https://img.shields.io/badge/docs-0.2.1-brightgreen.svg?style=flat" /></a> <a class="reference external" href="https://travis-ci.org/ChrisCummins/clgen"><img alt="Build Status" src="https://img.shields.io/travis/ChrisCummins/clgen/master.svg?style=flat" /></a> <a class="reference external" href="https://coveralls.io/github/ChrisCummins/clgen?branch=master"><img alt="Coverage Status" src="https://img.shields.io/coveralls/ChrisCummins/clgen/master.svg?style=flat" /></a> <a class="reference external" href="https://github.com/ChrisCummins/clgen/releases"><img alt="Release Version" src="https://img.shields.io/badge/release-0.2.1-blue.svg?style=flat" /></a> <a class="reference external" href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img alt="License Badge" src="https://img.shields.io/badge/license-GNU%20GPL%20v3-blue.svg?style=flat" /></a></strong></p><p><strong>CLgen</strong> is an open source application for generating runnable programs using
+<strong><a class="reference external" href="http://chriscummins.cc/clgen/"><img alt="Documentation Status" src="https://img.shields.io/badge/docs-0.2.2-brightgreen.svg?style=flat" /></a> <a class="reference external" href="https://travis-ci.org/ChrisCummins/clgen"><img alt="Build Status" src="https://img.shields.io/travis/ChrisCummins/clgen/master.svg?style=flat" /></a> <a class="reference external" href="https://coveralls.io/github/ChrisCummins/clgen?branch=master"><img alt="Coverage Status" src="https://img.shields.io/coveralls/ChrisCummins/clgen/master.svg?style=flat" /></a> <a class="reference external" href="https://github.com/ChrisCummins/clgen/releases"><img alt="Release Version" src="https://img.shields.io/badge/release-0.2.2-blue.svg?style=flat" /></a> <a class="reference external" href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img alt="License Badge" src="https://img.shields.io/badge/license-GNU%20GPL%20v3-blue.svg?style=flat" /></a></strong></p><p><strong>CLgen</strong> is an open source application for generating runnable programs using
 deep learning. CLgen <em>learns</em> to program using neural networks which model the
 semantics and usage from large volumes of program fragments, generating
 many-core OpenCL programs that are representative of, but <em>distinct</em> from, the
@@ -65,7 +65,7 @@ programs it learns from.</p>
 <h1>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h1>
 <p>For <strong>Ubuntu 16.04</strong> or <strong>OS X</strong>, the following command will install the
 CLgen requirements automatically:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.2.1/install-deps.sh | bash
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.2.2/install-deps.sh | bash
 </pre></div>
 </div>
 <p>Note that on Ubuntu, sudo privileges are required to install these requirements
@@ -73,33 +73,27 @@ CLgen requirements automatically:</p>
 <p>For <strong>other Linux distributions</strong> and older versions of Ubuntu, please check
 each for each of the following requirements:</p>
 <ul class="simple">
+<li><a class="reference external" href="https://www.python.org/">Python</a> == 3.5.</li>
+<li><a class="reference external" href="https://www.tensorflow.org/get_started/os_setup">TensorFlow</a> == 0.12</li>
 <li><a class="reference external" href="https://gcc.gnu.org/">GCC</a> &gt;= 4.8.2 or
 <a class="reference external" href="http://llvm.org/releases/download.html">clang</a> &gt;= 3.1.</li>
 <li><a class="reference external" href="http://savannah.gnu.org/projects/make">GNU Make</a> &gt; 3.79.</li>
-<li><a class="reference external" href="https://www.python.org/">Python</a> 2.7.12 or &gt;= 3.4.</li>
+<li><a class="reference external" href="https://www.gnu.org/software/libc/">glibc</a> &gt;= 2.16.</li>
 <li><a class="reference external" href="https://support.hdfgroup.org/HDF5/release/obtainsrc.html">libhdf5</a> &gt;=
 1.8.11.</li>
 <li><a class="reference external" href="https://sourceware.org/libffi/">libffi</a> &gt;= 3.0.13.</li>
 <li><a class="reference external" href="http://zlib.net/">zlib</a> &gt;= 1.2.3.4.</li>
-<li><a class="reference external" href="https://cmake.org/">CMake</a> &gt;= 2.8.12.</li>
 <li><a class="reference external" href="https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html">GNU Readline</a>.</li>
-<li><a class="reference external" href="https://www.qt.io/">Qt 4</a>.</li>
 <li><a class="reference external" href="https://www.gnu.org/software/ncurses/">ncurses</a>.</li>
-<li><a class="reference external" href="https://github.com/zeromq/libzmq">libzmq</a>.</li>
-<li><a class="reference external" href="http://gnuplot.sourceforge.net/">gnuplot</a>.</li>
-<li><a class="reference external" href="http://www.imagemagick.org/script/index.php">imagemagic</a>.</li>
-<li><a class="reference external" href="http://libjpeg.sourceforge.net/">libjpeg</a>.</li>
-<li><a class="reference external" href="http://www.graphicsmagick.org/">GraphicsMagick</a>.</li>
-<li><a class="reference external" href="http://sox.sourceforge.net/libsox.html">sox</a>.</li>
 <li><a class="reference external" href="https://git-scm.com/">git</a>.</li>
 <li><a class="reference external" href="https://curl.haxx.se/">curl</a>.</li>
 <li><a class="reference external" href="https://www.gnu.org/software/wget/">wget</a>.</li>
 </ul>
 <p>Optional, but recommended:</p>
 <ul class="simple">
-<li>NVIDIA GPU, <a class="reference external" href="http://www.nvidia.com/object/cuda_home_new.html">CUDA</a> &gt;= 6.5.</li>
+<li>NVIDIA GPU with
+<a class="reference external" href="https://www.tensorflow.org/get_started/os_setup#optional_install_cuda_gpus_on_linux">CUDA 8.0 and cuDNN</a>.</li>
 <li><a class="reference external" href="https://www.khronos.org/opencl/">OpenCL</a>.</li>
-<li><a class="reference external" href="https://github.com/xianyi/OpenBLAS">OpenBlas</a>.</li>
 </ul>
 </div>
 <div class="section" id="installation-virtualenv">
@@ -109,7 +103,7 @@ environment to install CLgen. This installs CLgen in its own directory, without
 impacting any existing programs on the machine. Installing in a virtualenv
 environment does not require sudo privileges.</p>
 <p>Create a virtualenv environment in the directory <cite>~/clgen</cite>:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ virtualenv --system-site-packages ~/clgen
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ virtualenv -p python3.5 ~/clgen
 </pre></div>
 </div>
 <p>Activate this environment:</p>
@@ -118,17 +112,17 @@ environment does not require sudo privileges.</p>
 </div>
 <p>Install the latest release of CLgen using one of the three configurations:</p>
 <p><strong>1. CPU-only:</strong> <em>slow performance, some features disabled.</em></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>(clgen)$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.2.1/install-cpu.sh | bash
+<div class="highlight-default"><div class="highlight"><pre><span></span>(clgen)$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.2.2/install-cpu.sh | bash
 </pre></div>
 </div>
 <p><strong>2. OpenCL enabled:</strong> <em>slow performance, all features enabled.</em>
 Requires <a class="reference external" href="https://www.khronos.org/opencl/">OpenCL</a>.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>(clgen)$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.2.1/install-opencl.sh | bash
+<div class="highlight-default"><div class="highlight"><pre><span></span>(clgen)$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.2.2/install-opencl.sh | bash
 </pre></div>
 </div>
 <p><strong>3. CUDA enabled:</strong> <em>fast performance, all features enabled.</em> Requires NVIDIA
 GPU, <a class="reference external" href="http://www.nvidia.com/object/cuda_home_new.html">CUDA</a> &gt;= 6.5.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>(clgen)$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.2.1/install-cuda.sh | bash
+<div class="highlight-default"><div class="highlight"><pre><span></span>(clgen)$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.2.2/install-cuda.sh | bash
 </pre></div>
 </div>
 <p>When you are done using CLgen, deactivate the virtualenv environment:</p>
@@ -149,17 +143,17 @@ you may be prompted for your password.</p>
 <p>Install the latest release of CLgen system-wide using one of the following
 configurations:</p>
 <p><strong>1. CPU-only:</strong> <em>slow performance, some features disabled.</em></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.2.1/install-cpu.sh | bash
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.2.2/install-cpu.sh | bash
 </pre></div>
 </div>
 <p><strong>2. OpenCL enabled:</strong> <em>slow performance, all features enabled.</em>
 Requires <a class="reference external" href="https://www.khronos.org/opencl/">OpenCL</a>.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.2.1/install-opencl.sh | bash
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.2.2/install-opencl.sh | bash
 </pre></div>
 </div>
 <p><strong>3. CUDA enabled:</strong> <em>fast performance, all features enabled.</em>
 Requires <a class="reference external" href="http://www.nvidia.com/object/cuda_home_new.html">CUDA</a> &gt;= 6.5.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.2.1/install-cuda.sh | bash
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.2.2/install-cuda.sh | bash
 </pre></div>
 </div>
 </div>
@@ -205,6 +199,7 @@ Requires <a class="reference external" href="http://www.nvidia.com/object/cuda_h
 <li class="toctree-l2"><a class="reference internal" href="bin/index.html#clgen-fetch-clsmith">clgen-fetch-clsmith</a></li>
 <li class="toctree-l2"><a class="reference internal" href="bin/index.html#clgen-fetch-db">clgen-fetch-db</a></li>
 <li class="toctree-l2"><a class="reference internal" href="bin/index.html#clgen-fetch-github">clgen-fetch-github</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bin/index.html#clgen-merge">clgen-merge</a></li>
 <li class="toctree-l2"><a class="reference internal" href="bin/index.html#clgen-preprocess">clgen-preprocess</a></li>
 <li class="toctree-l2"><a class="reference internal" href="bin/index.html#clgen-train">clgen-train</a></li>
 </ul>
@@ -277,7 +272,7 @@ Requires <a class="reference external" href="http://www.nvidia.com/object/cuda_h
         <li class="right" >
           <a href="installation.html" title="Building the Development Version"
              >next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">clgen 0.2.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">clgen 0.2.2 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

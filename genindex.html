@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Index &#8212; clgen 0.2.1 documentation</title>
+    <title>Index &#8212; clgen 0.2.2 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.1',
+        VERSION:     '0.2.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="clgen 0.2.1 documentation" href="index.html" /> 
+    <link rel="top" title="clgen 0.2.2 documentation" href="index.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">clgen 0.2.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">clgen 0.2.2 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -95,10 +95,6 @@
   <dt><a href="api/index.html#clgen.cli.ArgumentParser">ArgumentParser (class in clgen.cli)</a>
   </dt>
 
-      
-  <dt><a href="api/index.html#clgen.corpus.atomize">atomize() (in module clgen.corpus)</a>
-  </dt>
-
   </dl></td>
 </tr></table>
 
@@ -146,17 +142,19 @@
   </dt>
 
       
-  <dt><a href="api/index.html#clgen.dbutil.cc">cc() (in module clgen.dbutil)</a>
-  </dt>
-
-      
   <dt><a href="api/index.html#clgen.dbutil.charcount_aggregator">charcount_aggregator (class in clgen.dbutil)</a>
   </dt>
 
       
-  <dt><a href="api/index.html#clgen.model.Model.checkpoints">checkpoints (clgen.model.Model attribute)</a>
+  <dt><a href="api/index.html#clgen.model.DistModel.checkpoints">checkpoints (clgen.model.DistModel attribute)</a>
   </dt>
 
+      <dd><dl>
+        
+  <dt><a href="api/index.html#clgen.model.Model.checkpoints">(clgen.model.Model attribute)</a>
+  </dt>
+
+      </dl></dd>
       
   <dt><a href="api/index.html#clgen.checksum">checksum() (in module clgen)</a>
   </dt>
@@ -426,10 +424,6 @@
   </dt>
 
       
-  <dt><a href="api/index.html#clgen.preprocess.ensure_has_code">ensure_has_code() (in module clgen.preprocess)</a>
-  </dt>
-
-      
   <dt><a href="api/index.html#clgen.log.error">error() (in module clgen.log)</a>
   </dt>
 
@@ -652,6 +646,14 @@
   </dt>
 
       
+  <dt><a href="api/index.html#clgen.corpus.Corpus.input_h5">input_h5 (clgen.corpus.Corpus attribute)</a>
+  </dt>
+
+      
+  <dt><a href="api/index.html#clgen.corpus.Corpus.input_json">input_json (clgen.corpus.Corpus attribute)</a>
+  </dt>
+
+      
   <dt><a href="api/index.html#clgen.preprocess.instcounts2ratios">instcounts2ratios() (in module clgen.preprocess)</a>
   </dt>
 
@@ -659,12 +661,12 @@
   <dt><a href="api/index.html#clgen.preprocess.InstructionCountException">InstructionCountException</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api/index.html#clgen.InternalError">InternalError</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api/index.html#clgen.InvalidFile">InvalidFile</a>
   </dt>
@@ -809,8 +811,6 @@
   <dt><a href="api/index.html#clgen.explore.median">median() (in module clgen.explore)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api/index.html#clgen.model.DistModel.meta">meta (clgen.model.DistModel attribute)</a>
   </dt>
@@ -821,6 +821,8 @@
   </dt>
 
       </dl></dd>
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api/index.html#clgen.model.Model">Model (class in clgen.model)</a>
   </dt>
@@ -830,9 +832,15 @@
   </dt>
 
       
-  <dt><a href="api/index.html#clgen.model.Model.most_recent_checkpoint">most_recent_checkpoint (clgen.model.Model attribute)</a>
+  <dt><a href="api/index.html#clgen.model.DistModel.most_recent_checkpoint">most_recent_checkpoint (clgen.model.DistModel attribute)</a>
   </dt>
 
+      <dd><dl>
+        
+  <dt><a href="api/index.html#clgen.model.Model.most_recent_checkpoint">(clgen.model.Model attribute)</a>
+  </dt>
+
+      </dl></dd>
       
   <dt><a href="api/index.html#clgen.must_exist">must_exist() (in module clgen)</a>
   </dt>
@@ -864,11 +872,7 @@
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="api/index.html#clgen.corpus.Corpus.next_batch">next_batch() (clgen.corpus.Corpus method)</a>
-  </dt>
-
-      
-  <dt><a href="api/index.html#clgen.preprocess.NoCodeException">NoCodeException</a>
+  <dt><a href="api/index.html#clgen.NotImplementedError">NotImplementedError</a>
   </dt>
 
       
@@ -1050,10 +1054,6 @@
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="api/index.html#clgen.corpus.Corpus.reset_batch_pointer">reset_batch_pointer() (clgen.corpus.Corpus method)</a>
-  </dt>
-
-      
   <dt><a href="api/index.html#clgen.preprocess.rewrite_cl">rewrite_cl() (in module clgen.preprocess)</a>
   </dt>
 
@@ -1072,15 +1072,9 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="api/index.html#clgen.model.Model.sample">sample() (clgen.model.Model method)</a>
+  <dt><a href="api/index.html#clgen.sampler.Sampler.sample">sample() (clgen.sampler.Sampler method)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="api/index.html#clgen.sampler.Sampler.sample">(clgen.sampler.Sampler method)</a>
-  </dt>
-
-      </dl></dd>
       
   <dt><a href="api/index.html#clgen.sampler.Sampler.sample_iteration">sample_iteration() (clgen.sampler.Sampler method)</a>
   </dt>
@@ -1106,19 +1100,15 @@
   </dt>
 
       
-  <dt><a href="api/index.html#clgen.corpus.Corpus.set_batch_pointer">set_batch_pointer() (clgen.corpus.Corpus method)</a>
-  </dt>
-
-      
   <dt><a href="api/index.html#clgen.dbutil.set_modified_status">set_modified_status() (in module clgen.dbutil)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api/index.html#clgen.cldrive.KernelDriver.source">source (clgen.cldrive.KernelDriver attribute)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api/index.html#clgen.preprocess.sql_insert_dict">sql_insert_dict() (in module clgen.preprocess)</a>
   </dt>
@@ -1321,7 +1311,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">clgen 0.2.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">clgen 0.2.2 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

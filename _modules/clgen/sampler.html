@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.sampler &#8212; clgen 0.2.1 documentation</title>
+    <title>clgen.sampler &#8212; clgen 0.2.2 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.1',
+        VERSION:     '0.2.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="top" title="clgen 0.2.1 documentation" href="../../index.html" />
+    <link rel="top" title="clgen 0.2.2 documentation" href="../../index.html" />
     <link rel="up" title="clgen" href="../clgen.html" /> 
   </head>
   <body role="document">
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -74,8 +74,6 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
 
-<span class="kn">import</span> <span class="nn">sys</span>
-
 <span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">glob</span><span class="p">,</span> <span class="n">iglob</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">fs</span>
 
@@ -85,6 +83,7 @@
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">fetch</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">preprocess</span>
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">torch_rnn</span>
 <span class="kn">from</span> <span class="nn">clgen.cache</span> <span class="k">import</span> <span class="n">Cache</span>
 <span class="kn">from</span> <span class="nn">clgen.explore</span> <span class="k">import</span> <span class="n">explore</span>
 <span class="kn">from</span> <span class="nn">clgen.model</span> <span class="k">import</span> <span class="n">Model</span>
@@ -156,7 +155,7 @@
         <span class="n">sampler_model_hash</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">checksum_str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hash</span> <span class="o">+</span> <span class="n">model</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Cache</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="s2">&quot;sampler&quot;</span><span class="p">,</span> <span class="n">sampler_model_hash</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="Sampler.sample_iteration"><a class="viewcode-back" href="../../api/index.html#clgen.sampler.Sampler.sample_iteration">[docs]</a>    <span class="k">def</span> <span class="nf">sample_iteration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Sampler.sample_iteration"><a class="viewcode-back" href="../../api/index.html#clgen.sampler.Sampler.sample_iteration">[docs]</a>    <span class="k">def</span> <span class="nf">sample_iteration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run one sample iteration.</span>
 
@@ -167,35 +166,39 @@
 
         <span class="n">cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># create samples database if it doesn&#39;t exist</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">]:</span>
+            <span class="n">dbutil</span><span class="o">.</span><span class="n">create_db</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;kernels.tmp.db&quot;</span><span class="p">))</span>
+            <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span>
+                <span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;kernels.tmp.db&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">start_text</span> <span class="o">=</span> <span class="n">serialize_argspec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_opts</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">start_text</span> <span class="o">=</span> <span class="s2">&quot;__kernel void A(&quot;</span>
 
+        <span class="c1"># sample options</span>
+        <span class="n">opts</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;opencl&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;stream&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="s2">&quot;checkpoint&quot;</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">most_recent_checkpoint</span><span class="p">,</span>
+            <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;temperature&quot;</span><span class="p">,</span> <span class="o">.</span><span class="mi">75</span><span class="p">),</span>
+            <span class="s2">&quot;length&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_length&quot;</span><span class="p">,</span> <span class="mi">10000</span><span class="p">),</span>
+            <span class="s2">&quot;start_text&quot;</span><span class="p">:</span> <span class="n">start_text</span><span class="p">,</span>
+        <span class="p">}</span>
+
         <span class="n">tmppath</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;sample.tmp.cl&quot;</span><span class="p">)</span>
-
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmppath</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
-            <span class="n">opts</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="n">outfile</span><span class="p">,</span>
-                <span class="s2">&quot;num_samples&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
-                <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;temperature&quot;</span><span class="p">,</span> <span class="o">.</span><span class="mi">75</span><span class="p">),</span>
-                <span class="s2">&quot;max_length&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_length&quot;</span><span class="p">,</span> <span class="mi">10000</span><span class="p">),</span>
-                <span class="s2">&quot;seed_text&quot;</span><span class="p">:</span> <span class="n">start_text</span><span class="p">,</span>
-                <span class="s2">&quot;quiet&quot;</span><span class="p">:</span> <span class="n">quiet</span>
-            <span class="p">}</span>
-            <span class="n">model</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="o">**</span><span class="n">opts</span><span class="p">)</span>
-
-        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="n">torch_rnn</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">tmppath</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span>
         <span class="n">fetch</span><span class="o">.</span><span class="n">process_sample_file</span><span class="p">(</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">],</span> <span class="n">tmppath</span><span class="p">,</span>
-                                  <span class="n">max_kernel_len</span><span class="o">=</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;max_length&quot;</span><span class="p">],</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                                  <span class="n">max_kernel_len</span><span class="o">=</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;length&quot;</span><span class="p">],</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">static_checker</span><span class="p">:</span>
             <span class="c1"># TODO: Parse dynamic checker requirement</span>
             <span class="n">preprocess</span><span class="o">.</span><span class="n">preprocess_db</span><span class="p">(</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span>
         <span class="n">fs</span><span class="o">.</span><span class="n">rm</span><span class="p">(</span><span class="n">tmppath</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Sampler.sample"><a class="viewcode-back" href="../../api/index.html#clgen.sampler.Sampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Sampler.sample"><a class="viewcode-back" href="../../api/index.html#clgen.sampler.Sampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sample CLgen model.</span>
 
@@ -212,21 +215,21 @@
 
         <span class="n">batch_i</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">batch_i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;beginning batch&quot;</span><span class="p">,</span> <span class="n">batch_i</span><span class="p">,</span> <span class="s2">&quot;...&quot;</span><span class="p">)</span>
+
             <span class="c1"># stop if we have enough kernels</span>
-            <span class="n">has_max_kernels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_kernels</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="n">has_max_kernels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_kernels</span> <span class="o">&gt;=</span> <span class="mi">0</span>
             <span class="n">num_good_kernels</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">num_good_kernels</span><span class="p">(</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span>
             <span class="k">if</span> <span class="n">has_max_kernels</span> <span class="ow">and</span> <span class="n">num_good_kernels</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_kernels</span><span class="p">:</span>
                 <span class="k">return</span>
 
             <span class="c1"># stop if we&#39;ve done enough batches</span>
             <span class="n">has_max_batches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_batches</span> <span class="o">&gt;</span> <span class="mi">0</span>
-            <span class="k">if</span> <span class="n">has_max_batches</span> <span class="ow">and</span> <span class="n">batch_i</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_batches</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">has_max_batches</span> <span class="ow">and</span> <span class="n">batch_i</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_batches</span><span class="p">:</span>
                 <span class="k">return</span>
 
-            <span class="n">batch_i</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;sample batch&quot;</span><span class="p">,</span> <span class="n">batch_i</span><span class="p">,</span> <span class="s2">&quot;...&quot;</span><span class="p">)</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">sample_iteration</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="n">quiet</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sample_iteration</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 
             <span class="nb">print</span><span class="p">()</span>
             <span class="n">explore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">(</span><span class="n">model</span><span class="p">)[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span>
@@ -244,9 +247,11 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        Sampler: Instantiate sampler.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">sampler_opts</span> <span class="o">=</span> <span class="n">sampler_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sampler&quot;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">sampler_opts</span> <span class="o">=</span> <span class="n">sampler_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sampler&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sampler_opts</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s2">&quot;no sampler section in sampler specification&quot;</span><span class="p">)</span>
 
-    <span class="n">kernel_opts</span> <span class="o">=</span> <span class="n">sampler_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;kernels&quot;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">kernel_opts</span> <span class="o">=</span> <span class="n">sampler_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;kernels&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">kernel_opts</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s2">&quot;no kernels section in sampler specification&quot;</span><span class="p">)</span>
 
@@ -281,7 +286,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>
