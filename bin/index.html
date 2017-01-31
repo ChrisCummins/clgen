@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Command Line Interface &#8212; clgen 0.2.4 documentation</title>
+    <title>Command Line Interface &#8212; clgen 0.2.5 documentation</title>
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.4',
+        VERSION:     '0.2.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="clgen 0.2.4 documentation" href="../index.html" />
+    <link rel="top" title="clgen 0.2.5 documentation" href="../index.html" />
     <link rel="next" title="License" href="../license.html" />
     <link rel="prev" title="Python API" href="../api/index.html" /> 
   </head>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../api/index.html" title="Python API"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.5 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -103,7 +103,7 @@
 </div>
 <div class="section" id="clgen">
 <h2>clgen<a class="headerlink" href="#clgen" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">clgen</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">corpus</span><span class="o">-</span><span class="nb">dir</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">model</span><span class="o">-</span><span class="nb">dir</span><span class="p">]</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">clgen</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="nb">list</span><span class="o">-</span><span class="n">files</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">corpus</span><span class="o">-</span><span class="nb">dir</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">model</span><span class="o">-</span><span class="nb">dir</span><span class="p">]</span>
              <span class="p">[</span><span class="o">--</span><span class="n">sampler</span><span class="o">-</span><span class="nb">dir</span><span class="p">]</span>
              <span class="o">&lt;</span><span class="n">model</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">sampler</span><span class="o">&gt;</span>
 
@@ -131,6 +131,7 @@
   <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>     <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
   <span class="o">--</span><span class="n">version</span>      <span class="n">show</span> <span class="n">version</span> <span class="n">information</span> <span class="ow">and</span> <span class="n">exit</span>
   <span class="o">-</span><span class="n">v</span><span class="p">,</span> <span class="o">--</span><span class="n">verbose</span>  <span class="n">increase</span> <span class="n">output</span> <span class="n">verbosity</span>
+  <span class="o">--</span><span class="nb">list</span><span class="o">-</span><span class="n">files</span>   <span class="nb">print</span> <span class="n">cached</span> <span class="n">corpus</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="ow">and</span> <span class="n">sampler</span><span class="p">,</span> <span class="n">files</span>
   <span class="o">--</span><span class="n">corpus</span><span class="o">-</span><span class="nb">dir</span>   <span class="nb">print</span> <span class="n">path</span> <span class="n">to</span> <span class="n">corpus</span> <span class="n">cache</span>
   <span class="o">--</span><span class="n">model</span><span class="o">-</span><span class="nb">dir</span>    <span class="nb">print</span> <span class="n">path</span> <span class="n">to</span> <span class="n">model</span> <span class="n">cache</span>
   <span class="o">--</span><span class="n">sampler</span><span class="o">-</span><span class="nb">dir</span>  <span class="nb">print</span> <span class="n">path</span> <span class="n">to</span> <span class="n">sampler</span> <span class="n">cache</span>
@@ -178,29 +179,35 @@
 </pre></div>
 </div>
 </div>
-<div class="section" id="clgen-dist">
-<h2>clgen-dist<a class="headerlink" href="#clgen-dist" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default"><div class="highlight"><pre><span></span>usage: clgen-dist [-h] [--version] [-v] [--author AUTHOR] &lt;model&gt; &lt;distname&gt;
+<div class="section" id="clgen-dump">
+<h2>clgen-dump<a class="headerlink" href="#clgen-dump" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">clgen</span><span class="o">-</span><span class="n">dump</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">d</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">i</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="nb">input</span><span class="o">-</span><span class="n">samples</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">eof</span><span class="p">]</span>
+                  <span class="p">[</span><span class="o">-</span><span class="n">r</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">s</span> <span class="n">STATUS</span><span class="p">]</span>
+                  <span class="nb">input</span> <span class="n">output</span>
 
-Package CLgen models for distribution.
+<span class="n">Create</span> <span class="n">training</span> <span class="n">datasets</span><span class="o">.</span>
 
-Once a CLgen model has been trained, it can be distribute to other devices
-for sampling. This program provides the mechanism for doing so. So called
-&quot;dist files&quot; contain trained Neural Network models and metadata describing
-the method by which they were trained.
+<span class="n">Provides</span> <span class="n">a</span> <span class="n">front</span><span class="o">-</span><span class="n">end</span> <span class="k">for</span> <span class="n">utilities</span> <span class="k">for</span> <span class="n">turning</span> <span class="n">kernel</span> <span class="n">databases</span> <span class="n">into</span> <span class="n">corpuses</span>
+<span class="k">for</span> <span class="n">training</span> <span class="n">CLgen</span> <span class="n">models</span> <span class="n">on</span><span class="o">.</span>
 
-Copyright (C) 2016 Chris Cummins &lt;chrisc.101@gmail.com&gt;.
-&lt;http://chriscummins.cc/clgen&gt;
+<span class="n">Copyright</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span> <span class="mi">2016</span> <span class="n">Chris</span> <span class="n">Cummins</span> <span class="o">&lt;</span><span class="n">chrisc</span><span class="o">.</span><span class="mi">101</span><span class="nd">@gmail</span><span class="o">.</span><span class="n">com</span><span class="o">&gt;.</span>
+<span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">chriscummins</span><span class="o">.</span><span class="n">cc</span><span class="o">/</span><span class="n">clgen</span><span class="o">&gt;</span>
 
-positional arguments:
-  &lt;model&gt;          path to model specification file
-  &lt;distname&gt;       name of dist file
+<span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="nb">input</span>                 <span class="n">path</span> <span class="n">to</span> <span class="n">model</span> <span class="n">descriptor</span>
+  <span class="n">output</span>                <span class="n">path</span> <span class="n">to</span> <span class="n">output</span> <span class="n">file</span> <span class="ow">or</span> <span class="n">directory</span>
 
-optional arguments:
-  -h, --help       show this help message and exit
-  --version        show version information and exit
-  -v, --verbose    increase output verbosity
-  --author AUTHOR  Name of author (default: $USER@$HOSTNAME)
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">--</span><span class="n">version</span>             <span class="n">show</span> <span class="n">version</span> <span class="n">information</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">-</span><span class="n">v</span><span class="p">,</span> <span class="o">--</span><span class="n">verbose</span>         <span class="n">increase</span> <span class="n">output</span> <span class="n">verbosity</span>
+  <span class="o">-</span><span class="n">d</span>                    <span class="n">output</span> <span class="n">to</span> <span class="n">directory</span> <span class="p">(</span><span class="n">overrides</span> <span class="o">-</span><span class="n">i</span><span class="p">,</span> <span class="o">--</span><span class="n">eof</span><span class="p">,</span> <span class="o">-</span><span class="n">r</span><span class="p">)</span>
+  <span class="o">-</span><span class="n">i</span>                    <span class="n">include</span> <span class="n">file</span> <span class="n">separators</span>
+  <span class="o">--</span><span class="nb">input</span><span class="o">-</span><span class="n">samples</span>       <span class="n">use</span> <span class="nb">input</span> <span class="n">contents</span><span class="p">,</span> <span class="ow">not</span> <span class="n">preprocessed</span>
+  <span class="o">--</span><span class="n">eof</span>                 <span class="nb">print</span> <span class="n">end</span> <span class="n">of</span> <span class="n">file</span>
+  <span class="o">-</span><span class="n">r</span>                    <span class="n">use</span> <span class="n">reverse</span> <span class="n">order</span>
+  <span class="o">-</span><span class="n">s</span> <span class="n">STATUS</span><span class="p">,</span> <span class="o">--</span><span class="n">status</span> <span class="n">STATUS</span>
+                        <span class="n">status</span> <span class="n">code</span> <span class="n">to</span> <span class="n">use</span>
 </pre></div>
 </div>
 </div>
@@ -445,38 +452,6 @@ optional arguments:
 </pre></div>
 </div>
 </div>
-<div class="section" id="clgen-train">
-<h2>clgen-train<a class="headerlink" href="#clgen-train" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">clgen</span><span class="o">-</span><span class="n">train</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">d</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">i</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="nb">input</span><span class="o">-</span><span class="n">samples</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">eof</span><span class="p">]</span>
-                   <span class="p">[</span><span class="o">-</span><span class="n">r</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">s</span> <span class="n">STATUS</span><span class="p">]</span>
-                   <span class="nb">input</span> <span class="n">output</span>
-
-<span class="n">Create</span> <span class="n">training</span> <span class="n">datasets</span><span class="o">.</span>
-
-<span class="n">Provides</span> <span class="n">a</span> <span class="n">front</span><span class="o">-</span><span class="n">end</span> <span class="k">for</span> <span class="n">utilities</span> <span class="k">for</span> <span class="n">turning</span> <span class="n">kernel</span> <span class="n">databases</span> <span class="n">into</span> <span class="n">corpuses</span>
-<span class="k">for</span> <span class="n">training</span> <span class="n">CLgen</span> <span class="n">models</span> <span class="n">on</span><span class="o">.</span>
-
-<span class="n">Copyright</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span> <span class="mi">2016</span> <span class="n">Chris</span> <span class="n">Cummins</span> <span class="o">&lt;</span><span class="n">chrisc</span><span class="o">.</span><span class="mi">101</span><span class="nd">@gmail</span><span class="o">.</span><span class="n">com</span><span class="o">&gt;.</span>
-<span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">chriscummins</span><span class="o">.</span><span class="n">cc</span><span class="o">/</span><span class="n">clgen</span><span class="o">&gt;</span>
-
-<span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
-  <span class="nb">input</span>                 <span class="n">path</span> <span class="n">to</span> <span class="n">SQL</span> <span class="nb">input</span> <span class="n">dataset</span>
-  <span class="n">output</span>                <span class="n">path</span> <span class="n">to</span> <span class="n">output</span> <span class="n">file</span> <span class="ow">or</span> <span class="n">directory</span>
-
-<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
-  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
-  <span class="o">--</span><span class="n">version</span>             <span class="n">show</span> <span class="n">version</span> <span class="n">information</span> <span class="ow">and</span> <span class="n">exit</span>
-  <span class="o">-</span><span class="n">v</span><span class="p">,</span> <span class="o">--</span><span class="n">verbose</span>         <span class="n">increase</span> <span class="n">output</span> <span class="n">verbosity</span>
-  <span class="o">-</span><span class="n">d</span>                    <span class="n">output</span> <span class="n">to</span> <span class="n">directory</span> <span class="p">(</span><span class="n">overrides</span> <span class="o">-</span><span class="n">i</span><span class="p">,</span> <span class="o">--</span><span class="n">eof</span><span class="p">,</span> <span class="o">-</span><span class="n">r</span><span class="p">)</span>
-  <span class="o">-</span><span class="n">i</span>                    <span class="n">include</span> <span class="n">file</span> <span class="n">separators</span>
-  <span class="o">--</span><span class="nb">input</span><span class="o">-</span><span class="n">samples</span>       <span class="n">use</span> <span class="nb">input</span> <span class="n">contents</span><span class="p">,</span> <span class="ow">not</span> <span class="n">preprocessed</span>
-  <span class="o">--</span><span class="n">eof</span>                 <span class="nb">print</span> <span class="n">end</span> <span class="n">of</span> <span class="n">file</span>
-  <span class="o">-</span><span class="n">r</span>                    <span class="n">use</span> <span class="n">reverse</span> <span class="n">order</span>
-  <span class="o">-</span><span class="n">s</span> <span class="n">STATUS</span><span class="p">,</span> <span class="o">--</span><span class="n">status</span> <span class="n">STATUS</span>
-                        <span class="n">status</span> <span class="n">code</span> <span class="n">to</span> <span class="n">use</span>
-</pre></div>
-</div>
-</div>
 </div>
 
 
@@ -492,7 +467,7 @@ optional arguments:
 <li><a class="reference internal" href="#clgen">clgen</a></li>
 <li><a class="reference internal" href="#clgen-atomize">clgen-atomize</a></li>
 <li><a class="reference internal" href="#clgen-create-db">clgen-create-db</a></li>
-<li><a class="reference internal" href="#clgen-dist">clgen-dist</a></li>
+<li><a class="reference internal" href="#clgen-dump">clgen-dump</a></li>
 <li><a class="reference internal" href="#clgen-explore">clgen-explore</a></li>
 <li><a class="reference internal" href="#clgen-features">clgen-features</a></li>
 <li><a class="reference internal" href="#clgen-fetch">clgen-fetch</a></li>
@@ -502,7 +477,6 @@ optional arguments:
 <li><a class="reference internal" href="#clgen-fetch-github">clgen-fetch-github</a></li>
 <li><a class="reference internal" href="#clgen-merge">clgen-merge</a></li>
 <li><a class="reference internal" href="#clgen-preprocess">clgen-preprocess</a></li>
-<li><a class="reference internal" href="#clgen-train">clgen-train</a></li>
 </ul>
 </li>
 </ul>
@@ -549,7 +523,7 @@ optional arguments:
         <li class="right" >
           <a href="../api/index.html" title="Python API"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.5 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
