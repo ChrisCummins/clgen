@@ -8,6 +8,44 @@ cldrive
 
 ::
 
+    usage: cldrive [-h] [--version] [-v] [-s] [--cpu] [--gpu] [--fatal-errors]
+                   <input> [<input> ...]
+    
+    Drive OpenCL kernels.
+    
+    For each kernel, generate a randomly sized payload and execute.
+    Use environment variable 'DSIZE' to override random payload size.
+    
+    Program output is in CSV format, with the following scheme:
+    
+        <path>,<dsize>,<kernel>,<transfer>,<mean>,<ci>
+    
+    where each value corresponds to:
+    
+       <path>      path to input file
+       <dsize>     payload size
+       <kernel>    kernel name
+       <transfer>  transfer size, in bytes
+       <mean>      mean execution time
+       <ci>        95% confidence interval of execution time
+    
+    In case of an error, "-" is output for values which cannot be determined,
+    and the kernel name field is substituted for an error name.
+    
+    Copyright (C) 2016 Chris Cummins <chrisc.101@gmail.com>.
+    <http://chriscummins.cc/clgen>
+    
+    positional arguments:
+      <input>         input file(s) or directories
+    
+    optional arguments:
+      -h, --help      show this help message and exit
+      --version       show version information and exit
+      -v, --verbose   increase output verbosity
+      -s, --strict    reject any kernels which do not validate
+      --cpu           execute on CPU (default: no)
+      --gpu           execute on GPU (default: yes)
+      --fatal-errors  exit on error
 
 clgen
 ------
@@ -378,4 +416,20 @@ clgen-verify
 
 ::
 
+    usage: clgen-verify [-h] [--version] [-v] [--cpu] <dataset> <input-dir>
+    
+    Run a collection of CLgen programs and store their output.
+    
+    Copyright (C) 2016 Chris Cummins <chrisc.101@gmail.com>.
+    <http://chriscummins.cc/clgen>
+    
+    positional arguments:
+      <dataset>      path to output database. If it does not exist, it is created.
+      <input-dir>    path to directory containing CLgen-generated programs.
+    
+    optional arguments:
+      -h, --help     show this help message and exit
+      --version      show version information and exit
+      -v, --verbose  increase output verbosity
+      --cpu          Use CPU for execution (default: GPU)
 

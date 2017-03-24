@@ -60,6 +60,46 @@
 <p>The CLgen command line interface consists of a suite of related programs.</p>
 <div class="section" id="cldrive">
 <h2>cldrive<a class="headerlink" href="#cldrive" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">cldrive</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">s</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">cpu</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">gpu</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">fatal</span><span class="o">-</span><span class="n">errors</span><span class="p">]</span>
+               <span class="o">&lt;</span><span class="nb">input</span><span class="o">&gt;</span> <span class="p">[</span><span class="o">&lt;</span><span class="nb">input</span><span class="o">&gt;</span> <span class="o">...</span><span class="p">]</span>
+
+<span class="n">Drive</span> <span class="n">OpenCL</span> <span class="n">kernels</span><span class="o">.</span>
+
+<span class="n">For</span> <span class="n">each</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">generate</span> <span class="n">a</span> <span class="n">randomly</span> <span class="n">sized</span> <span class="n">payload</span> <span class="ow">and</span> <span class="n">execute</span><span class="o">.</span>
+<span class="n">Use</span> <span class="n">environment</span> <span class="n">variable</span> <span class="s1">&#39;DSIZE&#39;</span> <span class="n">to</span> <span class="n">override</span> <span class="n">random</span> <span class="n">payload</span> <span class="n">size</span><span class="o">.</span>
+
+<span class="n">Program</span> <span class="n">output</span> <span class="ow">is</span> <span class="ow">in</span> <span class="n">CSV</span> <span class="nb">format</span><span class="p">,</span> <span class="k">with</span> <span class="n">the</span> <span class="n">following</span> <span class="n">scheme</span><span class="p">:</span>
+
+    <span class="o">&lt;</span><span class="n">path</span><span class="o">&gt;</span><span class="p">,</span><span class="o">&lt;</span><span class="n">dsize</span><span class="o">&gt;</span><span class="p">,</span><span class="o">&lt;</span><span class="n">kernel</span><span class="o">&gt;</span><span class="p">,</span><span class="o">&lt;</span><span class="n">transfer</span><span class="o">&gt;</span><span class="p">,</span><span class="o">&lt;</span><span class="n">mean</span><span class="o">&gt;</span><span class="p">,</span><span class="o">&lt;</span><span class="n">ci</span><span class="o">&gt;</span>
+
+<span class="n">where</span> <span class="n">each</span> <span class="n">value</span> <span class="n">corresponds</span> <span class="n">to</span><span class="p">:</span>
+
+   <span class="o">&lt;</span><span class="n">path</span><span class="o">&gt;</span>      <span class="n">path</span> <span class="n">to</span> <span class="nb">input</span> <span class="n">file</span>
+   <span class="o">&lt;</span><span class="n">dsize</span><span class="o">&gt;</span>     <span class="n">payload</span> <span class="n">size</span>
+   <span class="o">&lt;</span><span class="n">kernel</span><span class="o">&gt;</span>    <span class="n">kernel</span> <span class="n">name</span>
+   <span class="o">&lt;</span><span class="n">transfer</span><span class="o">&gt;</span>  <span class="n">transfer</span> <span class="n">size</span><span class="p">,</span> <span class="ow">in</span> <span class="nb">bytes</span>
+   <span class="o">&lt;</span><span class="n">mean</span><span class="o">&gt;</span>      <span class="n">mean</span> <span class="n">execution</span> <span class="n">time</span>
+   <span class="o">&lt;</span><span class="n">ci</span><span class="o">&gt;</span>        <span class="mi">95</span><span class="o">%</span> <span class="n">confidence</span> <span class="n">interval</span> <span class="n">of</span> <span class="n">execution</span> <span class="n">time</span>
+
+<span class="n">In</span> <span class="n">case</span> <span class="n">of</span> <span class="n">an</span> <span class="n">error</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span> <span class="ow">is</span> <span class="n">output</span> <span class="k">for</span> <span class="n">values</span> <span class="n">which</span> <span class="n">cannot</span> <span class="n">be</span> <span class="n">determined</span><span class="p">,</span>
+<span class="ow">and</span> <span class="n">the</span> <span class="n">kernel</span> <span class="n">name</span> <span class="n">field</span> <span class="ow">is</span> <span class="n">substituted</span> <span class="k">for</span> <span class="n">an</span> <span class="n">error</span> <span class="n">name</span><span class="o">.</span>
+
+<span class="n">Copyright</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span> <span class="mi">2016</span> <span class="n">Chris</span> <span class="n">Cummins</span> <span class="o">&lt;</span><span class="n">chrisc</span><span class="o">.</span><span class="mi">101</span><span class="nd">@gmail</span><span class="o">.</span><span class="n">com</span><span class="o">&gt;.</span>
+<span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">chriscummins</span><span class="o">.</span><span class="n">cc</span><span class="o">/</span><span class="n">clgen</span><span class="o">&gt;</span>
+
+<span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">&lt;</span><span class="nb">input</span><span class="o">&gt;</span>         <span class="nb">input</span> <span class="n">file</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="ow">or</span> <span class="n">directories</span>
+
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>      <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">--</span><span class="n">version</span>       <span class="n">show</span> <span class="n">version</span> <span class="n">information</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">-</span><span class="n">v</span><span class="p">,</span> <span class="o">--</span><span class="n">verbose</span>   <span class="n">increase</span> <span class="n">output</span> <span class="n">verbosity</span>
+  <span class="o">-</span><span class="n">s</span><span class="p">,</span> <span class="o">--</span><span class="n">strict</span>    <span class="n">reject</span> <span class="nb">any</span> <span class="n">kernels</span> <span class="n">which</span> <span class="n">do</span> <span class="ow">not</span> <span class="n">validate</span>
+  <span class="o">--</span><span class="n">cpu</span>           <span class="n">execute</span> <span class="n">on</span> <span class="n">CPU</span> <span class="p">(</span><span class="n">default</span><span class="p">:</span> <span class="n">no</span><span class="p">)</span>
+  <span class="o">--</span><span class="n">gpu</span>           <span class="n">execute</span> <span class="n">on</span> <span class="n">GPU</span> <span class="p">(</span><span class="n">default</span><span class="p">:</span> <span class="n">yes</span><span class="p">)</span>
+  <span class="o">--</span><span class="n">fatal</span><span class="o">-</span><span class="n">errors</span>  <span class="n">exit</span> <span class="n">on</span> <span class="n">error</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="clgen">
 <h2>clgen<a class="headerlink" href="#clgen" title="Permalink to this headline">¶</a></h2>
@@ -414,6 +454,24 @@
 </div>
 <div class="section" id="clgen-verify">
 <h2>clgen-verify<a class="headerlink" href="#clgen-verify" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">clgen</span><span class="o">-</span><span class="n">verify</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">cpu</span><span class="p">]</span> <span class="o">&lt;</span><span class="n">dataset</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">input</span><span class="o">-</span><span class="nb">dir</span><span class="o">&gt;</span>
+
+<span class="n">Run</span> <span class="n">a</span> <span class="n">collection</span> <span class="n">of</span> <span class="n">CLgen</span> <span class="n">programs</span> <span class="ow">and</span> <span class="n">store</span> <span class="n">their</span> <span class="n">output</span><span class="o">.</span>
+
+<span class="n">Copyright</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span> <span class="mi">2016</span> <span class="n">Chris</span> <span class="n">Cummins</span> <span class="o">&lt;</span><span class="n">chrisc</span><span class="o">.</span><span class="mi">101</span><span class="nd">@gmail</span><span class="o">.</span><span class="n">com</span><span class="o">&gt;.</span>
+<span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">chriscummins</span><span class="o">.</span><span class="n">cc</span><span class="o">/</span><span class="n">clgen</span><span class="o">&gt;</span>
+
+<span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">&lt;</span><span class="n">dataset</span><span class="o">&gt;</span>      <span class="n">path</span> <span class="n">to</span> <span class="n">output</span> <span class="n">database</span><span class="o">.</span> <span class="n">If</span> <span class="n">it</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">exist</span><span class="p">,</span> <span class="n">it</span> <span class="ow">is</span> <span class="n">created</span><span class="o">.</span>
+  <span class="o">&lt;</span><span class="nb">input</span><span class="o">-</span><span class="nb">dir</span><span class="o">&gt;</span>    <span class="n">path</span> <span class="n">to</span> <span class="n">directory</span> <span class="n">containing</span> <span class="n">CLgen</span><span class="o">-</span><span class="n">generated</span> <span class="n">programs</span><span class="o">.</span>
+
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>     <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">--</span><span class="n">version</span>      <span class="n">show</span> <span class="n">version</span> <span class="n">information</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">-</span><span class="n">v</span><span class="p">,</span> <span class="o">--</span><span class="n">verbose</span>  <span class="n">increase</span> <span class="n">output</span> <span class="n">verbosity</span>
+  <span class="o">--</span><span class="n">cpu</span>          <span class="n">Use</span> <span class="n">CPU</span> <span class="k">for</span> <span class="n">execution</span> <span class="p">(</span><span class="n">default</span><span class="p">:</span> <span class="n">GPU</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </div>
 
