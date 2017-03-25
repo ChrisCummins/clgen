@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Command Line Interface &#8212; clgen 0.2.7 documentation</title>
+    <title>Command Line Interface &#8212; clgen 0.2.8 documentation</title>
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.7',
+        VERSION:     '0.2.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="clgen 0.2.7 documentation" href="../index.html" />
+    <link rel="top" title="clgen 0.2.8 documentation" href="../index.html" />
     <link rel="next" title="License" href="../license.html" />
     <link rel="prev" title="Python API" href="../api/index.html" /> 
   </head>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../api/index.html" title="Python API"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.8 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -420,7 +420,7 @@
 </div>
 <div class="section" id="clgen-preprocess">
 <h2>clgen-preprocess<a class="headerlink" href="#clgen-preprocess" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">clgen</span><span class="o">-</span><span class="n">preprocess</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">f</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">i</span><span class="p">]</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">clgen</span><span class="o">-</span><span class="n">preprocess</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">f</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">i</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">D</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">G</span><span class="p">]</span>
                         <span class="p">[</span><span class="o">--</span><span class="n">remove</span><span class="o">-</span><span class="n">bad</span><span class="o">-</span><span class="n">preprocessed</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">remove</span><span class="o">-</span><span class="n">preprocessed</span><span class="p">]</span>
                         <span class="n">inputs</span> <span class="p">[</span><span class="n">inputs</span> <span class="o">...</span><span class="p">]</span>
 
@@ -444,6 +444,9 @@
   <span class="o">-</span><span class="n">v</span><span class="p">,</span> <span class="o">--</span><span class="n">verbose</span>         <span class="n">increase</span> <span class="n">output</span> <span class="n">verbosity</span>
   <span class="o">-</span><span class="n">f</span><span class="p">,</span> <span class="o">--</span><span class="n">file</span>            <span class="n">treat</span> <span class="nb">input</span> <span class="k">as</span> <span class="n">file</span>
   <span class="o">-</span><span class="n">i</span><span class="p">,</span> <span class="o">--</span><span class="n">inplace</span>         <span class="n">inplace</span> <span class="n">file</span> <span class="n">rewrite</span>
+  <span class="o">-</span><span class="n">D</span><span class="p">,</span> <span class="o">--</span><span class="n">dynamic</span><span class="o">-</span><span class="n">checker</span>
+                        <span class="n">run</span> <span class="n">dynamic</span> <span class="n">checker</span> <span class="n">on</span> <span class="n">kernels</span>
+  <span class="o">-</span><span class="n">G</span><span class="p">,</span> <span class="o">--</span><span class="n">gpuverify</span>       <span class="n">run</span> <span class="n">GPUVerify</span> <span class="n">on</span> <span class="n">kernels</span>
   <span class="o">--</span><span class="n">remove</span><span class="o">-</span><span class="n">bad</span><span class="o">-</span><span class="n">preprocessed</span>
                         <span class="n">delete</span> <span class="n">the</span> <span class="n">contents</span> <span class="n">of</span> <span class="nb">all</span> <span class="n">bad</span> <span class="ow">or</span> <span class="n">ugly</span> <span class="n">preprocessed</span> <span class="n">files</span><span class="p">,</span>
                         <span class="n">but</span> <span class="n">keep</span> <span class="n">the</span> <span class="n">entries</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">table</span>
@@ -545,7 +548,7 @@
         <li class="right" >
           <a href="../api/index.html" title="Python API"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.8 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
