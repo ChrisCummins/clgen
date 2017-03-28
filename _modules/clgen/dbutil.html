@@ -136,6 +136,17 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span></div></div>
 
 
+<div class="viewcode-block" id="linecount"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.linecount">[docs]</a><span class="k">def</span> <span class="nf">linecount</span><span class="p">(</span><span class="n">t</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Line count.</span>
+<span class="sd">    Arguments:</span>
+<span class="sd">        t (str): String.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        int: Line count.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span></div>
+
+
 <div class="viewcode-block" id="charcount_aggregator"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.charcount_aggregator">[docs]</a><span class="k">class</span> <span class="nc">charcount_aggregator</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    sqlite3 aggregator for computing character count of column values.</span>
@@ -159,6 +170,7 @@
 <span class="sd">     * MD5SUM() returns md5 of column values</span>
 <span class="sd">     * LC() returns sum line count of text columns</span>
 <span class="sd">     * CC() returns sum character count of text columns</span>
+<span class="sd">     * LC_col() returns line count of text value</span>
 
 <span class="sd">    Arguments:</span>
 
@@ -172,6 +184,7 @@
     <span class="n">db</span><span class="o">.</span><span class="n">create_aggregate</span><span class="p">(</span><span class="s2">&quot;MD5SUM&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">md5sum_aggregator</span><span class="p">)</span>
     <span class="n">db</span><span class="o">.</span><span class="n">create_aggregate</span><span class="p">(</span><span class="s2">&quot;LC&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">linecount_aggregator</span><span class="p">)</span>
     <span class="n">db</span><span class="o">.</span><span class="n">create_aggregate</span><span class="p">(</span><span class="s2">&quot;CC&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">charcount_aggregator</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">create_function</span><span class="p">(</span><span class="s2">&quot;LC_col&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">linecount</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">db</span></div>
 
 
@@ -508,7 +521,8 @@
              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">new_size_human_readable</span><span class="p">,</span> <span class="n">reduction_ratio</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="sql_insert_dict"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.sql_insert_dict">[docs]</a><span class="k">def</span> <span class="nf">sql_insert_dict</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">replace_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="sql_insert_dict"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.sql_insert_dict">[docs]</a><span class="k">def</span> <span class="nf">sql_insert_dict</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">ignore_existing</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">replace_existing</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Insert a dict of key value pairs into an SQL table.</span>
 
@@ -518,12 +532,15 @@
 <span class="sd">        c (sqlite3.Cursor): Database cursor.</span>
 <span class="sd">        table (str): Destination table.</span>
 <span class="sd">        data (dict): Key value pairs.</span>
+<span class="sd">        ignore_existing (bool, optional): Ignore existing entries.</span>
+<span class="sd">        replace_existing (bool, optional): Replace existing entries.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">or_ignore</span> <span class="o">=</span> <span class="s2">&quot;OR IGNORE&quot;</span> <span class="k">if</span> <span class="n">ignore_existing</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
     <span class="n">or_replace</span> <span class="o">=</span> <span class="s2">&quot;OR REPLACE&quot;</span> <span class="k">if</span> <span class="n">replace_existing</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
     <span class="n">cols</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
     <span class="n">vals</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;?&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
 
-    <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;INSERT </span><span class="si">{or_replace}</span><span class="s2"> INTO </span><span class="si">{table}</span><span class="s2">(</span><span class="si">{cols}</span><span class="s2">) VALUES(</span><span class="si">{vals}</span><span class="s2">)&quot;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;INSERT </span><span class="si">{or_ignore}</span><span class="s2"> </span><span class="si">{or_replace}</span><span class="s2"> INTO </span><span class="si">{table}</span><span class="s2">(</span><span class="si">{cols}</span><span class="s2">) VALUES(</span><span class="si">{vals}</span><span class="s2">)&quot;</span>
            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">()))</span>
 
     <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">data</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())]))</span></div>
@@ -599,7 +616,7 @@
                   <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="p">))</span>
         <span class="n">orderby</span> <span class="o">=</span> <span class="s1">&#39;Repositories.stars&#39;</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">orderby</span> <span class="o">=</span> <span class="s1">&#39;LC(contents)&#39;</span>
+        <span class="n">orderby</span> <span class="o">=</span> <span class="s1">&#39;LC_col(contents)&#39;</span>
 
     <span class="n">query</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">{select}</span><span class="s1"> FROM </span><span class="si">{table}</span><span class="s1"> </span><span class="si">{qualifier}</span><span class="s1"> ORDER BY </span><span class="si">{orderby}</span><span class="s1"> </span><span class="si">{order}</span><span class="s1">&#39;</span>
              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">select</span><span class="o">=</span><span class="n">select</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">,</span> <span class="n">qualifier</span><span class="o">=</span><span class="n">qualifier</span><span class="p">,</span>
@@ -649,6 +666,50 @@
     <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;gh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_github</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
 
     <span class="n">_dump_db</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">out_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_all_sampler_datasets"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.get_all_sampler_datasets">[docs]</a><span class="k">def</span> <span class="nf">get_all_sampler_datasets</span><span class="p">(</span><span class="n">all_clgen_versions</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">all_clgen_versions</span><span class="p">:</span>
+        <span class="n">versiondirs</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="s2">&quot;~/.cache/clgen&quot;</span><span class="p">,</span> <span class="n">abspaths</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">versiondirs</span> <span class="o">=</span> <span class="p">[</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="s2">&quot;~/.cache/clgen&quot;</span><span class="p">,</span> <span class="n">clgen</span><span class="o">.</span><span class="n">version</span><span class="p">())]</span>
+
+    <span class="n">datasets</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">versiondir</span> <span class="ow">in</span> <span class="n">versiondirs</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">samplerdir</span> <span class="ow">in</span> <span class="n">fs</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="n">versiondir</span><span class="p">,</span> <span class="s2">&quot;sampler&quot;</span><span class="p">,</span> <span class="n">abspaths</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">inpath</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">samplerdir</span><span class="p">,</span> <span class="s2">&quot;kernels.db&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">fs</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">inpath</span><span class="p">):</span>
+                <span class="n">datasets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inpath</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">datasets</span></div>
+
+
+<div class="viewcode-block" id="merge"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.merge">[docs]</a><span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="n">outpath</span><span class="p">,</span> <span class="n">inpaths</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Merge kernel datasets.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">explore</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">fs</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">outpath</span><span class="p">):</span>
+        <span class="n">create_db</span><span class="p">(</span><span class="n">outpath</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;created&quot;</span><span class="p">,</span> <span class="n">outpath</span><span class="p">)</span>
+
+    <span class="n">db</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">outpath</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">inpaths</span><span class="p">:</span>
+        <span class="n">inpaths</span> <span class="o">=</span> <span class="n">get_all_sampler_datasets</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">inpath</span> <span class="ow">in</span> <span class="n">inpaths</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;merging from&quot;</span><span class="p">,</span> <span class="n">inpath</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;ATTACH &#39;</span><span class="si">{}</span><span class="s2">&#39; AS rhs&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">inpath</span><span class="p">))</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;INSERT OR IGNORE INTO ContentFiles &quot;</span>
+                  <span class="s2">&quot;SELECT * FROM rhs.ContentFiles&quot;</span><span class="p">)</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;INSERT OR IGNORE INTO PreprocessedFiles &quot;</span>
+                  <span class="s2">&quot;SELECT * FROM rhs.PreprocessedFiles&quot;</span><span class="p">)</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DETACH rhs&quot;</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+    <span class="n">explore</span><span class="o">.</span><span class="n">explore</span><span class="p">(</span><span class="n">outpath</span><span class="p">)</span></div>
 </pre></div>
 
           </div>

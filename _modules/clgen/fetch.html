@@ -463,7 +463,7 @@
             <span class="n">include_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">include_name</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">include_path</span><span class="p">)</span> <span class="ow">and</span> <span class="n">include_path</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stack</span><span class="p">:</span>
-                <span class="n">include_src</span> <span class="o">=</span> <span class="n">inline_headers</span><span class="p">(</span><span class="n">include_path</span><span class="p">,</span> <span class="n">stack</span><span class="p">)</span>
+                <span class="n">include_src</span> <span class="o">=</span> <span class="n">inline_fs_headers</span><span class="p">(</span><span class="n">include_path</span><span class="p">,</span> <span class="n">stack</span><span class="p">)</span>
                 <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;// [FETCH] include: &#39;</span> <span class="o">+</span> <span class="n">include_path</span><span class="p">)</span>
                 <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">include_src</span><span class="p">)</span>
                 <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;// [FETCH] eof(&#39;</span> <span class="o">+</span> <span class="n">include_path</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span>
@@ -478,19 +478,6 @@
             <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outlines</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="flatten"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.flatten">[docs]</a><span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="n">l</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Flattens a list of lists.</span>
-
-<span class="sd">    Arguments:</span>
-<span class="sd">        l (list of list): Input.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        list: Flattened list.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">l</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="process_cl_file"><a class="viewcode-back" href="../../api/index.html#clgen.fetch.process_cl_file">[docs]</a><span class="k">def</span> <span class="nf">process_cl_file</span><span class="p">(</span><span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>

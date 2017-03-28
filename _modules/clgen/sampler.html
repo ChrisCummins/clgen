@@ -363,14 +363,14 @@
                 <span class="k">for</span> <span class="n">kid</span><span class="p">,</span> <span class="n">src</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">kernels</span><span class="p">):</span>
                     <span class="n">dbutil</span><span class="o">.</span><span class="n">sql_insert_dict</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s2">&quot;ContentFiles&quot;</span><span class="p">,</span>
                                            <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">kid</span><span class="p">,</span> <span class="s2">&quot;contents&quot;</span><span class="p">:</span> <span class="n">src</span><span class="p">},</span>
-                                           <span class="n">replace_existing</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                                           <span class="n">ignore_existing</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
                 <span class="c1"># insert preprocessed samples</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler_opts</span><span class="p">[</span><span class="s2">&quot;static_checker&quot;</span><span class="p">]:</span>
                     <span class="k">for</span> <span class="n">kid</span><span class="p">,</span> <span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">src</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">pp</span><span class="p">):</span>
                         <span class="n">dbutil</span><span class="o">.</span><span class="n">sql_insert_dict</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s2">&quot;PreprocessedFiles&quot;</span><span class="p">,</span> <span class="p">{</span>
                             <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">kid</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">status</span><span class="p">,</span> <span class="s2">&quot;contents&quot;</span><span class="p">:</span> <span class="n">src</span>
-                        <span class="p">},</span> <span class="n">replace_existing</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                        <span class="p">},</span> <span class="n">ignore_existing</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
                 <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
                 <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>

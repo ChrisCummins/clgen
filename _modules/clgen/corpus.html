@@ -128,6 +128,9 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        str: Path to directory.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        clgen.InternalError: If unable to extract archive.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">fs</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">path</span>
@@ -142,7 +145,8 @@
         <span class="n">tar</span><span class="o">.</span><span class="n">unpack_archive</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;.tar.bz2&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">path</span>
 
-    <span class="k">return</span> <span class="n">path</span></div>
+    <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">InternalError</span><span class="p">(</span><span class="s2">&quot;cannot interpret archive &#39;</span><span class="si">{path}</span><span class="s2">&#39;&quot;</span>
+                              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">()))</span></div>
 
 
 <div class="viewcode-block" id="get_atomizer"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.get_atomizer">[docs]</a><span class="k">def</span> <span class="nf">get_atomizer</span><span class="p">(</span><span class="n">corpus</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">vocab</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;char&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
@@ -169,12 +173,13 @@
         <span class="k">return</span> <span class="n">atomizerclass</span><span class="o">.</span><span class="n">from_text</span><span class="p">(</span><span class="n">corpus</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="get_features"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.get_features">[docs]</a><span class="k">def</span> <span class="nf">get_features</span><span class="p">(</span><span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
+<div class="viewcode-block" id="get_features"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.get_features">[docs]</a><span class="k">def</span> <span class="nf">get_features</span><span class="p">(</span><span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get features for code.</span>
 
 <span class="sd">    Arguments:</span>
 <span class="sd">        code (str): Source code.</span>
+<span class="sd">        **kwargs (dict, optional): Arguments to features.features()</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        np.array: Feature values.</span>
@@ -182,7 +187,7 @@
     <span class="k">with</span> <span class="n">NamedTemporaryFile</span><span class="p">()</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
         <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">code</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
         <span class="n">outfile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">f</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">to_np_arrays</span><span class="p">([</span><span class="n">outfile</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">to_np_arrays</span><span class="p">([</span><span class="n">outfile</span><span class="o">.</span><span class="n">name</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;features:&quot;</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">FeaturesError</span><span class="p">(</span><span class="s2">&quot;code contains more than one kernel&quot;</span><span class="p">)</span>
@@ -496,18 +501,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">create_batches</span><span class="p">()</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_batches</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">meta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get corpus metadata.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            dict: Metadata.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">_meta</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">)</span>
-        <span class="n">_meta</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash</span>
-        <span class="k">return</span> <span class="n">_meta</span>
-
 <div class="viewcode-block" id="Corpus.reset_batch_pointer"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.Corpus.reset_batch_pointer">[docs]</a>    <span class="k">def</span> <span class="nf">reset_batch_pointer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Resets batch pointer to first batch.</span>
@@ -535,12 +528,77 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pointer</span> <span class="o">=</span> <span class="n">pointer</span></div>
 
+<div class="viewcode-block" id="Corpus.preprocessed"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.Corpus.preprocessed">[docs]</a>    <span class="k">def</span> <span class="nf">preprocessed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return an iterator over all preprocessed kernels.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            status (int, optional): Pre-processed status, {0, 1, 2} for</span>
+<span class="sd">                {good, bad, ugly}.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            sequence of str: Sources.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="s2">&quot;SELECT Contents FROM PreprocessedFiles WHERE status=</span><span class="si">{status}</span><span class="s2">&quot;</span>
+            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">()))</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">query</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Corpus.contentfiles"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.Corpus.contentfiles">[docs]</a>    <span class="k">def</span> <span class="nf">contentfiles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return an iterator over all un-processed samples.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            sequence of str: Samples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT Contents FROM ContentFiles&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">query</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Corpus.most_common_prototypes"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.Corpus.most_common_prototypes">[docs]</a>    <span class="k">def</span> <span class="nf">most_common_prototypes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the n most frequently occuring prototypes.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            c (Corpus): Corpus.</span>
+<span class="sd">            n (int): Number of prototypes to return:</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple of list of tuples, int:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">clutil</span>
+
+        <span class="n">prototypes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">kernel</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessed</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">prototype</span> <span class="o">=</span> <span class="n">clutil</span><span class="o">.</span><span class="n">KernelPrototype</span><span class="o">.</span><span class="n">from_source</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">prototype</span><span class="o">.</span><span class="n">is_synthesizable</span><span class="p">:</span>
+                    <span class="n">prototypes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">prototype</span><span class="o">.</span><span class="n">args</span><span class="p">))</span>
+            <span class="k">except</span> <span class="n">clutil</span><span class="o">.</span><span class="n">PrototypeException</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="c1"># Convert frequency into ratios</span>
+        <span class="n">counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">prototypes</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">counter</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">prototype</span><span class="p">,</span> <span class="n">freq</span> <span class="o">=</span> <span class="n">row</span>
+            <span class="n">ratio</span> <span class="o">=</span> <span class="n">freq</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">prototypes</span><span class="p">)</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">ratio</span><span class="p">,</span> <span class="n">prototype</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">prototypes</span><span class="p">)</span></div>
+
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="nb">hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash</span>
         <span class="n">nf</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">num_good_kernels</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s1">&#39;kernels.db&#39;</span><span class="p">])</span>
         <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;vocabulary&quot;</span><span class="p">]</span>
         <span class="n">nt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomizer</span><span class="o">.</span><span class="n">vocab_size</span>
-        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;corpus[</span><span class="si">{hash}</span><span class="s2">]: </span><span class="si">{nf}</span><span class="s2"> files, </span><span class="si">{v}</span><span class="s2"> vocabulary with </span><span class="si">{nt}</span><span class="s2"> tokens&quot;</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;corpus[</span><span class="si">{hash}</span><span class="s2">]: </span><span class="si">{nf}</span><span class="s2"> files, </span><span class="si">{size}</span><span class="s2"> tokens using </span><span class="si">{v}</span><span class="s2"> vocabulary of size </span><span class="si">{nt}</span><span class="s2">&quot;</span>
                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">()))</span>
 
 <div class="viewcode-block" id="Corpus.to_json"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.Corpus.to_json">[docs]</a>    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
@@ -582,57 +640,6 @@
             <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s2">&quot;No corpus path or ID provided&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">Corpus</span><span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">corpus_json</span><span class="p">)</span></div></div>
-
-
-<div class="viewcode-block" id="preprocessed_kernels"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.preprocessed_kernels">[docs]</a><span class="k">def</span> <span class="nf">preprocessed_kernels</span><span class="p">(</span><span class="n">corpus</span><span class="p">:</span> <span class="n">Corpus</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Return an iterator over all preprocessed kernels.</span>
-
-<span class="sd">    Arguments:</span>
-<span class="sd">        corpus (Corpus): Corpus.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        sequence of str: Kernel sources.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">corpus</span><span class="p">,</span> <span class="n">Corpus</span><span class="p">))</span>
-    <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">corpus</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-    <span class="n">query</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT Contents FROM PreprocessedFiles WHERE status=0&quot;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">query</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
-        <span class="k">yield</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
-
-
-<div class="viewcode-block" id="most_common_prototypes"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.most_common_prototypes">[docs]</a><span class="k">def</span> <span class="nf">most_common_prototypes</span><span class="p">(</span><span class="n">c</span><span class="p">:</span> <span class="n">Corpus</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Return the n most frequently occuring prototypes.</span>
-
-<span class="sd">    Arguments:</span>
-<span class="sd">        c (Corpus): Corpus.</span>
-<span class="sd">        n (int): Number of prototypes to return:</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        tuple of list of tuples, int:</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">clutil</span>
-
-    <span class="n">prototypes</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">kernel</span> <span class="ow">in</span> <span class="n">preprocessed_kernels</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">prototype</span> <span class="o">=</span> <span class="n">clutil</span><span class="o">.</span><span class="n">KernelPrototype</span><span class="o">.</span><span class="n">from_source</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">prototype</span><span class="o">.</span><span class="n">is_synthesizable</span><span class="p">:</span>
-                <span class="n">prototypes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">prototype</span><span class="o">.</span><span class="n">args</span><span class="p">))</span>
-        <span class="k">except</span> <span class="n">clutil</span><span class="o">.</span><span class="n">PrototypeException</span><span class="p">:</span>
-            <span class="k">pass</span>
-
-    <span class="c1"># Convert frequency into ratios</span>
-    <span class="n">counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">prototypes</span><span class="p">)</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">counter</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
-        <span class="n">prototype</span><span class="p">,</span> <span class="n">freq</span> <span class="o">=</span> <span class="n">row</span>
-        <span class="n">ratio</span> <span class="o">=</span> <span class="n">freq</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">prototypes</span><span class="p">)</span>
-        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">ratio</span><span class="p">,</span> <span class="n">prototype</span><span class="p">))</span>
-
-    <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">prototypes</span><span class="p">)</span></div>
 </pre></div>
 
           </div>

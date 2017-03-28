@@ -1682,6 +1682,24 @@ kernel.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="clgen.corpus.Corpus.contentfiles">
+<code class="descname">contentfiles</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/corpus.html#Corpus.contentfiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.corpus.Corpus.contentfiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an iterator over all un-processed samples.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Samples.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">sequence of str</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">list</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="clgen.corpus.Corpus.create_batches">
 <code class="descname">create_batches</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/corpus.html#Corpus.create_batches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.corpus.Corpus.create_batches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create batches for training.</p>
@@ -1718,19 +1736,28 @@ kernel.</p>
 <code class="descname">lock</code><a class="headerlink" href="#clgen.corpus.Corpus.lock" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="clgen.corpus.Corpus.meta">
-<code class="descname">meta</code><a class="headerlink" href="#clgen.corpus.Corpus.meta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get corpus metadata.</p>
+<dl class="method">
+<dt id="clgen.corpus.Corpus.most_common_prototypes">
+<code class="descname">most_common_prototypes</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/corpus.html#Corpus.most_common_prototypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.corpus.Corpus.most_common_prototypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the n most frequently occuring prototypes.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Metadata.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>c</strong> (<a class="reference internal" href="#clgen.corpus.Corpus" title="clgen.corpus.Corpus"><em>Corpus</em></a>) &#8211; Corpus.</li>
+<li><strong>n</strong> (<em>int</em>) &#8211; Number of prototypes to return:</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">dict</span></code></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">tuple of list of tuples, int</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -1758,6 +1785,27 @@ kernel.</p>
 <dt id="clgen.corpus.Corpus.num_batches">
 <code class="descname">num_batches</code><a class="headerlink" href="#clgen.corpus.Corpus.num_batches" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>rtype</em> &#8211; <code class="xref py py-class docutils literal"><span class="pre">int</span></code></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="clgen.corpus.Corpus.preprocessed">
+<code class="descname">preprocessed</code><span class="sig-paren">(</span><em>status=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/corpus.html#Corpus.preprocessed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.corpus.Corpus.preprocessed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an iterator over all preprocessed kernels.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>status</strong> (<em>int</em><em>, </em><em>optional</em>) &#8211; Pre-processed status, {0, 1, 2} for
+{good, bad, ugly}.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Sources.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">sequence of str</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">list</span></code></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -1881,66 +1929,26 @@ kernel.</p>
 
 <dl class="function">
 <dt id="clgen.corpus.get_features">
-<code class="descclassname">clgen.corpus.</code><code class="descname">get_features</code><span class="sig-paren">(</span><em>code</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/corpus.html#get_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.corpus.get_features" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.corpus.</code><code class="descname">get_features</code><span class="sig-paren">(</span><em>code</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/corpus.html#get_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.corpus.get_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get features for code.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>code</strong> (<em>str</em>) &#8211; Source code.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Feature values.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">&lt;built-in function array&gt;</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="clgen.corpus.most_common_prototypes">
-<code class="descclassname">clgen.corpus.</code><code class="descname">most_common_prototypes</code><span class="sig-paren">(</span><em>c</em>, <em>n</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/corpus.html#most_common_prototypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.corpus.most_common_prototypes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the n most frequently occuring prototypes.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>c</strong> (<a class="reference internal" href="#clgen.corpus.Corpus" title="clgen.corpus.Corpus"><em>Corpus</em></a>) &#8211; Corpus.</li>
-<li><strong>n</strong> (<em>int</em>) &#8211; Number of prototypes to return:</li>
+<li><strong>code</strong> (<em>str</em>) &#8211; Source code.</li>
+<li><strong>**kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) &#8211; Arguments to features.features()</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Feature values.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">tuple of list of tuples, int</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">np.array</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">&lt;built-in function array&gt;</p>
 </td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="clgen.corpus.preprocessed_kernels">
-<code class="descclassname">clgen.corpus.</code><code class="descname">preprocessed_kernels</code><span class="sig-paren">(</span><em>corpus</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/corpus.html#preprocessed_kernels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.corpus.preprocessed_kernels" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an iterator over all preprocessed kernels.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>corpus</strong> (<a class="reference internal" href="#clgen.corpus.Corpus" title="clgen.corpus.Corpus"><em>Corpus</em></a>) &#8211; Corpus.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Kernel sources.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">sequence of str</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">list</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -1961,7 +1969,9 @@ tarball with the same name, unpack it.</p>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">str</span></code></td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="#clgen.InternalError" title="clgen.InternalError"><code class="xref py py-exc docutils literal"><span class="pre">clgen.InternalError</span></code></a> &#8211; If unable to extract archive.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">str</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -2041,6 +2051,7 @@ tarball with the same name, unpack it.</p>
 <li>MD5SUM() returns md5 of column values</li>
 <li>LC() returns sum line count of text columns</li>
 <li>CC() returns sum character count of text columns</li>
+<li>LC_col() returns line count of text value</li>
 </ul>
 </div></blockquote>
 <table class="docutils field-list" frame="void" rules="none">
@@ -2113,6 +2124,19 @@ tarball with the same name, unpack it.</p>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">str</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.dbutil.get_all_sampler_datasets">
+<code class="descclassname">clgen.dbutil.</code><code class="descname">get_all_sampler_datasets</code><span class="sig-paren">(</span><em>all_clgen_versions=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#get_all_sampler_datasets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.get_all_sampler_datasets" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">list</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -2288,6 +2312,26 @@ tarball with the same name, unpack it.</p>
 </table>
 </dd></dl>
 
+<dl class="function">
+<dt id="clgen.dbutil.linecount">
+<code class="descclassname">clgen.dbutil.</code><code class="descname">linecount</code><span class="sig-paren">(</span><em>t</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#linecount"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.linecount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Line count.
+:param t: String.
+:type t: str</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Line count.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">int</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="class">
 <dt id="clgen.dbutil.linecount_aggregator">
 <em class="property">class </em><code class="descclassname">clgen.dbutil.</code><code class="descname">linecount_aggregator</code><a class="reference internal" href="../_modules/clgen/dbutil.html#linecount_aggregator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.linecount_aggregator" title="Permalink to this definition">¶</a></dt>
@@ -2350,6 +2394,12 @@ tarball with the same name, unpack it.</p>
 </table>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen.dbutil.merge">
+<code class="descclassname">clgen.dbutil.</code><code class="descname">merge</code><span class="sig-paren">(</span><em>outpath</em>, <em>inpaths=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#merge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.merge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merge kernel datasets.</p>
 </dd></dl>
 
 <dl class="function">
@@ -2500,7 +2550,7 @@ tarball with the same name, unpack it.</p>
 
 <dl class="function">
 <dt id="clgen.dbutil.set_version_meta">
-<code class="descclassname">clgen.dbutil.</code><code class="descname">set_version_meta</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.2.12'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#set_version_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.set_version_meta" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.dbutil.</code><code class="descname">set_version_meta</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.2.13'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#set_version_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.set_version_meta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the &#8220;version&#8221; key in an database.</p>
 <p>This is useful for marking version requirements of specific datasets, e.g.
 a databse schema which requires a particular CLgen version, or a scheme
@@ -2524,7 +2574,7 @@ which is likely to change in the future.</p>
 
 <dl class="function">
 <dt id="clgen.dbutil.sql_insert_dict">
-<code class="descclassname">clgen.dbutil.</code><code class="descname">sql_insert_dict</code><span class="sig-paren">(</span><em>c</em>, <em>table</em>, <em>data</em>, <em>replace_existing=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#sql_insert_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.sql_insert_dict" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.dbutil.</code><code class="descname">sql_insert_dict</code><span class="sig-paren">(</span><em>c</em>, <em>table</em>, <em>data</em>, <em>ignore_existing=False</em>, <em>replace_existing=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#sql_insert_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.sql_insert_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Insert a dict of key value pairs into an SQL table.</p>
 <p>Uses the key names as column names, as the values as column values.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -2535,6 +2585,8 @@ which is likely to change in the future.</p>
 <li><strong>c</strong> (<em>sqlite3.Cursor</em>) &#8211; Database cursor.</li>
 <li><strong>table</strong> (<em>str</em>) &#8211; Destination table.</li>
 <li><strong>data</strong> (<em>dict</em>) &#8211; Key value pairs.</li>
+<li><strong>ignore_existing</strong> (<em>bool</em><em>, </em><em>optional</em>) &#8211; Ignore existing entries.</li>
+<li><strong>replace_existing</strong> (<em>bool</em><em>, </em><em>optional</em>) &#8211; Replace existing entries.</li>
 </ul>
 </td>
 </tr>
@@ -2574,7 +2626,7 @@ which is likely to change in the future.</p>
 
 <dl class="function">
 <dt id="clgen.dbutil.version_meta_matches">
-<code class="descclassname">clgen.dbutil.</code><code class="descname">version_meta_matches</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.2.12'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#version_meta_matches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.version_meta_matches" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.dbutil.</code><code class="descname">version_meta_matches</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.2.13'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#version_meta_matches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.version_meta_matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check that the &#8220;version&#8221; key in a database matches the expected value.</p>
 <p>If the database does not have a &#8220;version&#8221; key in the Meta table, returns
 False.</p>
@@ -2676,20 +2728,15 @@ False.</p>
 
 <dl class="function">
 <dt id="clgen.explore.explore">
-<code class="descclassname">clgen.explore.</code><code class="descname">explore</code><span class="sig-paren">(</span><em>db_path</em>, <em>graph=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/explore.html#explore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.explore.explore" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.explore.</code><code class="descname">explore</code><span class="sig-paren">(</span><em>db_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/explore.html#explore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.explore.explore" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run exploratory analysis on dataset.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>db_path</strong> (<em>str</em>) &#8211; Path to dataset.</li>
-<li><strong>graph</strong> (<em>bool</em><em>, </em><em>optional</em>) &#8211; Render graphs.</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>db_path</strong> (<em>str</em>) &#8211; Path to dataset.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">None</p>
-</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">None</td>
 </tr>
 </tbody>
 </table>
@@ -2697,20 +2744,15 @@ False.</p>
 
 <dl class="function">
 <dt id="clgen.explore.explore_gh">
-<code class="descclassname">clgen.explore.</code><code class="descname">explore_gh</code><span class="sig-paren">(</span><em>db_path</em>, <em>graph=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/explore.html#explore_gh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.explore.explore_gh" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.explore.</code><code class="descname">explore_gh</code><span class="sig-paren">(</span><em>db_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/explore.html#explore_gh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.explore.explore_gh" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run exploratory analysis on GitHub dataset.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>db_path</strong> (<em>str</em>) &#8211; Path to dataset.</li>
-<li><strong>graph</strong> (<em>bool</em><em>, </em><em>optional</em>) &#8211; Render graphs.</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>db_path</strong> (<em>str</em>) &#8211; Path to dataset.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">None</p>
-</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">None</td>
 </tr>
 </tbody>
 </table>
@@ -2725,48 +2767,6 @@ False.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">list</span></code></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="clgen.explore.graph_bc_lc">
-<code class="descclassname">clgen.explore.</code><code class="descname">graph_bc_lc</code><span class="sig-paren">(</span><em>db_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/explore.html#graph_bc_lc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.explore.graph_bc_lc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot distribution of bytecode line counts.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="clgen.explore.graph_ocl_lc">
-<code class="descclassname">clgen.explore.</code><code class="descname">graph_ocl_lc</code><span class="sig-paren">(</span><em>db_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/explore.html#graph_ocl_lc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.explore.graph_ocl_lc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot distribution of OpenCL file line counts.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="clgen.explore.graph_ocl_stars">
-<code class="descclassname">clgen.explore.</code><code class="descname">graph_ocl_stars</code><span class="sig-paren">(</span><em>db_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/explore.html#graph_ocl_stars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.explore.graph_ocl_stars" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot distribution of stargazers per file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
 </tr>
 </tbody>
 </table>
@@ -3051,26 +3051,6 @@ False.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">None</p>
 </td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="clgen.fetch.flatten">
-<code class="descclassname">clgen.fetch.</code><code class="descname">flatten</code><span class="sig-paren">(</span><em>l</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/fetch.html#flatten"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.fetch.flatten" title="Permalink to this definition">¶</a></dt>
-<dd><p>Flattens a list of lists.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>l</strong> (<em>list of list</em>) &#8211; Input.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Flattened list.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">list</span></code></td>
 </tr>
 </tbody>
 </table>
