@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Python API &#8212; clgen 0.2.12 documentation</title>
+    <title>Python API &#8212; clgen 0.2.13 documentation</title>
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.12',
+        VERSION:     '0.2.13',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="clgen 0.2.12 documentation" href="../index.html" />
+    <link rel="top" title="clgen 0.2.13 documentation" href="../index.html" />
     <link rel="next" title="Command Line Interface" href="../bin/index.html" />
     <link rel="prev" title="Building the Development Version" href="../installation.html" /> 
   </head>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../installation.html" title="Building the Development Version"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.12 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.13 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -2567,90 +2567,6 @@ This function does not return.</p>
 <div class="section" id="clgen-sampler">
 <h2>clgen.sampler<a class="headerlink" href="#clgen-sampler" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-clgen.train">
-<span id="clgen-train"></span><h2>clgen.train<a class="headerlink" href="#module-clgen.train" title="Permalink to this headline">¶</a></h2>
-<p>Training utils.</p>
-<dl class="function">
-<dt id="clgen.train.create_corpus">
-<code class="descclassname">clgen.train.</code><code class="descname">create_corpus</code><span class="sig-paren">(</span><em>db</em>, <em>out_path</em>, <em>gh=False</em>, <em>fileid=False</em>, <em>reverse=False</em>, <em>input_samples=False</em>, <em>status=0</em>, <em>eof=False</em>, <em>dir=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/train.html#create_corpus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.train.create_corpus" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create CLgen training corpus.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>db</strong> (<em>slite3.Connection</em>) &#8211; Dataset.</li>
-<li><strong>out_path</strong> (<em>str</em>) &#8211; Path to output.</li>
-<li><strong>gh</strong> (<em>bool, optional</em>) &#8211; Dataset is GitHub.</li>
-<li><strong>fileid</strong> (<em>bool, optional</em>) &#8211; Include file IDs.</li>
-<li><strong>reverse</strong> (<em>bool, optional</em>) &#8211; Reverse ordering of output.</li>
-<li><strong>input_samples</strong> (<em>bool, optional</em>) &#8211; If True, use un-preprocessed files.</li>
-<li><strong>status</strong> (<em>int, optional</em>) &#8211; Filter preprocess status.</li>
-<li><strong>eof</strong> (<em>bool, optional</em>) &#8211; Include EOF separators.</li>
-<li><strong>dir</strong> (<em>bool, optional</em>) &#8211; Write output to directory.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="clgen.train.linecount">
-<code class="descclassname">clgen.train.</code><code class="descname">linecount</code><span class="sig-paren">(</span><em>t</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/train.html#linecount"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.train.linecount" title="Permalink to this definition">¶</a></dt>
-<dd><p>Line count.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>t</strong> (<em>str</em>) &#8211; String.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Line count.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="clgen.train.sanitize_id">
-<code class="descclassname">clgen.train.</code><code class="descname">sanitize_id</code><span class="sig-paren">(</span><em>id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/train.html#sanitize_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.train.sanitize_id" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sanitize ID.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>id</strong> (<em>str</em>) &#8211; ID.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">ID.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="clgen.train.train">
-<code class="descclassname">clgen.train.</code><code class="descname">train</code><span class="sig-paren">(</span><em>db_path</em>, <em>out_path</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/train.html#train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.train.train" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate corpus.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>db_path</strong> (<em>str</em>) &#8211; Dataset.</li>
-<li><strong>out_path</strong> (<em>str</em>) &#8211; Corpus path.</li>
-<li><strong>**kwargs</strong> (<em>dict</em>) &#8211; Additional arguments to create_corpus().</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</div>
 </div>
 
 
@@ -2678,7 +2594,6 @@ This function does not return.</p>
 <li><a class="reference internal" href="#module-clgen.native">clgen.native</a></li>
 <li><a class="reference internal" href="#clgen-preprocess">clgen.preprocess</a></li>
 <li><a class="reference internal" href="#clgen-sampler">clgen.sampler</a></li>
-<li><a class="reference internal" href="#module-clgen.train">clgen.train</a></li>
 </ul>
 </li>
 </ul>
@@ -2725,7 +2640,7 @@ This function does not return.</p>
         <li class="right" >
           <a href="../installation.html" title="Building the Development Version"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.12 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.13 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
