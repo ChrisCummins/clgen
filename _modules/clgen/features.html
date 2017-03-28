@@ -17,7 +17,8 @@
         VERSION:     '0.2.13',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
@@ -25,9 +26,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="top" title="clgen 0.2.13 documentation" href="../../index.html" />
-    <link rel="up" title="clgen" href="../clgen.html" /> 
+    <link rel="search" title="Search" href="../../search.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -52,7 +51,7 @@
             
   <h1>Source code for clgen.features</h1><div class="highlight"><pre>
 <span></span><span class="c1">#</span>
-<span class="c1"># Copyright 2016 Chris Cummins &lt;chrisc.101@gmail.com&gt;.</span>
+<span class="c1"># Copyright 2016, 2017 Chris Cummins &lt;chrisc.101@gmail.com&gt;.</span>
 <span class="c1">#</span>
 <span class="c1"># This file is part of CLgen.</span>
 <span class="c1">#</span>
@@ -72,26 +71,29 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">OpenCL feature extraction.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">with_statement</span>
-
 <span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
-<span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="nb">open</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="nb">open</span><span class="p">,</span> <span class="n">StringIO</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">fs</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">math</span> <span class="k">as</span> <span class="n">labmath</span>
 <span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span><span class="p">,</span> <span class="n">STDOUT</span>
 
+<span class="kn">import</span> <span class="nn">clgen</span>
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">native</span>
 
 
-<span class="k">def</span> <span class="nf">_shim_args</span><span class="p">(</span><span class="n">use_shim</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="FeatureExtractionError"><a class="viewcode-back" href="../../api/index.html#clgen.features.FeatureExtractionError">[docs]</a><span class="k">class</span> <span class="nc">FeatureExtractionError</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Thrown in case feature extraction fails &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<span class="k">def</span> <span class="nf">_shim_args</span><span class="p">(</span><span class="n">use_shim</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;get shim header args&quot;&quot;&quot;</span>
     <span class="n">args</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="n">use_shim</span><span class="p">:</span>
@@ -99,12 +101,12 @@
     <span class="k">return</span> <span class="n">args</span>
 
 
-<span class="k">def</span> <span class="nf">_is_features</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_is_features</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;true if features&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">==</span> <span class="mi">10</span>
 
 
-<span class="k">def</span> <span class="nf">_is_good_features</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">stderr</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_is_good_features</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">stderr</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;true if feature extractor worked&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">_is_features</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
         <span class="n">has_err</span> <span class="o">=</span> <span class="kc">False</span> <span class="k">if</span> <span class="n">stderr</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39; error: &#39;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="k">else</span> <span class="kc">True</span>
@@ -112,8 +114,37 @@
     <span class="k">return</span> <span class="kc">False</span>
 
 
-<div class="viewcode-block" id="features"><a class="viewcode-back" href="../../api/index.html#clgen.features.features">[docs]</a><span class="k">def</span> <span class="nf">features</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">fatal_errors</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_shim</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-             <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="to_np_arrays"><a class="viewcode-back" href="../../api/index.html#clgen.features.to_np_arrays">[docs]</a><span class="k">def</span> <span class="nf">to_np_arrays</span><span class="p">(</span><span class="n">paths</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a list of numpy arrays for features in kernels in files.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        path (str[]): List of file paths.</span>
+<span class="sd">        **kwargs (dict, optional): Arguments to features()</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        FeatureExtractionError: In case feature extraction fails.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_process_file</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">buf</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+        <span class="n">features</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">buf</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">buf</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+             <span class="c1"># last line is empty:</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="c1"># first two cols are ignored (path and kernel names):</span>
+            <span class="n">parse</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">l</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">:]])</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">parse</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;lines:&quot;</span><span class="p">,</span> <span class="n">lines</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">FeatureExtractionError</span>
+
+    <span class="n">flatten</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">l</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">flatten</span><span class="p">([</span><span class="n">_process_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="features"><a class="viewcode-back" href="../../api/index.html#clgen.features.features">[docs]</a><span class="k">def</span> <span class="nf">features</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">fatal_errors</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+             <span class="n">use_shim</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">quiet</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print CSV format features of file.</span>
 
@@ -124,6 +155,8 @@
 <span class="sd">        use_shim (bool, optional): Inject shim header.</span>
 <span class="sd">        quiet (bool, optional): Don&#39;t print compiler output on errors.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">must_exist</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
     <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="n">native</span><span class="o">.</span><span class="n">CLGEN_FEATURES</span><span class="p">,</span> <span class="n">path</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span>
         <span class="s1">&#39;-extra-arg=&#39;</span> <span class="o">+</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">_shim_args</span><span class="p">(</span><span class="n">use_shim</span><span class="o">=</span><span class="n">use_shim</span><span class="p">)]</span>
 
@@ -153,7 +186,7 @@
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="p">),</span> <span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="feature_headers"><a class="viewcode-back" href="../../api/index.html#clgen.features.feature_headers">[docs]</a><span class="k">def</span> <span class="nf">feature_headers</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">):</span>
+<div class="viewcode-block" id="feature_headers"><a class="viewcode-back" href="../../api/index.html#clgen.features.feature_headers">[docs]</a><span class="k">def</span> <span class="nf">feature_headers</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print CSV format feature header.</span>
 
@@ -168,7 +201,7 @@
     <span class="nb">print</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="files"><a class="viewcode-back" href="../../api/index.html#clgen.features.files">[docs]</a><span class="k">def</span> <span class="nf">files</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="files"><a class="viewcode-back" href="../../api/index.html#clgen.features.files">[docs]</a><span class="k">def</span> <span class="nf">files</span><span class="p">(</span><span class="n">paths</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print feature values of files in CSV format.</span>
 
@@ -187,7 +220,7 @@
         <span class="n">features</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="summarize"><a class="viewcode-back" href="../../api/index.html#clgen.features.summarize">[docs]</a><span class="k">def</span> <span class="nf">summarize</span><span class="p">(</span><span class="n">csv_path</span><span class="p">):</span>
+<div class="viewcode-block" id="summarize"><a class="viewcode-back" href="../../api/index.html#clgen.features.summarize">[docs]</a><span class="k">def</span> <span class="nf">summarize</span><span class="p">(</span><span class="n">csv_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrderedDict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Summarize a CSV file of feature values.</span>
 
@@ -246,7 +279,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2016, Chris Cummins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.3.
     </div>
   </body>
 </html>

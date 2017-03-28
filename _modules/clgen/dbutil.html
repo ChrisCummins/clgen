@@ -17,7 +17,8 @@
         VERSION:     '0.2.13',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
@@ -25,9 +26,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="top" title="clgen 0.2.13 documentation" href="../../index.html" />
-    <link rel="up" title="clgen" href="../clgen.html" /> 
+    <link rel="search" title="Search" href="../../search.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -52,7 +51,7 @@
             
   <h1>Source code for clgen.dbutil</h1><div class="highlight"><pre>
 <span></span><span class="c1">#</span>
-<span class="c1"># Copyright 2016 Chris Cummins &lt;chrisc.101@gmail.com&gt;.</span>
+<span class="c1"># Copyright 2016, 2017 Chris Cummins &lt;chrisc.101@gmail.com&gt;.</span>
 <span class="c1">#</span>
 <span class="c1"># This file is part of CLgen.</span>
 <span class="c1">#</span>
@@ -72,17 +71,19 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">CLgen sqlite3 database utilities</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
-
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">sqlite3</span>
 
 <span class="kn">from</span> <span class="nn">hashlib</span> <span class="k">import</span> <span class="n">md5</span>
+<span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">fs</span>
 
 <span class="kn">import</span> <span class="nn">clgen</span>
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
 
 
-<div class="viewcode-block" id="create_db"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.create_db">[docs]</a><span class="k">def</span> <span class="nf">create_db</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">github</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="create_db"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.create_db">[docs]</a><span class="k">def</span> <span class="nf">create_db</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">github</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create an empty OpenCL kernel database.</span>
 
@@ -114,10 +115,10 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">md5</span> <span class="o">=</span> <span class="n">md5</span><span class="p">()</span>
 
-<div class="viewcode-block" id="md5sum_aggregator.step"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.md5sum_aggregator.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="md5sum_aggregator.step"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.md5sum_aggregator.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">md5</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="md5sum_aggregator.finalize"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.md5sum_aggregator.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="md5sum_aggregator.finalize"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.md5sum_aggregator.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">md5</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span></div></div>
 
 
@@ -128,10 +129,10 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
 
-<div class="viewcode-block" id="linecount_aggregator.step"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.linecount_aggregator.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="linecount_aggregator.step"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.linecount_aggregator.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="linecount_aggregator.finalize"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.linecount_aggregator.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="linecount_aggregator.finalize"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.linecount_aggregator.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span></div></div>
 
 
@@ -142,14 +143,14 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
 
-<div class="viewcode-block" id="charcount_aggregator.step"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.charcount_aggregator.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="charcount_aggregator.step"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.charcount_aggregator.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="charcount_aggregator.finalize"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.charcount_aggregator.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="charcount_aggregator.finalize"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.charcount_aggregator.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span></div></div>
 
 
-<div class="viewcode-block" id="connect"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.connect">[docs]</a><span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
+<div class="viewcode-block" id="connect"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.connect">[docs]</a><span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns a connection to a database.</span>
 
@@ -174,7 +175,119 @@
     <span class="k">return</span> <span class="n">db</span></div>
 
 
-<div class="viewcode-block" id="is_modified"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.is_modified">[docs]</a><span class="k">def</span> <span class="nf">is_modified</span><span class="p">(</span><span class="n">db</span><span class="p">):</span>
+<div class="viewcode-block" id="set_meta"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.set_meta">[docs]</a><span class="k">def</span> <span class="nf">set_meta</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set a value in a database&#39;s Meta table.</span>
+
+<span class="sd">    If the a row with this key already exists in the table, it is replaced.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        path (str): Path to database.</span>
+<span class="sd">        key (str): Key name.</span>
+<span class="sd">        value (str): Value to insert.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DELETE FROM Meta WHERE key=?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">key</span><span class="p">,))</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;INSERT INTO Meta (key, value) VALUES (?,?)&quot;</span><span class="p">,</span>
+              <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="get_meta"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.get_meta">[docs]</a><span class="k">def</span> <span class="nf">get_meta</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve a value from a database&#39;s Meta table.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        path (str): Path to database.</span>
+<span class="sd">        key (str): Key name.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Value. If no row matching key is found, returns empty string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT value FROM Meta WHERE key=?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">key</span><span class="p">,))</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">v</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="get_kernel"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.get_kernel">[docs]</a><span class="k">def</span> <span class="nf">get_kernel</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">kid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;PreprocessedFiles&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve a kernel from a database.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        path (str): Path to database.</span>
+<span class="sd">        kid (str): Kernel ID.</span>
+<span class="sd">        table (str): Name of table.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Source code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT contents FROM </span><span class="si">{table}</span><span class="s2"> WHERE id=?&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">()),</span> <span class="p">(</span><span class="n">kid</span><span class="p">,))</span>
+    <span class="n">src</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">src</span></div>
+
+
+<div class="viewcode-block" id="set_version_meta"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.set_version_meta">[docs]</a><span class="k">def</span> <span class="nf">set_version_meta</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="n">clgen</span><span class="o">.</span><span class="n">version</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the &quot;version&quot; key in an database.</span>
+
+<span class="sd">    This is useful for marking version requirements of specific datasets, e.g.</span>
+<span class="sd">    a databse schema which requires a particular CLgen version, or a scheme</span>
+<span class="sd">    which is likely to change in the future.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        path (str): Path to database.</span>
+<span class="sd">        version (str, optional): Version value (defaults to CLgen version).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">set_meta</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="version_meta_matches"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.version_meta_matches">[docs]</a><span class="k">def</span> <span class="nf">version_meta_matches</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="n">clgen</span><span class="o">.</span><span class="n">version</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check that the &quot;version&quot; key in a database matches the expected value.</span>
+
+<span class="sd">    If the database does not have a &quot;version&quot; key in the Meta table, returns</span>
+<span class="sd">    False.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        path (str): Path to database.</span>
+<span class="sd">        version (str, optional): Version value (defaults to CLgen version).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if version in database matches expected version, else False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">get_meta</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">version</span></div>
+
+
+<div class="viewcode-block" id="run_script"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.run_script">[docs]</a><span class="k">def</span> <span class="nf">run_script</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">script</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run an SQL script on a databse.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        path (str): Path to database.</span>
+<span class="sd">        script (str): Name of SQL data script.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">executescript</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">sql_script</span><span class="p">(</span><span class="n">script</span><span class="p">))</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="is_modified"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.is_modified">[docs]</a><span class="k">def</span> <span class="nf">is_modified</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns whether database is preprocessed.</span>
 
@@ -197,7 +310,7 @@
     <span class="k">return</span> <span class="kc">False</span> <span class="k">if</span> <span class="n">cached_checksum</span> <span class="o">==</span> <span class="n">checksum</span> <span class="k">else</span> <span class="n">checksum</span></div>
 
 
-<div class="viewcode-block" id="set_modified_status"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.set_modified_status">[docs]</a><span class="k">def</span> <span class="nf">set_modified_status</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">checksum</span><span class="p">):</span>
+<div class="viewcode-block" id="set_modified_status"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.set_modified_status">[docs]</a><span class="k">def</span> <span class="nf">set_modified_status</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">checksum</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Set database preprocessed checksum.</span>
 
@@ -212,7 +325,30 @@
     <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="table_exists"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.table_exists">[docs]</a><span class="k">def</span> <span class="nf">table_exists</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">table_name</span><span class="p">):</span>
+<div class="viewcode-block" id="kernel_ids"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.kernel_ids">[docs]</a><span class="k">def</span> <span class="nf">kernel_ids</span><span class="p">(</span><span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;PreprocessedFiles&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a list of kernel IDs.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        path (str): Database path.</span>
+<span class="sd">        table (str, optional): Name of table.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list of str: Kernel IDs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT id FROM </span><span class="si">{table}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">()))</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()]</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">results</span></div>
+
+
+<div class="viewcode-block" id="table_exists"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.table_exists">[docs]</a><span class="k">def</span> <span class="nf">table_exists</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    SQL table exists.</span>
 
@@ -231,7 +367,7 @@
     <span class="k">return</span> <span class="n">res</span> <span class="ow">and</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="is_github"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.is_github">[docs]</a><span class="k">def</span> <span class="nf">is_github</span><span class="p">(</span><span class="n">db</span><span class="p">):</span>
+<div class="viewcode-block" id="is_github"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.is_github">[docs]</a><span class="k">def</span> <span class="nf">is_github</span><span class="p">(</span><span class="n">db</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    SQL table has GitHub metadata tables.</span>
 
@@ -244,7 +380,7 @@
     <span class="k">return</span> <span class="n">table_exists</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="s1">&#39;Repositories&#39;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="num_good_kernels"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.num_good_kernels">[docs]</a><span class="k">def</span> <span class="nf">num_good_kernels</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<div class="viewcode-block" id="num_good_kernels"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.num_good_kernels">[docs]</a><span class="k">def</span> <span class="nf">num_good_kernels</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fetch the number of good preprocessed kernels from dataset.</span>
 
@@ -259,7 +395,7 @@
     <span class="k">return</span> <span class="n">num_rows_in</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;PreprocessedFiles&quot;</span><span class="p">,</span> <span class="s2">&quot;WHERE status=0&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="num_rows_in"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.num_rows_in">[docs]</a><span class="k">def</span> <span class="nf">num_rows_in</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">condition</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="num_rows_in"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.num_rows_in">[docs]</a><span class="k">def</span> <span class="nf">num_rows_in</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">condition</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fetch number of rows in table.</span>
 
@@ -280,7 +416,28 @@
     <span class="k">return</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="lc"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.lc">[docs]</a><span class="k">def</span> <span class="nf">lc</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="s2">&quot;Contents&quot;</span><span class="p">,</span> <span class="n">condition</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="cc"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.cc">[docs]</a><span class="k">def</span> <span class="nf">cc</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">column</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;Contents&quot;</span><span class="p">,</span> <span class="n">condition</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fetch character count of contents in table.</span>
+
+<span class="sd">    Arguments:</span>
+
+<span class="sd">        path (str): Path to database.</span>
+<span class="sd">        table (str): Table ID.</span>
+<span class="sd">        condition (str, optional): Conditional.</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">        int: Num lines.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT CC(</span><span class="si">{column}</span><span class="s2">) FROM </span><span class="si">{table}</span><span class="s2"> </span><span class="si">{condition}</span><span class="s2">&quot;</span>
+              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="n">column</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">,</span> <span class="n">condition</span><span class="o">=</span><span class="n">condition</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="lc"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.lc">[docs]</a><span class="k">def</span> <span class="nf">lc</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">column</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;Contents&quot;</span><span class="p">,</span> <span class="n">condition</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fetch line count of contents in table.</span>
 
@@ -298,10 +455,10 @@
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
     <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT LC(</span><span class="si">{column}</span><span class="s2">) FROM </span><span class="si">{table}</span><span class="s2"> </span><span class="si">{condition}</span><span class="s2">&quot;</span>
               <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="n">column</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">,</span> <span class="n">condition</span><span class="o">=</span><span class="n">condition</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span></div>
+    <span class="k">return</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="mi">0</span></div>
 
 
-<div class="viewcode-block" id="remove_preprocessed"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.remove_preprocessed">[docs]</a><span class="k">def</span> <span class="nf">remove_preprocessed</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<div class="viewcode-block" id="remove_preprocessed"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.remove_preprocessed">[docs]</a><span class="k">def</span> <span class="nf">remove_preprocessed</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Removes all preprocessed files from database.</span>
 
@@ -317,6 +474,181 @@
     <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DELETE FROM Meta WHERE key=&#39;preprocessed_checksum&#39;&quot;</span><span class="p">)</span>
     <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
     <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="remove_bad_preprocessed"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.remove_bad_preprocessed">[docs]</a><span class="k">def</span> <span class="nf">remove_bad_preprocessed</span><span class="p">(</span><span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove all ugly and bad contents from PreprocessedFiles table.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        db_path (str): Dataset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">original_size</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">du</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">human_readable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">original_size_human_readable</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">du</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">human_readable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;vacuuming&quot;</span><span class="p">,</span> <span class="n">original_size_human_readable</span><span class="p">,</span> <span class="s2">&quot;database&quot;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+    <span class="c1"># Remove contents from bad or ugly preprocessed files.</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;UPDATE PreprocessedFiles SET contents=&#39;[DELETED]&#39; &quot;</span>
+              <span class="s2">&quot;WHERE status=1 OR status=2&quot;</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;VACUUM&quot;</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">new_size</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">du</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">human_readable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">new_size_human_readable</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">du</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">human_readable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">reduction_ratio</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">new_size</span> <span class="o">/</span> <span class="n">original_size</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;done. new size </span><span class="si">{}</span><span class="s2">. (</span><span class="si">{:.0f}% r</span><span class="s2">eduction)&quot;</span>
+             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">new_size_human_readable</span><span class="p">,</span> <span class="n">reduction_ratio</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="sql_insert_dict"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.sql_insert_dict">[docs]</a><span class="k">def</span> <span class="nf">sql_insert_dict</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">replace_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Insert a dict of key value pairs into an SQL table.</span>
+
+<span class="sd">    Uses the key names as column names, as the values as column values.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        c (sqlite3.Cursor): Database cursor.</span>
+<span class="sd">        table (str): Destination table.</span>
+<span class="sd">        data (dict): Key value pairs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">or_replace</span> <span class="o">=</span> <span class="s2">&quot;OR REPLACE&quot;</span> <span class="k">if</span> <span class="n">replace_existing</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+    <span class="n">vals</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;?&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+
+    <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;INSERT </span><span class="si">{or_replace}</span><span class="s2"> INTO </span><span class="si">{table}</span><span class="s2">(</span><span class="si">{cols}</span><span class="s2">) VALUES(</span><span class="si">{vals}</span><span class="s2">)&quot;</span>
+           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">()))</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">data</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())]))</span></div>
+
+
+<span class="n">_sql_rm_chars</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;[\(\)]&#39;</span><span class="p">)</span>
+<span class="n">_sql_sub_chars</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;-&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="escape_sql_key"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.escape_sql_key">[docs]</a><span class="k">def</span> <span class="nf">escape_sql_key</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Escape SQL key.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        key (str): SQL key.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Escaped key.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">_sql_sub_chars</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span>
+                  <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">_sql_rm_chars</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">))))</span></div>
+
+
+<div class="viewcode-block" id="kid_to_path"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.kid_to_path">[docs]</a><span class="k">def</span> <span class="nf">kid_to_path</span><span class="p">(</span><span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sanitize ID.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        id (str): ID.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: ID.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;[/:\. ]+&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_dump_db</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">out_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">gh</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fileid</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+             <span class="n">reverse</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">input_samples</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+             <span class="n">eof</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">dir</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dump database contents.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        db (slite3.Connection): Dataset.</span>
+<span class="sd">        out_path (str): Path to output.</span>
+<span class="sd">        gh (bool, optional): Dataset is GitHub.</span>
+<span class="sd">        fileid (bool, optional): Include file IDs.</span>
+<span class="sd">        reverse (bool, optional): Reverse ordering of output.</span>
+<span class="sd">        input_samples (bool, optional): If True, use un-preprocessed files.</span>
+<span class="sd">        status (int, optional): Filter preprocess status.</span>
+<span class="sd">        eof (bool, optional): Include EOF separators.</span>
+<span class="sd">        dir (bool, optional): Write output to directory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;writing corpus&#39;</span><span class="p">,</span> <span class="n">out_path</span><span class="p">,</span> <span class="s1">&#39;...&#39;</span><span class="p">)</span>
+
+    <span class="n">order</span> <span class="o">=</span> <span class="s1">&#39;ASC&#39;</span> <span class="k">if</span> <span class="n">reverse</span> <span class="k">else</span> <span class="s1">&#39;DESC&#39;</span>
+
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+    <span class="c1"># Query components</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="s1">&#39;ContentFiles&#39;</span> <span class="k">if</span> <span class="n">input_samples</span> <span class="k">else</span> <span class="s1">&#39;PreprocessedFiles&#39;</span>
+    <span class="n">select</span> <span class="o">=</span> <span class="s1">&#39;SELECT </span><span class="si">{}</span><span class="s1">.id,</span><span class="si">{}</span><span class="s1">.contents&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">input_samples</span><span class="p">:</span>
+        <span class="n">qualifier</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">qualifier</span> <span class="o">=</span> <span class="s1">&#39;WHERE </span><span class="si">{}</span><span class="s1">.status=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">status</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">gh</span><span class="p">:</span>
+        <span class="n">table</span> <span class="o">+=</span> <span class="p">(</span><span class="s1">&#39; LEFT JOIN ContentMeta ON </span><span class="si">{}</span><span class="s1">.id=ContentMeta.id&#39;</span>
+                  <span class="s1">&#39; LEFT JOIN Repositories ON &#39;</span>
+                  <span class="s1">&#39;ContentMeta.repo_url=Repositories.url&#39;</span>
+                  <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="p">))</span>
+        <span class="n">orderby</span> <span class="o">=</span> <span class="s1">&#39;Repositories.stars&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">orderby</span> <span class="o">=</span> <span class="s1">&#39;LC(contents)&#39;</span>
+
+    <span class="n">query</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">{select}</span><span class="s1"> FROM </span><span class="si">{table}</span><span class="s1"> </span><span class="si">{qualifier}</span><span class="s1"> ORDER BY </span><span class="si">{orderby}</span><span class="s1"> </span><span class="si">{order}</span><span class="s1">&#39;</span>
+             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">select</span><span class="o">=</span><span class="n">select</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">,</span> <span class="n">qualifier</span><span class="o">=</span><span class="n">qualifier</span><span class="p">,</span>
+                     <span class="n">orderby</span><span class="o">=</span><span class="n">orderby</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">))</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">dir</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;writing to directory &#39;</span><span class="p">,</span> <span class="n">out_path</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">out_path</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="n">out_path</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s1">&#39;directory already exists!&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+            <span class="nb">id</span><span class="p">,</span> <span class="n">contents</span> <span class="o">=</span> <span class="n">row</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="n">kid_to_path</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.cl&#39;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out</span><span class="p">:</span>
+                <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;writing file&#39;</span><span class="p">,</span> <span class="n">out_path</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+                <span class="nb">id</span><span class="p">,</span> <span class="n">contents</span> <span class="o">=</span> <span class="n">row</span>
+                <span class="k">if</span> <span class="n">fileid</span><span class="p">:</span>  <span class="c1"># Print file ID</span>
+                    <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;/* ID: </span><span class="si">{}</span><span class="s1"> */</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+                <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contents</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">eof</span><span class="p">:</span>  <span class="c1"># Print EOF token</span>
+                    <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">/* EOF */</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="dump_db"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.dump_db">[docs]</a><span class="k">def</span> <span class="nf">dump_db</span><span class="p">(</span><span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">out_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dump database contents.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        db_path (str): Dataset.</span>
+<span class="sd">        out_path (str): Corpus path.</span>
+<span class="sd">        **kwargs (dict): Additional arguments to _dump_db().</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+
+    <span class="c1"># auto-detect whether it&#39;s a GitHub repo</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;gh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_github</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
+
+    <span class="n">_dump_db</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">out_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -354,7 +686,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2016, Chris Cummins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.3.
     </div>
   </body>
 </html>

@@ -17,7 +17,8 @@
         VERSION:     '0.2.13',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
@@ -25,9 +26,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="top" title="clgen 0.2.13 documentation" href="../../index.html" />
-    <link rel="up" title="clgen" href="../clgen.html" /> 
+    <link rel="search" title="Search" href="../../search.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -52,7 +51,7 @@
             
   <h1>Source code for clgen.preprocess</h1><div class="highlight"><pre>
 <span></span><span class="c1">#</span>
-<span class="c1"># Copyright 2016 Chris Cummins &lt;chrisc.101@gmail.com&gt;.</span>
+<span class="c1"># Copyright 2016, 2017 Chris Cummins &lt;chrisc.101@gmail.com&gt;.</span>
 <span class="c1">#</span>
 <span class="c1"># This file is part of CLgen.</span>
 <span class="c1">#</span>
@@ -72,15 +71,12 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Preprocess OpenCL files for machine learning.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">with_statement</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
-
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">labm8</span>
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">progressbar</span>
+<span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">sqlite3</span>
@@ -92,6 +88,7 @@
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="k">import</span> <span class="n">cpu_count</span><span class="p">,</span> <span class="n">Pool</span>
 <span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span><span class="p">,</span> <span class="n">STDOUT</span>
 <span class="kn">from</span> <span class="nn">tempfile</span> <span class="k">import</span> <span class="n">NamedTemporaryFile</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="k">import</span> <span class="n">Condition</span><span class="p">,</span> <span class="n">Thread</span><span class="p">,</span> <span class="n">Lock</span>
 
 
 <span class="kn">import</span> <span class="nn">clgen</span>
@@ -99,7 +96,6 @@
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">dbutil</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">native</span>
-<span class="kn">from</span> <span class="nn">clgen.cache</span> <span class="k">import</span> <span class="n">Cache</span>
 
 
 <span class="c1">#</span>
@@ -109,13 +105,6 @@
 <span class="c1"># Internal exceptions:</span>
 <div class="viewcode-block" id="LlvmException"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.LlvmException">[docs]</a><span class="k">class</span> <span class="nc">LlvmException</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;LLVM Error&quot;&quot;&quot;</span>
-    <span class="k">pass</span></div>
-
-
-<div class="viewcode-block" id="ClangFormatException"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.ClangFormatException">[docs]</a><span class="k">class</span> <span class="nc">ClangFormatException</span><span class="p">(</span><span class="n">LlvmException</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    clang-format error.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
@@ -140,9 +129,9 @@
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="CodeAnalysisException"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.CodeAnalysisException">[docs]</a><span class="k">class</span> <span class="nc">CodeAnalysisException</span><span class="p">(</span><span class="n">BadCodeException</span><span class="p">):</span>
+<div class="viewcode-block" id="ClangFormatException"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.ClangFormatException">[docs]</a><span class="k">class</span> <span class="nc">ClangFormatException</span><span class="p">(</span><span class="n">BadCodeException</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Code analysis error.</span>
+<span class="sd">    clang-format error.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
@@ -161,9 +150,23 @@
     <span class="k">pass</span></div>
 
 
+<div class="viewcode-block" id="NoCodeException"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.NoCodeException">[docs]</a><span class="k">class</span> <span class="nc">NoCodeException</span><span class="p">(</span><span class="n">UglyCodeException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sample contains no code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
 <div class="viewcode-block" id="RewriterException"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.RewriterException">[docs]</a><span class="k">class</span> <span class="nc">RewriterException</span><span class="p">(</span><span class="n">UglyCodeException</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Program rewriter error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="GPUVerifyException"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.GPUVerifyException">[docs]</a><span class="k">class</span> <span class="nc">GPUVerifyException</span><span class="p">(</span><span class="n">UglyCodeException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    GPUVerify found a bug.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
@@ -174,8 +177,8 @@
 <span class="p">]</span>
 
 
-<div class="viewcode-block" id="clang_cl_args"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.clang_cl_args">[docs]</a><span class="k">def</span> <span class="nf">clang_cl_args</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">CLANG_CL_TARGETS</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                  <span class="n">use_shim</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">error_limit</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="clang_cl_args"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.clang_cl_args">[docs]</a><span class="k">def</span> <span class="nf">clang_cl_args</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="n">CLANG_CL_TARGETS</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                  <span class="n">use_shim</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">error_limit</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the Clang args to compile OpenCL.</span>
 
@@ -208,7 +211,8 @@
     <span class="k">return</span> <span class="n">args</span></div>
 
 
-<div class="viewcode-block" id="compiler_preprocess_cl"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.compiler_preprocess_cl">[docs]</a><span class="k">def</span> <span class="nf">compiler_preprocess_cl</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">,</span> <span class="n">use_shim</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="compiler_preprocess_cl"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.compiler_preprocess_cl">[docs]</a><span class="k">def</span> <span class="nf">compiler_preprocess_cl</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">,</span>
+                           <span class="n">use_shim</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Preprocess OpenCL file.</span>
 
@@ -251,7 +255,7 @@
     <span class="k">return</span> <span class="n">src</span></div>
 
 
-<div class="viewcode-block" id="rewrite_cl"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.rewrite_cl">[docs]</a><span class="k">def</span> <span class="nf">rewrite_cl</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">,</span> <span class="n">use_shim</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="rewrite_cl"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.rewrite_cl">[docs]</a><span class="k">def</span> <span class="nf">rewrite_cl</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">,</span> <span class="n">use_shim</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Rewrite OpenCL sources.</span>
 
@@ -298,7 +302,7 @@
     <span class="k">return</span> <span class="n">stripped</span></div>
 
 
-<div class="viewcode-block" id="compile_cl_bytecode"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.compile_cl_bytecode">[docs]</a><span class="k">def</span> <span class="nf">compile_cl_bytecode</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">,</span> <span class="n">use_shim</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="compile_cl_bytecode"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.compile_cl_bytecode">[docs]</a><span class="k">def</span> <span class="nf">compile_cl_bytecode</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">,</span> <span class="n">use_shim</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compile OpenCL kernel to LLVM bytecode.</span>
 
@@ -308,7 +312,7 @@
 <span class="sd">        use_shim (bool, optional): Inject shim header.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        bytes: Bytecode.</span>
+<span class="sd">        str: Bytecode.</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        ClangException: If compiler errors.</span>
@@ -325,11 +329,41 @@
     <span class="k">return</span> <span class="n">stdout</span></div>
 
 
+<div class="viewcode-block" id="gpuverify"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.gpuverify">[docs]</a><span class="k">def</span> <span class="nf">gpuverify</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run GPUverify over kernel.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        src (str): OpenCL source.</span>
+<span class="sd">        id (str, optional): OpenCL source name.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: OpenCL source.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        GPUVerifyException: If GPUverify finds a bug.</span>
+<span class="sd">        InternalError: If GPUverify fails.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># GPUverify can&#39;t read from stdin.</span>
+    <span class="k">with</span> <span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;.cl&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmp</span><span class="p">:</span>
+        <span class="n">tmp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+        <span class="n">tmp</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">([</span><span class="n">native</span><span class="o">.</span><span class="n">GPUVERIFY</span><span class="p">,</span> <span class="n">tmp</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span><span class="p">)</span>
+
+        <span class="n">process</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">PIPE</span><span class="p">)</span>
+        <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">GPUVerifyException</span><span class="p">(</span><span class="n">stderr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">src</span></div>
+
+
 <span class="n">_instcount_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
     <span class="s2">r&quot;^(?P&lt;count&gt;\d+) instcount - Number of (?P&lt;type&gt;.+)&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="parse_instcounts"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.parse_instcounts">[docs]</a><span class="k">def</span> <span class="nf">parse_instcounts</span><span class="p">(</span><span class="n">txt</span><span class="p">):</span>
+<div class="viewcode-block" id="parse_instcounts"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.parse_instcounts">[docs]</a><span class="k">def</span> <span class="nf">parse_instcounts</span><span class="p">(</span><span class="n">txt</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parse LLVM opt instruction counts pass.</span>
 
@@ -361,25 +395,7 @@
     <span class="k">return</span> <span class="n">counts</span></div>
 
 
-<span class="n">_sql_rm_chars</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;[\(\)]&#39;</span><span class="p">)</span>
-<span class="n">_sql_sub_chars</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;-&#39;</span><span class="p">)</span>
-
-
-<div class="viewcode-block" id="escape_sql_key"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.escape_sql_key">[docs]</a><span class="k">def</span> <span class="nf">escape_sql_key</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Escape SQL key.</span>
-
-<span class="sd">    Arguments:</span>
-<span class="sd">        key (str): SQL key.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        str: Escaped key.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">_sql_sub_chars</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span>
-                  <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">_sql_rm_chars</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">))))</span></div>
-
-
-<div class="viewcode-block" id="instcounts2ratios"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.instcounts2ratios">[docs]</a><span class="k">def</span> <span class="nf">instcounts2ratios</span><span class="p">(</span><span class="n">counts</span><span class="p">):</span>
+<div class="viewcode-block" id="instcounts2ratios"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.instcounts2ratios">[docs]</a><span class="k">def</span> <span class="nf">instcounts2ratios</span><span class="p">(</span><span class="n">counts</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert instruction counts to instruction densities.</span>
 
@@ -403,43 +419,25 @@
     <span class="n">total</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">counts</span><span class="p">[</span><span class="n">total_key</span><span class="p">])</span>
 
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">non_ratio_keys</span><span class="p">:</span>
-        <span class="n">ratios</span><span class="p">[</span><span class="n">escape_sql_key</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="n">counts</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="n">ratios</span><span class="p">[</span><span class="n">dbutil</span><span class="o">.</span><span class="n">escape_sql_key</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="n">counts</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">counts</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">non_ratio_keys</span><span class="p">:</span>
             <span class="c1"># Copy count</span>
-            <span class="n">ratios</span><span class="p">[</span><span class="n">escape_sql_key</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="n">counts</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="n">ratios</span><span class="p">[</span><span class="n">dbutil</span><span class="o">.</span><span class="n">escape_sql_key</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="n">counts</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
             <span class="c1"># Insert ratio</span>
-            <span class="n">ratios</span><span class="p">[</span><span class="n">escape_sql_key</span><span class="p">(</span><span class="s1">&#39;ratio_&#39;</span> <span class="o">+</span> <span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">counts</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="o">/</span> <span class="n">total</span>
+            <span class="n">ratio</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">counts</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="o">/</span> <span class="n">total</span>
+            <span class="n">ratios</span><span class="p">[</span><span class="n">dbutil</span><span class="o">.</span><span class="n">escape_sql_key</span><span class="p">(</span><span class="s1">&#39;ratio_&#39;</span> <span class="o">+</span> <span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="n">ratio</span>
 
     <span class="k">return</span> <span class="n">ratios</span></div>
 
 
-<div class="viewcode-block" id="sql_insert_dict"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.sql_insert_dict">[docs]</a><span class="k">def</span> <span class="nf">sql_insert_dict</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Insert a dict of key value pairs into an SQL table.</span>
-
-<span class="sd">    Uses the key names as column names, as the values as column values.</span>
-
-<span class="sd">    Arguments:</span>
-<span class="sd">        c (sqlite3.Cursor): Database cursor.</span>
-<span class="sd">        table (str): Destination table.</span>
-<span class="sd">        data (dict): Key value pairs.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;INSERT INTO </span><span class="si">{table}</span><span class="s2">(</span><span class="si">{cols}</span><span class="s2">) VALUES(</span><span class="si">{vals}</span><span class="s2">)&quot;</span>
-           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">,</span>
-                   <span class="n">cols</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
-                   <span class="n">vals</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;?&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))))</span>
-
-    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span></div>
-
-
-<div class="viewcode-block" id="bytecode_features"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.bytecode_features">[docs]</a><span class="k">def</span> <span class="nf">bytecode_features</span><span class="p">(</span><span class="n">bc</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="bytecode_features"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.bytecode_features">[docs]</a><span class="k">def</span> <span class="nf">bytecode_features</span><span class="p">(</span><span class="n">bc</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extract features from bytecode.</span>
 
 <span class="sd">    Arguments:</span>
-<span class="sd">        bc (bytes): LLVM bytecode.</span>
+<span class="sd">        bc (str): LLVM bytecode.</span>
 <span class="sd">        id (str, optional): Name of OpenCL source.</span>
 
 <span class="sd">    Returns:</span>
@@ -481,7 +479,7 @@
 <span class="p">}</span>
 
 
-<div class="viewcode-block" id="clangformat_ocl"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.clangformat_ocl">[docs]</a><span class="k">def</span> <span class="nf">clangformat_ocl</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="clangformat_ocl"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.clangformat_ocl">[docs]</a><span class="k">def</span> <span class="nf">clangformat_ocl</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Enforce code style on OpenCL file.</span>
 
@@ -508,35 +506,7 @@
     <span class="k">return</span> <span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="print_bytecode_features"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.print_bytecode_features">[docs]</a><span class="k">def</span> <span class="nf">print_bytecode_features</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Print Bytecode features.</span>
-
-<span class="sd">    Arguments:</span>
-<span class="sd">        db_path: Path to dataset.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-
-    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT sha,contents FROM Bytecodes&#39;</span><span class="p">)</span>
-    <span class="n">query</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
-
-    <span class="n">uniq_features</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">query</span><span class="p">:</span>
-        <span class="n">sha</span><span class="p">,</span> <span class="n">contents</span> <span class="o">=</span> <span class="n">row</span>
-
-        <span class="n">features</span> <span class="o">=</span> <span class="n">bytecode_features</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
-        <span class="c1"># Add the table key</span>
-        <span class="n">features</span><span class="p">[</span><span class="s1">&#39;sha&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sha</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">features</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">uniq_features</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-
-    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Features:&#39;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">uniq_features</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;        &#39;</span><span class="p">,</span> <span class="n">feature</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="verify_bytecode_features"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.verify_bytecode_features">[docs]</a><span class="k">def</span> <span class="nf">verify_bytecode_features</span><span class="p">(</span><span class="n">bc_features</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="verify_bytecode_features"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.verify_bytecode_features">[docs]</a><span class="k">def</span> <span class="nf">verify_bytecode_features</span><span class="p">(</span><span class="n">bc_features</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Verify LLVM bytecode features.</span>
 
@@ -549,11 +519,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># The minimum number of instructions before a kernel is discarded</span>
     <span class="c1"># as ugly.</span>
-    <span class="n">min_num_instructions</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">num_instructions</span> <span class="o">=</span> <span class="n">bc_features</span><span class="p">[</span><span class="s1">&#39;instructions_of_all_types&#39;</span><span class="p">]</span>
-    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-        <span class="n">num_instructions</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">min_num_instructions</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">num_instructions</span> <span class="o">=</span> <span class="n">bc_features</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;instructions_of_all_types&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">num_instructions</span> <span class="o">&lt;</span> <span class="n">min_num_instructions</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">InstructionCountException</span><span class="p">(</span>
@@ -561,7 +528,23 @@
             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_instructions</span><span class="p">,</span> <span class="n">min_num_instructions</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="sanitize_prototype"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.sanitize_prototype">[docs]</a><span class="k">def</span> <span class="nf">sanitize_prototype</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
+<div class="viewcode-block" id="ensure_has_code"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.ensure_has_code">[docs]</a><span class="k">def</span> <span class="nf">ensure_has_code</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check that file contains actual executable code.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        src (str): OpenCL source, must be preprocessed.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        NoCodeException: If kernel is empty.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">NoCodeException</span>
+
+    <span class="k">return</span> <span class="n">src</span></div>
+
+
+<div class="viewcode-block" id="sanitize_prototype"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.sanitize_prototype">[docs]</a><span class="k">def</span> <span class="nf">sanitize_prototype</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sanitize OpenCL prototype.</span>
 
@@ -588,7 +571,9 @@
         <span class="k">return</span> <span class="n">src</span></div>
 
 
-<div class="viewcode-block" id="preprocess"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.preprocess">[docs]</a><span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">,</span> <span class="n">use_shim</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="preprocess"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.preprocess">[docs]</a><span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">,</span> <span class="n">use_shim</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+               <span class="n">use_dynamic_checker</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+               <span class="n">use_gpuverify</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Preprocess an OpenCL source. There are three possible outcomes:</span>
 
@@ -602,6 +587,9 @@
 <span class="sd">        id (str, optional): An identifying name for the source code</span>
 <span class="sd">            (used in exception messages).</span>
 <span class="sd">        use_shim (bool, optional): Inject shim header.</span>
+<span class="sd">        use_dynamic_checker (bool, optional): Whether to run the dynamic</span>
+<span class="sd">            checker on the code.</span>
+<span class="sd">        use_gpuverify (bool, optional): Whether to run GPUVerify on the code.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        str: Preprocessed source code as a string.</span>
@@ -620,115 +608,34 @@
     <span class="n">src</span> <span class="o">=</span> <span class="n">compiler_preprocess_cl</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">use_shim</span><span class="p">)</span>
     <span class="n">src</span> <span class="o">=</span> <span class="n">rewrite_cl</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">use_shim</span><span class="p">)</span>
     <span class="n">src</span> <span class="o">=</span> <span class="n">clangformat_ocl</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">src</span> <span class="o">=</span> <span class="n">ensure_has_code</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
     <span class="n">src</span> <span class="o">=</span> <span class="n">sanitize_prototype</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">use_dynamic_checker</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Dynamic checker&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">use_gpuverify</span><span class="p">:</span>
+        <span class="n">gpuverify</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">src</span></div>
 
 
-<span class="k">def</span> <span class="nf">_preprocess_db_worker</span><span class="p">(</span><span class="n">job</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Database worker thread&quot;&quot;&quot;</span>
-    <span class="n">db_path</span> <span class="o">=</span> <span class="n">job</span><span class="p">[</span><span class="s2">&quot;db_in&quot;</span><span class="p">]</span>
-    <span class="n">db_index_range</span> <span class="o">=</span> <span class="n">job</span><span class="p">[</span><span class="s2">&quot;db_index_range&quot;</span><span class="p">]</span>
-    <span class="n">outpath</span> <span class="o">=</span> <span class="n">job</span><span class="p">[</span><span class="s2">&quot;json_out&quot;</span><span class="p">]</span>
-    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;worker&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="n">outpath</span><span class="p">)</span>
-
-    <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-    <span class="n">split_start</span><span class="p">,</span> <span class="n">split_end</span> <span class="o">=</span> <span class="n">db_index_range</span>
-    <span class="n">split_size</span> <span class="o">=</span> <span class="n">split_end</span> <span class="o">-</span> <span class="n">split_start</span>
-
-    <span class="c1"># get the files to preprocess</span>
-    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT id,contents FROM ContentFiles LIMIT </span><span class="si">{}</span><span class="s1"> OFFSET </span><span class="si">{}</span><span class="s1">&#39;</span>
-              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">split_size</span><span class="p">,</span> <span class="n">split_start</span><span class="p">))</span>
-
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outpath</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
-            <span class="nb">id</span><span class="p">,</span> <span class="n">contents</span> <span class="o">=</span> <span class="n">row</span>
-
-            <span class="c1"># Get checksum of cached file:</span>
-            <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT id FROM PreprocessedFiles WHERE id=?&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nb">id</span><span class="p">,))</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
-            <span class="n">cached_id</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">result</span> <span class="k">else</span> <span class="kc">None</span>
-
-            <span class="c1"># Check that file is modified:</span>
-            <span class="k">if</span> <span class="nb">id</span> <span class="o">!=</span> <span class="n">cached_id</span><span class="p">:</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="c1"># Try and preprocess it:</span>
-                    <span class="n">contents</span> <span class="o">=</span> <span class="n">preprocess</span><span class="p">(</span><span class="n">contents</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span>
-                    <span class="n">status</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="k">except</span> <span class="n">BadCodeException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="n">contents</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-                    <span class="n">status</span> <span class="o">=</span> <span class="mi">1</span>
-                <span class="k">except</span> <span class="n">UglyCodeException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="n">contents</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-                    <span class="n">status</span> <span class="o">=</span> <span class="mi">2</span>
-
-                <span class="c1"># write result to json</span>
-                <span class="n">line</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">([</span><span class="nb">id</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">contents</span><span class="p">])</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
-                <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-                <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
-
-    <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
-
-<div class="viewcode-block" id="preprocess_contentfiles"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.preprocess_contentfiles">[docs]</a><span class="k">def</span> <span class="nf">preprocess_contentfiles</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">max_num_workers</span><span class="o">=</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">*</span> <span class="mi">4</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Preprocess OpenCL dataset.</span>
-
-<span class="sd">    Arguments:</span>
-<span class="sd">        db_path (str): OpenCL kernels dataset.</span>
-<span class="sd">        max_num_workers (int, optional): Number of processes to spawn.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">_finalize</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">cache</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Tidy up after worker threads finish&quot;&quot;&quot;</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;worker finalize&quot;</span><span class="p">)</span>
-
-        <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-
-        <span class="c1"># import results from worker threads</span>
-        <span class="k">for</span> <span class="n">outpath</span> <span class="ow">in</span> <span class="n">fs</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">abspaths</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outpath</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">infile</span><span class="p">:</span>
-                    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;INSERT OR REPLACE INTO PreprocessedFiles &#39;</span>
-                              <span class="s1">&#39;VALUES(?,?,?)&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
-
-        <span class="c1"># write changes to database and remove cache</span>
-        <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-        <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="n">cache</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span>
-
-    <span class="n">num_contentfiles</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">num_rows_in</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="s1">&#39;ContentFiles&#39;</span><span class="p">)</span>
-    <span class="n">num_preprocessedfiles</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">num_rows_in</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="s1">&#39;PreprocessedFiles&#39;</span><span class="p">)</span>
-
-    <span class="n">num_workers</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">num_contentfiles</span><span class="p">,</span> <span class="n">max_num_workers</span><span class="p">)</span>
-    <span class="n">files_per_worker</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">num_contentfiles</span> <span class="o">/</span> <span class="n">num_workers</span><span class="p">)</span>
-
-    <span class="c1"># temporary cache used for worker thread results</span>
-    <span class="n">cache</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{pid}</span><span class="s2">.preprocess&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pid</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()))</span>
-    <span class="c1"># each worker thread receives a range of database indices to preprocess,</span>
-    <span class="c1"># and a JSON file to write results into</span>
-    <span class="n">jobs</span> <span class="o">=</span> <span class="p">[{</span>
-        <span class="s2">&quot;db_in&quot;</span><span class="p">:</span> <span class="n">db_path</span><span class="p">,</span>
-        <span class="s2">&quot;db_index_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">files_per_worker</span><span class="p">,</span>
-                           <span class="n">i</span> <span class="o">*</span> <span class="n">files_per_worker</span> <span class="o">+</span> <span class="n">files_per_worker</span><span class="p">),</span>
-        <span class="s2">&quot;json_out&quot;</span><span class="p">:</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{i}</span><span class="s2">.json&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">))</span>
-    <span class="p">}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_workers</span><span class="p">)]</span>
-
-    <span class="c1"># spool up worker threads then finalize</span>
+<div class="viewcode-block" id="preprocess_for_db"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.preprocess_for_db">[docs]</a><span class="k">def</span> <span class="nf">preprocess_for_db</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="o">**</span><span class="n">preprocess_opts</span><span class="p">):</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;spawning&#39;</span><span class="p">,</span> <span class="n">num_workers</span><span class="p">,</span> <span class="s1">&#39;worker threads to process&#39;</span><span class="p">,</span>
-                 <span class="n">num_contentfiles</span> <span class="o">-</span> <span class="n">num_preprocessedfiles</span><span class="p">,</span> <span class="s1">&#39;files ...&#39;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="n">clgen</span><span class="o">.</span><span class="n">terminating</span><span class="p">(</span><span class="n">Pool</span><span class="p">(</span><span class="n">num_workers</span><span class="p">))</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
-            <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">_preprocess_db_worker</span><span class="p">,</span> <span class="n">jobs</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">_finalize</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">cache</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="n">e</span>
-    <span class="n">_finalize</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">cache</span><span class="p">)</span></div>
+        <span class="c1"># Try and preprocess it:</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="n">preprocess</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="o">**</span><span class="n">preprocess_opts</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">BadCodeException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">UglyCodeException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">contents</span></div>
 
 
-<div class="viewcode-block" id="preprocess_file"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.preprocess_file">[docs]</a><span class="k">def</span> <span class="nf">preprocess_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="preprocess_file"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.preprocess_file">[docs]</a><span class="k">def</span> <span class="nf">preprocess_file</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inplace</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">preprocess_opts</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Preprocess a file.</span>
 
@@ -742,25 +649,29 @@
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
         <span class="n">contents</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="n">preprocess</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">preprocess</span><span class="p">(</span><span class="n">contents</span><span class="p">,</span> <span class="o">**</span><span class="n">preprocess_opts</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">inplace</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
                 <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;preprocess&#39;</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">BadCodeException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">ret</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">UglyCodeException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">ret</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">_preprocess_inplace_worker</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_preprocess_inplace_worker</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;worker function for preprocess_inplace()&quot;&quot;&quot;</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;preprocess&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
     <span class="n">preprocess_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="preprocess_inplace"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.preprocess_inplace">[docs]</a><span class="k">def</span> <span class="nf">preprocess_inplace</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">max_num_workers</span><span class="o">=</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">*</span> <span class="mi">4</span><span class="p">):</span>
+<span class="n">MAX_OS_RETRIES</span> <span class="o">=</span> <span class="mi">10</span>
+
+
+<div class="viewcode-block" id="preprocess_inplace"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.preprocess_inplace">[docs]</a><span class="k">def</span> <span class="nf">preprocess_inplace</span><span class="p">(</span><span class="n">paths</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_num_workers</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="n">cpu_count</span><span class="p">(),</span>
+                       <span class="n">attempt</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Preprocess a list of files in place.</span>
 
@@ -768,14 +679,159 @@
 <span class="sd">        paths (str[]): List of paths.</span>
 <span class="sd">        max_num_workers (int, optional): Number of processes to spawn.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">attempt</span> <span class="o">&gt;=</span> <span class="n">MAX_OS_RETRIES</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">InternalError</span><span class="p">(</span><span class="s2">&quot;Failed to process files&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">attempt</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;preprocess attempt #.&quot;</span><span class="p">,</span> <span class="n">attempt</span><span class="p">)</span>
+
     <span class="n">num_workers</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">),</span> <span class="n">max_num_workers</span><span class="p">)</span>
-    <span class="k">with</span> <span class="n">clgen</span><span class="o">.</span><span class="n">terminating</span><span class="p">(</span><span class="n">Pool</span><span class="p">(</span><span class="n">num_workers</span><span class="p">))</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;spawning&#39;</span><span class="p">,</span> <span class="n">num_workers</span><span class="p">,</span> <span class="s1">&#39;worker threads to process&#39;</span><span class="p">,</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;spawned&#39;</span><span class="p">,</span> <span class="n">num_workers</span><span class="p">,</span> <span class="s1">&#39;worker threads to process&#39;</span><span class="p">,</span>
                  <span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">),</span> <span class="s1">&#39;files ...&#39;</span><span class="p">)</span>
-        <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">_preprocess_inplace_worker</span><span class="p">,</span> <span class="n">paths</span><span class="p">)</span></div>
+        <span class="k">with</span> <span class="n">clgen</span><span class="o">.</span><span class="n">terminating</span><span class="p">(</span><span class="n">Pool</span><span class="p">(</span><span class="n">num_workers</span><span class="p">))</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+            <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">_preprocess_inplace_worker</span><span class="p">,</span> <span class="n">paths</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="c1"># Try again with fewer threads.</span>
+        <span class="c1"># See: https://github.com/ChrisCummins/clgen/issues/64</span>
+        <span class="n">max_num_workers</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">max_num_workers</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">preprocess_inplace</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">max_num_workers</span><span class="o">=</span><span class="n">max_num_workers</span><span class="p">,</span>
+                           <span class="n">attempt</span><span class="o">=</span><span class="n">attempt</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="preprocess_db"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.preprocess_db">[docs]</a><span class="k">def</span> <span class="nf">preprocess_db</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
+<div class="viewcode-block" id="PreprocessWorker"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.PreprocessWorker">[docs]</a><span class="k">class</span> <span class="nc">PreprocessWorker</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; preprocessor worker thread &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jobs</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PreprocessWorker</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span> <span class="o">=</span> <span class="n">jobs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">condition</span> <span class="o">=</span> <span class="n">condition</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">queue</span>
+
+<div class="viewcode-block" id="PreprocessWorker.run"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.PreprocessWorker.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="p">:</span>
+            <span class="n">job</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="n">kid</span> <span class="o">=</span> <span class="n">job</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+            <span class="n">src</span> <span class="o">=</span> <span class="n">job</span><span class="p">[</span><span class="s2">&quot;src&quot;</span><span class="p">]</span>
+            <span class="n">preprocess_opts</span> <span class="o">=</span> <span class="n">job</span><span class="p">[</span><span class="s2">&quot;preprocess_opts&quot;</span><span class="p">]</span>
+
+            <span class="n">status</span><span class="p">,</span> <span class="n">contents</span> <span class="o">=</span> <span class="n">preprocess_for_db</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="o">**</span><span class="n">preprocess_opts</span><span class="p">)</span>
+
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">kid</span><span class="p">,</span>
+                <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">status</span><span class="p">,</span>
+                <span class="s2">&quot;contents&quot;</span><span class="p">:</span> <span class="n">contents</span>
+            <span class="p">}</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="o">.</span><span class="n">notify</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="o">.</span><span class="n">release</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="DbImportWorker"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.DbImportWorker">[docs]</a><span class="k">class</span> <span class="nc">DbImportWorker</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; insert preprocessed results into database &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_path</span><span class="p">,</span> <span class="n">numjobs</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DbImportWorker</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_path</span> <span class="o">=</span> <span class="n">db_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numjobs</span> <span class="o">=</span> <span class="n">numjobs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">condition</span> <span class="o">=</span> <span class="n">condition</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">queue</span>
+
+<div class="viewcode-block" id="DbImportWorker.run"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.DbImportWorker.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">bar</span> <span class="o">=</span> <span class="n">progressbar</span><span class="o">.</span><span class="n">ProgressBar</span><span class="p">(</span><span class="n">max_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">numjobs</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">bar</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numjobs</span><span class="p">)):</span>
+            <span class="c1"># get the next result</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+
+            <span class="c1"># insert result into database</span>
+            <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;INSERT INTO PreprocessedFiles VALUES(?,?,?)&quot;</span><span class="p">,</span>
+                      <span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;contents&quot;</span><span class="p">]))</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+
+
+<span class="k">def</span> <span class="nf">_preprocess_db</span><span class="p">(</span><span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_num_workers</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="n">cpu_count</span><span class="p">(),</span>
+                   <span class="n">attempt</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">preprocess_opts</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Preprocess OpenCL dataset.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        db_path (str): OpenCL kernels dataset.</span>
+<span class="sd">        max_num_workers (int, optional): Number of processes to spawn.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">attempt</span> <span class="o">&gt;=</span> <span class="n">MAX_OS_RETRIES</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">InternalError</span><span class="p">(</span>
+            <span class="s2">&quot;failed to preprocess files after </span><span class="si">{attempt}</span><span class="s2"> attempts&quot;</span>
+            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">()))</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">verbose</span><span class="p">(</span><span class="s2">&quot;determining jobs&quot;</span><span class="p">)</span>
+
+    <span class="n">contentfiles</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">dbutil</span><span class="o">.</span><span class="n">kernel_ids</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="s2">&quot;ContentFiles&quot;</span><span class="p">))</span>
+    <span class="n">preprocessedfiles</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">dbutil</span><span class="o">.</span><span class="n">kernel_ids</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="s2">&quot;PreprocessedFiles&quot;</span><span class="p">))</span>
+
+    <span class="n">ncontentfiles</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">contentfiles</span><span class="p">)</span>
+    <span class="n">npreprocessedfiles</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">preprocessedfiles</span><span class="p">)</span>
+
+    <span class="n">todo</span> <span class="o">=</span> <span class="n">contentfiles</span> <span class="o">-</span> <span class="n">preprocessedfiles</span>
+    <span class="n">ntodo</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">todo</span><span class="p">)</span>
+
+    <span class="n">todo_ratio</span> <span class="o">=</span> <span class="n">ntodo</span> <span class="o">/</span> <span class="n">ncontentfiles</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{ntodo}</span><span class="s2"> (</span><span class="si">{todo_ratio:.1%}</span><span class="s2">) samples need preprocessing&quot;</span>
+             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">()))</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">verbose</span><span class="p">(</span><span class="s2">&quot;creating jobs&quot;</span><span class="p">)</span>
+
+    <span class="c1"># create jobs</span>
+    <span class="n">jobs</span> <span class="o">=</span> <span class="p">[{</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">kid</span><span class="p">,</span>
+        <span class="s2">&quot;src&quot;</span><span class="p">:</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">get_kernel</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">kid</span><span class="p">,</span> <span class="s2">&quot;ContentFiles&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;preprocess_opts&quot;</span><span class="p">:</span> <span class="n">preprocess_opts</span>
+    <span class="p">}</span> <span class="k">for</span> <span class="n">kid</span> <span class="ow">in</span> <span class="n">todo</span><span class="p">]</span>
+
+    <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">jobs</span><span class="p">)</span>
+
+    <span class="c1"># split size</span>
+    <span class="n">worker_njobs</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">ntodo</span> <span class="o">/</span> <span class="n">max_num_workers</span><span class="p">)</span>
+
+    <span class="c1"># producer-consumer queue</span>
+    <span class="n">queue</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>
+    <span class="n">condition</span> <span class="o">=</span> <span class="n">Condition</span><span class="p">()</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">verbose</span><span class="p">(</span><span class="s2">&quot;assigning </span><span class="si">{ntodo}</span><span class="s2"> jobs to </span><span class="si">{max_num_workers}</span><span class="s2"> threads&quot;</span>
+                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">()))</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">ntodo</span><span class="p">,</span> <span class="n">worker_njobs</span><span class="p">):</span>
+            <span class="n">PreprocessWorker</span><span class="p">(</span><span class="n">jobs</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">worker_njobs</span><span class="p">],</span> <span class="n">condition</span><span class="p">,</span> <span class="n">queue</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+        <span class="n">importer</span> <span class="o">=</span> <span class="n">DbImportWorker</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">ntodo</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">queue</span><span class="p">)</span>
+        <span class="n">importer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="n">importer</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="c1"># Try again with fewer threads.</span>
+        <span class="c1"># See: https://github.com/ChrisCummins/clgen/issues/64</span>
+        <span class="n">max_num_workers</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">max_num_workers</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">_preprocess_db</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">max_num_workers</span><span class="o">=</span><span class="n">max_num_workers</span><span class="p">,</span>
+                       <span class="n">attempt</span><span class="o">=</span><span class="n">attempt</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">preprocess_opts</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="preprocess_db"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.preprocess_db">[docs]</a><span class="k">def</span> <span class="nf">preprocess_db</span><span class="p">(</span><span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">preprocess_opts</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Preprocess database contents.</span>
 
@@ -789,43 +845,11 @@
 
     <span class="n">modified</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">is_modified</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">modified</span><span class="p">:</span>
-        <span class="n">preprocess_contentfiles</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+        <span class="n">_preprocess_db</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="o">**</span><span class="n">preprocess_opts</span><span class="p">)</span>
         <span class="n">dbutil</span><span class="o">.</span><span class="n">set_modified_status</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">modified</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span></div>
-
-
-<div class="viewcode-block" id="remove_bad_preprocessed"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.remove_bad_preprocessed">[docs]</a><span class="k">def</span> <span class="nf">remove_bad_preprocessed</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Remove all ugly and bad contents from PreprocessedFiles table.</span>
-
-<span class="sd">    Arguments:</span>
-<span class="sd">        db_path (str): Dataset.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">original_size</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">du</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">human_readable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">original_size_human_readable</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">du</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">human_readable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;vacuuming&quot;</span><span class="p">,</span> <span class="n">original_size_human_readable</span><span class="p">,</span> <span class="s2">&quot;database&quot;</span><span class="p">)</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
-
-    <span class="c1"># Remove contents from bad or ugly preprocessed files.</span>
-    <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;UPDATE PreprocessedFiles SET contents=&#39;[DELETED]&#39; &quot;</span>
-              <span class="s2">&quot;WHERE status=1 OR status=2&quot;</span><span class="p">)</span>
-    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-    <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
-    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;VACUUM&quot;</span><span class="p">)</span>
-    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-    <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
-    <span class="n">new_size</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">du</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">human_readable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">new_size_human_readable</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">du</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">human_readable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">reduction_ratio</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">new_size</span> <span class="o">/</span> <span class="n">original_size</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span>
-    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;done. new size </span><span class="si">{}</span><span class="s2">. (</span><span class="si">{:.0f}% r</span><span class="s2">eduction)&quot;</span>
-             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">new_size_human_readable</span><span class="p">,</span> <span class="n">reduction_ratio</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -863,7 +887,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2016, Chris Cummins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.3.
     </div>
   </body>
 </html>

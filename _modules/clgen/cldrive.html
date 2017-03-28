@@ -17,7 +17,8 @@
         VERSION:     '0.2.13',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
@@ -25,9 +26,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="top" title="clgen 0.2.13 documentation" href="../../index.html" />
-    <link rel="up" title="clgen" href="../clgen.html" /> 
+    <link rel="search" title="Search" href="../../search.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -52,7 +51,7 @@
             
   <h1>Source code for clgen.cldrive</h1><div class="highlight"><pre>
 <span></span><span class="c1">#</span>
-<span class="c1"># Copyright 2016 Chris Cummins &lt;chrisc.101@gmail.com&gt;.</span>
+<span class="c1"># Copyright 2016, 2017 Chris Cummins &lt;chrisc.101@gmail.com&gt;.</span>
 <span class="c1">#</span>
 <span class="c1"># This file is part of CLgen.</span>
 <span class="c1">#</span>
@@ -72,13 +71,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">OpenCL kernel driver</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">with_statement</span>
-
-<span class="kn">import</span> <span class="nn">labm8</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="n">BytesIO</span><span class="p">,</span> <span class="n">StringIO</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -95,13 +88,7 @@
 <span class="kn">import</span> <span class="nn">clgen</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">clutil</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">config</span> <span class="k">as</span> <span class="n">cfg</span>
-
-<span class="c1"># Python 2 and Python 3 have different StringIO classes.</span>
-<span class="c1"># See: http://stackoverflow.com/a/19243243</span>
-<span class="k">if</span> <span class="n">labm8</span><span class="o">.</span><span class="n">is_python3</span><span class="p">():</span>
-    <span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="n">StringIO</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">StringIO</span> <span class="k">import</span> <span class="n">StringIO</span>
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
 
 <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">USE_OPENCL</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">pyopencl</span> <span class="k">as</span> <span class="nn">cl</span>
@@ -139,6 +126,13 @@
 <div class="viewcode-block" id="KernelDriverException"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelDriverException">[docs]</a><span class="k">class</span> <span class="nc">KernelDriverException</span><span class="p">(</span><span class="n">CLDriveException</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Kernel driver exception.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="E_NO_INPUT"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.E_NO_INPUT">[docs]</a><span class="k">class</span> <span class="nc">E_NO_INPUT</span><span class="p">(</span><span class="n">KernelDriverException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Thrown if there&#39;s no kernel to drive.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
@@ -206,7 +200,7 @@
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="device_type_matches"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.device_type_matches">[docs]</a><span class="k">def</span> <span class="nf">device_type_matches</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">devtype</span><span class="p">):</span>
+<div class="viewcode-block" id="device_type_matches"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.device_type_matches">[docs]</a><span class="k">def</span> <span class="nf">device_type_matches</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">devtype</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check that device type matches.</span>
 
@@ -217,31 +211,32 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        bool: True if device is of type devtype, else False.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">actual</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">TYPE</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">actual</span> <span class="o">==</span> <span class="n">devtype</span></div>
+    <span class="k">if</span> <span class="n">devtype</span><span class="p">:</span>
+        <span class="n">actual_devtype</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">TYPE</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">actual_devtype</span> <span class="o">==</span> <span class="n">devtype</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># no devtype to match against</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="hang_requires_restart"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.hang_requires_restart">[docs]</a><span class="k">def</span> <span class="nf">hang_requires_restart</span><span class="p">():</span>
+<div class="viewcode-block" id="init_opencl"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.init_opencl">[docs]</a><span class="k">def</span> <span class="nf">init_opencl</span><span class="p">(</span><span class="n">devtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">queue_flags</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Does an OpenCL kernel hang require a system restart?</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># FIXME: return gethostname() == &quot;monza&quot;</span>
-    <span class="k">return</span> <span class="kc">True</span></div>
+<span class="sd">    Initialise an OpenCL context and device queue for a requested device type.</span>
 
-
-<div class="viewcode-block" id="init_opencl"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.init_opencl">[docs]</a><span class="k">def</span> <span class="nf">init_opencl</span><span class="p">(</span><span class="n">devtype</span><span class="o">=</span><span class="s2">&quot;__placeholder__&quot;</span><span class="p">,</span> <span class="n">queue_flags</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Initialise an OpenCL context with some command queue.</span>
+<span class="sd">    Iterates over the available OpenCL platforms and devices looking for a</span>
+<span class="sd">    device matching the requested type. Constructs and returns an OpenCL</span>
+<span class="sd">    context and queue for the matching device. Note that OpenCL profiling is</span>
+<span class="sd">    enabled.</span>
 
 <span class="sd">    Arguments:</span>
-
 <span class="sd">        devtype (pyopencl.device_type, optional): OpenCL device type.</span>
-<span class="sd">            Default: gpu.</span>
+<span class="sd">            If not specified, the first available device will be used.</span>
 <span class="sd">        queue_flags (cl.command_queue_properties, optional): Bitfield of</span>
 <span class="sd">            OpenCL queue constructor options.</span>
 
-<span class="sd">    Raises:</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        (cl.Context, cl.Queue): Tuple of OpenCL context and device queue.</span>
 
+<span class="sd">    Raises:</span>
 <span class="sd">        OpenCLNotSupported: If host does not support OpenCL.</span>
 <span class="sd">        OpenCLDriverException: In case of error.</span>
 <span class="sd">        OpenCLDeviceNotFound: If no matching type found.</span>
@@ -256,11 +251,19 @@
 
     <span class="n">platforms</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">get_platforms</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">platform</span> <span class="ow">in</span> <span class="n">platforms</span><span class="p">:</span>
+        <span class="n">platform_str</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">platform_info</span><span class="o">.</span><span class="n">NAME</span><span class="p">)</span>
         <span class="n">ctx</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span>
             <span class="n">properties</span><span class="o">=</span><span class="p">[(</span><span class="n">cl</span><span class="o">.</span><span class="n">context_properties</span><span class="o">.</span><span class="n">PLATFORM</span><span class="p">,</span> <span class="n">platform</span><span class="p">)])</span>
         <span class="n">devices</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">context_info</span><span class="o">.</span><span class="n">DEVICES</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">devices</span><span class="p">:</span>
+            <span class="n">device_str</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">NAME</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">verbose</span><span class="p">(</span>
+                <span class="s1">&#39;found device &quot;</span><span class="si">{device_str}</span><span class="s1">&quot; on platform &quot;</span><span class="si">{platform_str}</span><span class="s1">&quot;&#39;</span>
+                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">()))</span>
             <span class="k">if</span> <span class="n">device_type_matches</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">devtype</span><span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">verbose</span><span class="p">(</span>
+                    <span class="s1">&#39;using device &quot;</span><span class="si">{device_str}</span><span class="s1">&quot; on platform &quot;</span><span class="si">{platform_str}</span><span class="s1">&quot;&#39;</span>
+                    <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">()))</span>
                 <span class="n">queue_flags</span> <span class="o">|=</span> <span class="n">cl</span><span class="o">.</span><span class="n">command_queue_properties</span><span class="o">.</span><span class="n">PROFILING_ENABLE</span>
                 <span class="n">queue</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">CommandQueue</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="n">queue_flags</span><span class="p">)</span>
 
@@ -269,13 +272,18 @@
     <span class="k">raise</span> <span class="n">OpenCLDeviceNotFound</span><span class="p">(</span><span class="s2">&quot;Could not find a suitable device&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="get_event_time"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.get_event_time">[docs]</a><span class="k">def</span> <span class="nf">get_event_time</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="get_event_time"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.get_event_time">[docs]</a><span class="k">def</span> <span class="nf">get_event_time</span><span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Block until OpenCL event has completed and return time delta</span>
 <span class="sd">    between event submission and end, in milliseconds.</span>
 
-<span class="sd">    Raises:</span>
+<span class="sd">    Arguments:</span>
+<span class="sd">        event (cl.Event): Event handle.</span>
 
+<span class="sd">    Returns:</span>
+<span class="sd">        float: Elapsed time, in milliseconds.</span>
+
+<span class="sd">    Raises:</span>
 <span class="sd">        E_BAD_PROFILE: In case of error.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
@@ -292,254 +300,11 @@
         <span class="k">raise</span> <span class="n">E_BAD_PROFILE</span></div>
 
 
-<div class="viewcode-block" id="KernelDriver"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelDriver">[docs]</a><span class="k">class</span> <span class="nc">KernelDriver</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    OpenCL Kernel driver. Drives a single OpenCL kernel.</span>
-
-<span class="sd">    Arguments:</span>
-
-<span class="sd">        ctx:  pyopencl context.</span>
-<span class="sd">        queue: OpenCL queue for context.</span>
-<span class="sd">        source: String kernel source.</span>
-
-<span class="sd">    Raises:</span>
-
-<span class="sd">        E_BAD_CODE: If program doesn&#39;t compile.</span>
-<span class="sd">        E_UGLY_CODE: If program contains multiple kernels.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">source_path</span><span class="o">=</span><span class="s1">&#39;&lt;stdin&gt;&#39;</span><span class="p">):</span>
-        <span class="c1"># Safety first, kids:</span>
-        <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span> <span class="o">==</span> <span class="n">cl</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span>
-        <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">string_types</span><span class="p">))</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span> <span class="o">=</span> <span class="n">ctx</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_src</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_program</span> <span class="o">=</span> <span class="n">KernelDriver</span><span class="o">.</span><span class="n">build_program</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_src</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_prototype</span> <span class="o">=</span> <span class="n">clutil</span><span class="o">.</span><span class="n">KernelPrototype</span><span class="o">.</span><span class="n">from_source</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_src</span><span class="p">)</span>
-
-        <span class="n">kernels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_program</span><span class="o">.</span><span class="n">all_kernels</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">kernels</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">E_UGLY_CODE</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_kernel</span> <span class="o">=</span> <span class="n">kernels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernel</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">kernel_info</span><span class="o">.</span><span class="n">FUNCTION_NAME</span><span class="p">)</span>
-
-        <span class="c1"># Profiling stats</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_wgsizes</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_transfers</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_runtimes</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
-        <span class="c1"># Safety first, kids:</span>
-        <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">queue</span><span class="p">)</span> <span class="o">==</span> <span class="n">cl</span><span class="o">.</span><span class="n">CommandQueue</span><span class="p">)</span>
-        <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span> <span class="o">==</span> <span class="n">KernelPayload</span><span class="p">)</span>
-
-        <span class="c1"># First off, let&#39;s clear any existing tasks in the command</span>
-        <span class="c1"># queue:</span>
-        <span class="n">queue</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
-
-        <span class="n">elapsed</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
-
-        <span class="n">kargs</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">kargs</span>
-
-        <span class="c1"># Copy data from host to device.</span>
-        <span class="n">elapsed</span> <span class="o">+=</span> <span class="n">output</span><span class="o">.</span><span class="n">host_to_device</span><span class="p">(</span><span class="n">queue</span><span class="p">)</span>
-
-        <span class="c1"># Try setting the kernel arguments.</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">set_args</span><span class="p">(</span><span class="o">*</span><span class="n">kargs</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">E_BAD_ARGS</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-
-        <span class="c1"># Execute kernel.</span>
-        <span class="n">local_size_x</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">ndrange</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">256</span><span class="p">)</span>
-        <span class="n">event</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">ndrange</span><span class="p">,</span> <span class="p">(</span><span class="n">local_size_x</span><span class="p">,),</span> <span class="o">*</span><span class="n">kargs</span><span class="p">)</span>
-        <span class="n">elapsed</span> <span class="o">+=</span> <span class="n">get_event_time</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
-
-        <span class="c1"># Copy data from device to host.</span>
-        <span class="n">elapsed</span> <span class="o">+=</span> <span class="n">output</span><span class="o">.</span><span class="n">device_to_host</span><span class="p">(</span><span class="n">queue</span><span class="p">)</span>
-
-        <span class="c1"># Record workgroup size.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">wgsizes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">local_size_x</span><span class="p">)</span>
-
-        <span class="c1"># Record runtime.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">runtimes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elapsed</span><span class="p">)</span>
-
-        <span class="c1"># Record transfers.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">transfers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">transfersize</span><span class="p">)</span>
-
-        <span class="c1"># Check that everything is done before we finish:</span>
-        <span class="n">queue</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
-
-        <span class="k">return</span> <span class="n">output</span>
-
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span>
-
-<div class="viewcode-block" id="KernelDriver.validate"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelDriver.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">16</span><span class="p">):</span>
-        <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">queue</span><span class="p">)</span> <span class="o">==</span> <span class="n">cl</span><span class="o">.</span><span class="n">CommandQueue</span><span class="p">)</span>
-
-        <span class="k">def</span> <span class="nf">assert_constraint</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">err</span><span class="o">=</span><span class="n">CLDriveException</span><span class="p">):</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">constraint</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">err</span>
-
-        <span class="c1"># Create payloads.</span>
-        <span class="n">A1in</span> <span class="o">=</span> <span class="n">KernelPayload</span><span class="o">.</span><span class="n">create_sequential</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
-        <span class="n">A2in</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">A1in</span><span class="p">)</span>
-
-        <span class="n">B1in</span> <span class="o">=</span> <span class="n">KernelPayload</span><span class="o">.</span><span class="n">create_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
-        <span class="n">B2in</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">B1in</span><span class="p">)</span>
-
-        <span class="c1"># Input constraints.</span>
-        <span class="n">assert_constraint</span><span class="p">(</span><span class="n">A1in</span> <span class="o">==</span> <span class="n">A2in</span><span class="p">,</span> <span class="n">E_BAD_DRIVER</span><span class="p">)</span>
-        <span class="n">assert_constraint</span><span class="p">(</span><span class="n">B1in</span> <span class="o">==</span> <span class="n">B2in</span><span class="p">,</span> <span class="n">E_BAD_DRIVER</span><span class="p">)</span>
-        <span class="n">assert_constraint</span><span class="p">(</span><span class="n">A1in</span> <span class="o">!=</span> <span class="n">B1in</span><span class="p">,</span> <span class="n">E_BAD_DRIVER</span><span class="p">)</span>
-
-        <span class="n">k</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">)</span>
-        <span class="n">A1out</span> <span class="o">=</span> <span class="n">k</span><span class="p">(</span><span class="n">A1in</span><span class="p">)</span>
-        <span class="n">B1out</span> <span class="o">=</span> <span class="n">k</span><span class="p">(</span><span class="n">B1in</span><span class="p">)</span>
-        <span class="n">A2out</span> <span class="o">=</span> <span class="n">k</span><span class="p">(</span><span class="n">A2in</span><span class="p">)</span>
-        <span class="n">B2out</span> <span class="o">=</span> <span class="n">k</span><span class="p">(</span><span class="n">B2in</span><span class="p">)</span>
-
-        <span class="c1"># outputs must be consistent across runs:</span>
-        <span class="n">assert_constraint</span><span class="p">(</span><span class="n">A1out</span> <span class="o">==</span> <span class="n">A2out</span><span class="p">,</span> <span class="n">E_NONDETERMINISTIC</span><span class="p">)</span>
-        <span class="n">assert_constraint</span><span class="p">(</span><span class="n">B1out</span> <span class="o">==</span> <span class="n">B2out</span><span class="p">,</span> <span class="n">E_NONDETERMINISTIC</span><span class="p">)</span>
-
-        <span class="c1"># outputs must depend on inputs:</span>
-        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">is_const</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">prototype</span><span class="o">.</span><span class="n">args</span><span class="p">):</span>
-            <span class="n">assert_constraint</span><span class="p">(</span><span class="n">A1out</span> <span class="o">!=</span> <span class="n">B1out</span><span class="p">,</span> <span class="n">E_INPUT_INSENSITIVE</span><span class="p">)</span>
-
-        <span class="c1"># outputs must be different from inputs:</span>
-        <span class="n">assert_constraint</span><span class="p">(</span><span class="n">A1in</span> <span class="o">!=</span> <span class="n">A1out</span><span class="p">,</span> <span class="n">E_NO_OUTPUTS</span><span class="p">)</span>
-        <span class="n">assert_constraint</span><span class="p">(</span><span class="n">B1in</span> <span class="o">!=</span> <span class="n">B1out</span><span class="p">,</span> <span class="n">E_NO_OUTPUTS</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="KernelDriver.profile"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelDriver.profile">[docs]</a>    <span class="k">def</span> <span class="nf">profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">must_validate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">out</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">metaout</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="n">min_num_iterations</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Output format (CSV):</span>
-
-<span class="sd">            out:      &lt;kernel&gt; &lt;wgsize&gt; &lt;transfer&gt; &lt;runtime&gt; &lt;ci&gt;</span>
-<span class="sd">            metaout:  &lt;error&gt; &lt;kernel&gt;</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">cl</span><span class="o">.</span><span class="n">CommandQueue</span><span class="p">))</span>
-
-        <span class="k">if</span> <span class="n">must_validate</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
-            <span class="k">except</span> <span class="n">CLDriveException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">metaout</span><span class="p">)</span>
-
-        <span class="n">P</span> <span class="o">=</span> <span class="n">KernelPayload</span><span class="o">.</span><span class="n">create_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
-        <span class="n">k</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">)</span>
-
-        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runtimes</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">min_num_iterations</span><span class="p">:</span>
-            <span class="n">k</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
-
-        <span class="n">wgsize</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">labmath</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wgsizes</span><span class="p">)))</span>
-        <span class="n">transfer</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">labmath</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transfers</span><span class="p">)))</span>
-        <span class="n">mean</span> <span class="o">=</span> <span class="n">labmath</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runtimes</span><span class="p">)</span>
-        <span class="n">ci</span> <span class="o">=</span> <span class="n">labmath</span><span class="o">.</span><span class="n">confinterval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runtimes</span><span class="p">,</span> <span class="n">array_mean</span><span class="o">=</span><span class="n">mean</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">mean</span>
-        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">wgsize</span><span class="p">,</span> <span class="n">transfer</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">ci</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
-              <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">out</span><span class="p">)</span></div>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">context</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        OpenCL context.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Kernel source code.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_src</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">program</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        OpenCL program instance.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_program</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">prototype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Kernel prototype instance.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prototype</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Kernel instance.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernel</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Kernel name.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">wgsizes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Workgroup sizes used.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wgsizes</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">transfers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Size of data transfers (in bytes).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transfers</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">runtimes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Runtimes recorded.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_runtimes</span>
-
-    <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="KernelDriver.build_program"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelDriver.build_program">[docs]</a>    <span class="k">def</span> <span class="nf">build_program</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compile an OpenCL program.</span>
-
-<span class="sd">        Arguments:</span>
-
-<span class="sd">            ctx (cl.Context): OpenCL context.</span>
-<span class="sd">            src (str): Kernel source.</span>
-<span class="sd">            quiet (bool, optional): suppress compiler output.</span>
-
-<span class="sd">        Returns:</span>
-
-<span class="sd">            cl.Program: Program instance.</span>
-
-<span class="sd">        Raises:</span>
-
-<span class="sd">            E_BAD_CODE: If does not build.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">quiet</span><span class="p">:</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PYOPENCL_COMPILER_OUTPUT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PYOPENCL_COMPILER_OUTPUT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">cl</span><span class="o">.</span><span class="n">Program</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">src</span><span class="p">)</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">E_BAD_CODE</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div></div>
-
-
 <div class="viewcode-block" id="KernelPayload"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelPayload">[docs]</a><span class="k">class</span> <span class="nc">KernelPayload</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstraction of data for OpenCL kernel.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">ndrange</span><span class="p">,</span> <span class="n">transfersize</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">ndrange</span><span class="p">,</span> <span class="n">transfersize</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a kernel payload.</span>
 
@@ -559,7 +324,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_ndrange</span> <span class="o">=</span> <span class="n">ndrange</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_transfersize</span> <span class="o">=</span> <span class="n">transfersize</span>
 
-    <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">:</span> <span class="nb">dict</span><span class="o">=</span><span class="p">{}):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Make a deep copy of a payload.</span>
 
@@ -567,30 +332,34 @@
 <span class="sd">        OpenCL mem objects with pointers to this host data. Note that</span>
 <span class="sd">        this DOES NOT copy the OpenCL context associated with the</span>
 <span class="sd">        payload.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            KernelPayload: A new kernel payload instance containing copies of</span>
+<span class="sd">                all data.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">clutil</span><span class="o">.</span><span class="n">KernelArg</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">string</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">]</span>
 
-        <span class="k">for</span> <span class="n">newarg</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">hostdata</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">arg</span><span class="o">.</span><span class="n">is_local</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">src</span><span class="o">.</span><span class="n">hostdata</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">src</span><span class="o">.</span><span class="n">is_local</span><span class="p">:</span>
                 <span class="c1"># Copy a local memory buffer.</span>
-                <span class="n">newarg</span><span class="o">.</span><span class="n">hostdata</span> <span class="o">=</span> <span class="kc">None</span>
-                <span class="n">newarg</span><span class="o">.</span><span class="n">bufsize</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">bufsize</span>
-                <span class="n">newarg</span><span class="o">.</span><span class="n">devdata</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">LocalMemory</span><span class="p">(</span><span class="n">newarg</span><span class="o">.</span><span class="n">bufsize</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">arg</span><span class="o">.</span><span class="n">hostdata</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">dst</span><span class="o">.</span><span class="n">hostdata</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">dst</span><span class="o">.</span><span class="n">bufsize</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">bufsize</span>
+                <span class="n">dst</span><span class="o">.</span><span class="n">devdata</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">LocalMemory</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">bufsize</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">src</span><span class="o">.</span><span class="n">hostdata</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="c1"># Copy a scalar value.</span>
-                <span class="n">newarg</span><span class="o">.</span><span class="n">hostdata</span> <span class="o">=</span> <span class="kc">None</span>
-                <span class="n">newarg</span><span class="o">.</span><span class="n">devdata</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">devdata</span><span class="p">)</span>
+                <span class="n">dst</span><span class="o">.</span><span class="n">hostdata</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">dst</span><span class="o">.</span><span class="n">devdata</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">devdata</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Copy a global memory buffer.</span>
-                <span class="n">newarg</span><span class="o">.</span><span class="n">hostdata</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">hostdata</span><span class="p">,</span> <span class="n">memo</span><span class="o">=</span><span class="n">memo</span><span class="p">)</span>
-                <span class="n">newarg</span><span class="o">.</span><span class="n">flags</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">flags</span>
-                <span class="n">newarg</span><span class="o">.</span><span class="n">devdata</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">Buffer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">newarg</span><span class="o">.</span><span class="n">flags</span><span class="p">,</span>
-                                           <span class="n">hostbuf</span><span class="o">=</span><span class="n">newarg</span><span class="o">.</span><span class="n">hostdata</span><span class="p">)</span>
+                <span class="n">dst</span><span class="o">.</span><span class="n">hostdata</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">hostdata</span><span class="p">,</span> <span class="n">memo</span><span class="o">=</span><span class="n">memo</span><span class="p">)</span>
+                <span class="n">dst</span><span class="o">.</span><span class="n">flags</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">flags</span>
+                <span class="n">dst</span><span class="o">.</span><span class="n">devdata</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">Buffer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">src</span><span class="o">.</span><span class="n">flags</span><span class="p">,</span>
+                                        <span class="n">hostbuf</span><span class="o">=</span><span class="n">dst</span><span class="o">.</span><span class="n">hostdata</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">KernelPayload</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndrange</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">transfersize</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Equality comparison. Checks that OpenCL context and arguments match.</span>
 
@@ -621,7 +390,7 @@
                     <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Not equal check.</span>
 
@@ -633,26 +402,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
 
-<div class="viewcode-block" id="KernelPayload.device_to_host"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelPayload.device_to_host">[docs]</a>    <span class="k">def</span> <span class="nf">device_to_host</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Transfer payload from device to host.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">cl</span><span class="o">.</span><span class="n">CommandQueue</span><span class="p">))</span>
-        <span class="n">elapsed</span> <span class="o">=</span> <span class="mi">0</span>
-
-        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">hostdata</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">arg</span><span class="o">.</span><span class="n">is_const</span><span class="p">:</span>
-                <span class="k">continue</span>
-
-            <span class="n">event</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">enqueue_copy</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">arg</span><span class="o">.</span><span class="n">hostdata</span><span class="p">,</span> <span class="n">arg</span><span class="o">.</span><span class="n">devdata</span><span class="p">,</span>
-                                    <span class="n">is_blocking</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="n">get_event_time</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">elapsed</span></div>
-
-<div class="viewcode-block" id="KernelPayload.host_to_device"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelPayload.host_to_device">[docs]</a>    <span class="k">def</span> <span class="nf">host_to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
+<div class="viewcode-block" id="KernelPayload.host_to_device"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelPayload.host_to_device">[docs]</a>    <span class="k">def</span> <span class="nf">host_to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Transfer payload from host to device.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            queue (cl.Queue): Device Queue.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Elapsed time, in milliseconds.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">cl</span><span class="o">.</span><span class="n">CommandQueue</span><span class="p">))</span>
         <span class="n">elapsed</span> <span class="o">=</span> <span class="mi">0</span>
@@ -667,45 +425,76 @@
 
         <span class="k">return</span> <span class="n">elapsed</span></div>
 
+<div class="viewcode-block" id="KernelPayload.device_to_host"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelPayload.device_to_host">[docs]</a>    <span class="k">def</span> <span class="nf">device_to_host</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transfer payload from device to host.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            queue (cl.Queue): Device Queue.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Elapsed time, in milliseconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">cl</span><span class="o">.</span><span class="n">CommandQueue</span><span class="p">))</span>
+        <span class="n">elapsed</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">hostdata</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">arg</span><span class="o">.</span><span class="n">is_const</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">event</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">enqueue_copy</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">arg</span><span class="o">.</span><span class="n">hostdata</span><span class="p">,</span> <span class="n">arg</span><span class="o">.</span><span class="n">devdata</span><span class="p">,</span>
+                                    <span class="n">is_blocking</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">get_event_time</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">elapsed</span></div>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">context</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        OpenCL context.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; OpenCL context. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">args</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Argument instances.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; Argument instances. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_args</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">kargs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Device data for arguments.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; Device data for arguments. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">devdata</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">ndrange</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        ND-range</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; ND-range &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ndrange</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">transfersize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns transfer size (in bytes).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; Returns transfer size (in bytes). &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transfersize</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns a raw byte array of host data. &quot;&quot;&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">hostdata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">arg</span><span class="o">.</span><span class="n">hostdata</span><span class="p">)</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+<div class="viewcode-block" id="KernelPayload.json"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelPayload.json">[docs]</a>    <span class="k">def</span> <span class="nf">json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">roundval</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return JSON arrays of host data, with optional decimal rounding. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">roundval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">roundval</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">[[</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">arg</span><span class="o">.</span><span class="n">hostdata</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span>
+                <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">hostdata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span></div>
+
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Stringify payload.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; Stringify payload. &quot;&quot;&quot;</span>
         <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;Payload on host:</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">hostdata</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -728,6 +517,20 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_create_payload</span><span class="p">(</span><span class="n">nparray</span><span class="p">,</span> <span class="n">driver</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a payload.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            nparray (function): Numpy array generator.</span>
+<span class="sd">            driver (KernelDriver): Driver.</span>
+<span class="sd">            size (int): Payload size parameter.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            KernelPayload: Generated payload.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            E_BAD_ARGS: If payload can&#39;t be synthesized for kernel argument(s).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span><span class="p">(</span><span class="n">callable</span><span class="p">(</span><span class="n">nparray</span><span class="p">))</span>
         <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="n">KernelDriver</span><span class="p">))</span>
         <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">Number</span><span class="p">))</span>
@@ -789,6 +592,9 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            KernelPayload: Generated payload.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            E_BAD_ARGS: If payload can&#39;t be synthesized for kernel argument(s).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">KernelPayload</span><span class="o">.</span><span class="n">_create_payload</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">,</span> <span class="n">driver</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span></div>
 
@@ -803,25 +609,285 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            KernelPayload: Generated payload.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            E_BAD_ARGS: If payload can&#39;t be synthesized for kernel argument(s).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">KernelPayload</span><span class="o">.</span><span class="n">_create_payload</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">,</span> <span class="n">driver</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="kernel"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.kernel">[docs]</a><span class="k">def</span> <span class="nf">kernel</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;&lt;stdin&gt;&#39;</span><span class="p">,</span> <span class="n">devtype</span><span class="o">=</span><span class="s2">&quot;__placeholder__&quot;</span><span class="p">,</span>
-           <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">must_validate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fatal_errors</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="KernelDriver"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelDriver">[docs]</a><span class="k">class</span> <span class="nc">KernelDriver</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    OpenCL Kernel driver. Drives a single OpenCL kernel.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">source_path</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;&lt;stdin&gt;&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Arguments:</span>
+<span class="sd">            ctx (cl.Context): OpenCL context.</span>
+<span class="sd">            source (str): String kernel source.</span>
+<span class="sd">            source_path (str, optional): Path to corresponding source file.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            E_BAD_CODE: If source doesn&#39;t compile.</span>
+<span class="sd">            E_UGLY_CODE: If source contains multiple kernels.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Safety first, kids:</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span> <span class="o">==</span> <span class="n">cl</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">string_types</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span> <span class="o">=</span> <span class="n">ctx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_src</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_program</span> <span class="o">=</span> <span class="n">KernelDriver</span><span class="o">.</span><span class="n">build_program</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_src</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prototype</span> <span class="o">=</span> <span class="n">clutil</span><span class="o">.</span><span class="n">KernelPrototype</span><span class="o">.</span><span class="n">from_source</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_src</span><span class="p">)</span>
+
+        <span class="n">kernels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_program</span><span class="o">.</span><span class="n">all_kernels</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">kernels</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">E_UGLY_CODE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kernel</span> <span class="o">=</span> <span class="n">kernels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernel</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">kernel_info</span><span class="o">.</span><span class="n">FUNCTION_NAME</span><span class="p">)</span>
+
+        <span class="c1"># Profiling stats</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wgsizes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transfers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_runtimes</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run kernel.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            queue (cl.Queue): Device queue.</span>
+<span class="sd">            payload (KernelPayload): Input payload.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Payload: Output payload.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            E_BAD_ARGS: If payload input does not match kernel arguments.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Safety first, kids:</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">queue</span><span class="p">)</span> <span class="o">==</span> <span class="n">cl</span><span class="o">.</span><span class="n">CommandQueue</span><span class="p">)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span> <span class="o">==</span> <span class="n">KernelPayload</span><span class="p">)</span>
+
+        <span class="c1"># First off, let&#39;s clear any existing tasks in the command</span>
+        <span class="c1"># queue:</span>
+        <span class="n">queue</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+        <span class="n">elapsed</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+
+        <span class="n">kargs</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">kargs</span>
+
+        <span class="c1"># Copy data from host to device.</span>
+        <span class="n">elapsed</span> <span class="o">+=</span> <span class="n">output</span><span class="o">.</span><span class="n">host_to_device</span><span class="p">(</span><span class="n">queue</span><span class="p">)</span>
+
+        <span class="c1"># Try setting the kernel arguments.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">set_args</span><span class="p">(</span><span class="o">*</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">E_BAD_ARGS</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="c1"># Execute kernel.</span>
+        <span class="n">local_size_x</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">ndrange</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">256</span><span class="p">)</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">ndrange</span><span class="p">,</span> <span class="p">(</span><span class="n">local_size_x</span><span class="p">,),</span> <span class="o">*</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="n">elapsed</span> <span class="o">+=</span> <span class="n">get_event_time</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+        <span class="c1"># Copy data from device to host.</span>
+        <span class="n">elapsed</span> <span class="o">+=</span> <span class="n">output</span><span class="o">.</span><span class="n">device_to_host</span><span class="p">(</span><span class="n">queue</span><span class="p">)</span>
+
+        <span class="c1"># Record workgroup size.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wgsizes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">local_size_x</span><span class="p">)</span>
+
+        <span class="c1"># Record runtime.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">runtimes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elapsed</span><span class="p">)</span>
+
+        <span class="c1"># Record transfers.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transfers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">transfersize</span><span class="p">)</span>
+
+        <span class="c1"># Check that everything is done before we finish:</span>
+        <span class="n">queue</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">output</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span>
+
+<div class="viewcode-block" id="KernelDriver.validate"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelDriver.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">16</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run dynamic checker on OpenCL kernel.</span>
+
+<span class="sd">        This is a 3 step process:</span>
+<span class="sd">          1. Create 4 equal size payloads A1in, B1in, A2in, B2in, subject to</span>
+<span class="sd">             restrictions: A1in = A2in , B1in = B2in , A1in != B1in.</span>
+<span class="sd">          2. Execute kernel k 4 times: k(A1in) → A1out, k(B1in) → B1out,</span>
+<span class="sd">             k(A2in) → A2out, k(B2in) → B2out.</span>
+<span class="sd">          3. Assert:</span>
+<span class="sd">             a. A1out != A1in or B1out != B1in, else k has no output.</span>
+<span class="sd">             b. A1out == A2out and B1out == B2out, else k is nondeterministic.</span>
+<span class="sd">             c. A1out != B1out, else k is input insensitive.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            E_BAD_DRIVER: If unable to synthesize payloads (see step 1 above).</span>
+<span class="sd">            E_NO_OUTPUTS: If kernel has no outputs (step 3a above).</span>
+<span class="sd">            E_NONDETERMINISTIC: If kernel is nondeterministic (step 3b above).</span>
+<span class="sd">            E_INPUT_INSENSITIVE: If kernel is input insensitive (step 3c above).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">queue</span><span class="p">)</span> <span class="o">==</span> <span class="n">cl</span><span class="o">.</span><span class="n">CommandQueue</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">assert_constraint</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">err</span><span class="o">=</span><span class="n">CLDriveException</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot; assert condition else raise exception with message &quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">constraint</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">err</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="c1"># Create payloads.</span>
+        <span class="n">A1in</span> <span class="o">=</span> <span class="n">KernelPayload</span><span class="o">.</span><span class="n">create_sequential</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+        <span class="n">A2in</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">A1in</span><span class="p">)</span>
+
+        <span class="n">B1in</span> <span class="o">=</span> <span class="n">KernelPayload</span><span class="o">.</span><span class="n">create_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">B1in</span> <span class="o">==</span> <span class="n">A1in</span><span class="p">:</span>  <span class="c1"># input constraint: A1in != B1in</span>
+            <span class="n">B1in</span> <span class="o">=</span> <span class="n">KernelPayload</span><span class="o">.</span><span class="n">create_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+        <span class="n">B2in</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">B1in</span><span class="p">)</span>
+
+        <span class="c1"># Input constraints.</span>
+        <span class="n">assert_constraint</span><span class="p">(</span><span class="n">A1in</span> <span class="o">==</span> <span class="n">A2in</span><span class="p">,</span> <span class="n">E_BAD_DRIVER</span><span class="p">,</span> <span class="s2">&quot;A1in != A2in&quot;</span><span class="p">)</span>
+        <span class="n">assert_constraint</span><span class="p">(</span><span class="n">B1in</span> <span class="o">==</span> <span class="n">B2in</span><span class="p">,</span> <span class="n">E_BAD_DRIVER</span><span class="p">,</span> <span class="s2">&quot;B1in != B2in&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Run kernel.</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">)</span>
+        <span class="n">A1out</span> <span class="o">=</span> <span class="n">k</span><span class="p">(</span><span class="n">A1in</span><span class="p">)</span>
+        <span class="n">B1out</span> <span class="o">=</span> <span class="n">k</span><span class="p">(</span><span class="n">B1in</span><span class="p">)</span>
+        <span class="n">A2out</span> <span class="o">=</span> <span class="n">k</span><span class="p">(</span><span class="n">A2in</span><span class="p">)</span>
+        <span class="n">B2out</span> <span class="o">=</span> <span class="n">k</span><span class="p">(</span><span class="n">B2in</span><span class="p">)</span>
+
+        <span class="c1"># outputs must be different from inputs:</span>
+        <span class="n">assert_constraint</span><span class="p">(</span><span class="n">A1in</span> <span class="o">!=</span> <span class="n">A1out</span><span class="p">,</span> <span class="n">E_NO_OUTPUTS</span><span class="p">)</span>
+        <span class="n">assert_constraint</span><span class="p">(</span><span class="n">B1in</span> <span class="o">!=</span> <span class="n">B1out</span><span class="p">,</span> <span class="n">E_NO_OUTPUTS</span><span class="p">)</span>
+
+        <span class="c1"># outputs must be consistent across runs:</span>
+        <span class="n">assert_constraint</span><span class="p">(</span><span class="n">A1out</span> <span class="o">==</span> <span class="n">A2out</span><span class="p">,</span> <span class="n">E_NONDETERMINISTIC</span><span class="p">)</span>
+        <span class="n">assert_constraint</span><span class="p">(</span><span class="n">B1out</span> <span class="o">==</span> <span class="n">B2out</span><span class="p">,</span> <span class="n">E_NONDETERMINISTIC</span><span class="p">)</span>
+
+        <span class="c1"># outputs must depend on inputs:</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">is_const</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">prototype</span><span class="o">.</span><span class="n">args</span><span class="p">):</span>
+            <span class="n">assert_constraint</span><span class="p">(</span><span class="n">A1out</span> <span class="o">!=</span> <span class="n">B1out</span><span class="p">,</span> <span class="n">E_INPUT_INSENSITIVE</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KernelDriver.profile"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelDriver.profile">[docs]</a>    <span class="k">def</span> <span class="nf">profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">must_validate</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">out</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">metaout</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="n">min_num_iterations</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run kernel and profile runtime.</span>
+
+<span class="sd">        Output format (CSV):</span>
+
+<span class="sd">            out:      &lt;kernel&gt; &lt;platform&gt; &lt;device&gt; &lt;wgsize&gt; &lt;transfer&gt; &lt;runtime&gt;</span>
+<span class="sd">            metaout:  &lt;kernel&gt; &lt;platform&gt; &lt;device&gt; &lt;error&gt;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">cl</span><span class="o">.</span><span class="n">CommandQueue</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">must_validate</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">CLDriveException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">metaout</span><span class="p">)</span>
+
+        <span class="n">P</span> <span class="o">=</span> <span class="n">KernelPayload</span><span class="o">.</span><span class="n">create_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runtimes</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">min_num_iterations</span><span class="p">:</span>
+            <span class="n">k</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+
+        <span class="n">device</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">command_queue_info</span><span class="o">.</span><span class="n">DEVICE</span><span class="p">)</span>
+        <span class="n">device_str</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">NAME</span><span class="p">)</span>
+
+        <span class="n">platform</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">PLATFORM</span><span class="p">)</span>
+        <span class="n">platform_str</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">platform_info</span><span class="o">.</span><span class="n">NAME</span><span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wgsizes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">transfers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">runtimes</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">wgsize</span><span class="p">,</span> <span class="n">transfer</span><span class="p">,</span> <span class="n">runtime</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">platform_str</span><span class="p">,</span> <span class="n">device_str</span><span class="p">,</span> <span class="n">wgsize</span><span class="p">,</span> <span class="n">transfer</span><span class="p">,</span>
+                  <span class="s2">&quot;</span><span class="si">{:.6f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">runtime</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">out</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">context</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; OpenCL context. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Kernel source code. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_src</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">program</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; OpenCL program instance. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_program</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">prototype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Kernel prototype instance. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prototype</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Kernel instance. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernel</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Kernel name. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">wgsizes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Workgroup sizes used. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wgsizes</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">transfers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Size of data transfers (in bytes). &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transfers</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">runtimes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Runtimes recorded. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_runtimes</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="KernelDriver.build_program"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.KernelDriver.build_program">[docs]</a>    <span class="k">def</span> <span class="nf">build_program</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compile an OpenCL program.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            ctx (cl.Context): OpenCL context.</span>
+<span class="sd">            src (str): Kernel source.</span>
+<span class="sd">            quiet (bool, optional): suppress compiler output.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            cl.Program: Program instance.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            E_BAD_CODE: If does not build.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">quiet</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PYOPENCL_COMPILER_OUTPUT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PYOPENCL_COMPILER_OUTPUT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cl</span><span class="o">.</span><span class="n">Program</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">src</span><span class="p">)</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">E_BAD_CODE</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="kernel"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.kernel">[docs]</a><span class="k">def</span> <span class="nf">kernel</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;&lt;stdin&gt;&#39;</span><span class="p">,</span> <span class="n">devtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+           <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">must_validate</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fatal_errors</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Drive a kernel.</span>
 
 <span class="sd">    Output format (CSV):</span>
 
-<span class="sd">        out:      &lt;file&gt; &lt;size&gt; &lt;kernel&gt; &lt;wgsize&gt; &lt;transfer&gt; &lt;runtime&gt; &lt;ci&gt;</span>
-<span class="sd">        metaout:  &lt;file&gt; &lt;size&gt; &lt;error&gt; &lt;kernel&gt;</span>
+<span class="sd">        out:      &lt;file&gt; &lt;size&gt; &lt;profile() out...&gt;</span>
+<span class="sd">        metaout:  &lt;file&gt; &lt;size&gt; &lt;profile() metaout...&gt;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># we have to use a string as a placeholder for the default type or else</span>
-    <span class="c1"># module import will break when pyopencl is not installed:</span>
-    <span class="k">if</span> <span class="n">devtype</span> <span class="o">==</span> <span class="s2">&quot;__placeholder__&quot;</span><span class="p">:</span>
-        <span class="n">devtype</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">device_type</span><span class="o">.</span><span class="n">GPU</span>
-
     <span class="k">try</span><span class="p">:</span>
         <span class="n">ctx</span><span class="p">,</span> <span class="n">queue</span> <span class="o">=</span> <span class="n">init_opencl</span><span class="p">(</span><span class="n">devtype</span><span class="o">=</span><span class="n">devtype</span><span class="p">)</span>
         <span class="n">driver</span> <span class="o">=</span> <span class="n">KernelDriver</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">src</span><span class="p">)</span>
@@ -831,7 +897,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
         <span class="k">return</span>
 
-    <span class="c1"># If no size is given, pick one.</span>
+    <span class="c1"># If no size is given, pick a random size.</span>
     <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">size</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">randrange</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
 
@@ -850,13 +916,16 @@
      <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stderr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">line</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="file"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.file">[docs]</a><span class="k">def</span> <span class="nf">file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="file"><a class="viewcode-back" href="../../api/index.html#clgen.cldrive.file">[docs]</a><span class="k">def</span> <span class="nf">file</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Drive an OpenCL kernel file.</span>
 
 <span class="sd">    Arguments:</span>
 <span class="sd">        path (str): Path to file</span>
 <span class="sd">        **kwargs (dict, optional): Arguments to kernel()</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        E_NO_INPUT: If file contains no OpenCL kernels.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
         <span class="n">src</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
@@ -865,9 +934,9 @@
         <span class="c1"># error if there&#39;s no kernels</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">kernels</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fatal_errors&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="n">E_BAD_CODE</span><span class="p">(</span><span class="s2">&quot;no kernels in file &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+                <span class="k">raise</span> <span class="n">E_NO_INPUT</span><span class="p">(</span><span class="s2">&quot;no kernels in file &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;E_BAD_CODE&quot;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;E_NO_INPUT&quot;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
 
         <span class="c1"># execute all kernels in file</span>
         <span class="k">for</span> <span class="n">kernelsrc</span> <span class="ow">in</span> <span class="n">kernels</span><span class="p">:</span>
@@ -909,7 +978,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2016, Chris Cummins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.3.
     </div>
   </body>
 </html>

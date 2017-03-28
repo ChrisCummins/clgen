@@ -17,7 +17,8 @@
         VERSION:     '0.2.13',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
@@ -25,9 +26,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="clgen 0.2.13 documentation" href="../index.html" />
-    <link rel="up" title="Module code" href="index.html" /> 
+    <link rel="search" title="Search" href="../search.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -51,7 +50,7 @@
             
   <h1>Source code for clgen</h1><div class="highlight"><pre>
 <span></span><span class="c1">#</span>
-<span class="c1"># Copyright 2016 Chris Cummins &lt;chrisc.101@gmail.com&gt;.</span>
+<span class="c1"># Copyright 2016, 2017 Chris Cummins &lt;chrisc.101@gmail.com&gt;.</span>
 <span class="c1">#</span>
 <span class="c1"># This file is part of CLgen.</span>
 <span class="c1">#</span>
@@ -71,21 +70,24 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Deep learning program generator</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">with_statement</span>
-
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">platform</span>
+<span class="kn">import</span> <span class="nn">psutil</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">six</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">tarfile</span>
 
-<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="k">import</span> <span class="n">contextmanager</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">hashlib</span> <span class="k">import</span> <span class="n">sha1</span>
 <span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="k">import</span> <span class="n">resource_filename</span><span class="p">,</span> <span class="n">resource_string</span><span class="p">,</span> <span class="n">require</span>
 
 <span class="kn">import</span> <span class="nn">labm8</span>
+<span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">cache</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">fs</span>
+<span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">jsonutil</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">system</span>
 
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">config</span> <span class="k">as</span> <span class="n">cfg</span>
@@ -113,13 +115,6 @@
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="NotImplementedError"><a class="viewcode-back" href="../api/index.html#clgen.NotImplementedError">[docs]</a><span class="k">class</span> <span class="nc">NotImplementedError</span><span class="p">(</span><span class="n">InternalError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Code not found.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">pass</span></div>
-
-
 <div class="viewcode-block" id="File404"><a class="viewcode-back" href="../api/index.html#clgen.File404">[docs]</a><span class="k">class</span> <span class="nc">File404</span><span class="p">(</span><span class="n">InternalError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Data not found.</span>
@@ -141,7 +136,7 @@
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="version"><a class="viewcode-back" href="../api/index.html#clgen.version">[docs]</a><span class="k">def</span> <span class="nf">version</span><span class="p">():</span>
+<div class="viewcode-block" id="version"><a class="viewcode-back" href="../api/index.html#clgen.version">[docs]</a><span class="k">def</span> <span class="nf">version</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the package version.</span>
 
@@ -155,7 +150,40 @@
     <span class="k">return</span> <span class="n">require</span><span class="p">(</span><span class="s2">&quot;clgen&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">version</span></div>
 
 
-<div class="viewcode-block" id="must_exist"><a class="viewcode-back" href="../api/index.html#clgen.must_exist">[docs]</a><span class="k">def</span> <span class="nf">must_exist</span><span class="p">(</span><span class="o">*</span><span class="n">path_components</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="cachepath"><a class="viewcode-back" href="../api/index.html#clgen.cachepath">[docs]</a><span class="k">def</span> <span class="nf">cachepath</span><span class="p">(</span><span class="o">*</span><span class="n">relative_path_components</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return path to file system cache.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        *relative_path_components (list of str): Relative path of cache.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Absolute path of file system cache.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span><span class="p">(</span><span class="n">relative_path_components</span><span class="p">)</span>
+
+    <span class="n">cache_root</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;~&quot;</span><span class="p">,</span> <span class="s2">&quot;.cache&quot;</span><span class="p">,</span> <span class="s2">&quot;clgen&quot;</span><span class="p">,</span> <span class="n">version</span><span class="p">()]</span>
+    <span class="k">return</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="o">*</span><span class="n">cache_root</span><span class="p">,</span> <span class="o">*</span><span class="n">relative_path_components</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="mkcache"><a class="viewcode-back" href="../api/index.html#clgen.mkcache">[docs]</a><span class="k">def</span> <span class="nf">mkcache</span><span class="p">(</span><span class="o">*</span><span class="n">relative_path_components</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">cache</span><span class="o">.</span><span class="n">FSCache</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Instantiae a file system cache.</span>
+
+<span class="sd">    If the cache does not exist, one is created.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        *relative_path_components (list of str): Relative path of cache.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        labm8.FSCache: Filesystem cache.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">cache</span><span class="o">.</span><span class="n">FSCache</span><span class="p">(</span><span class="n">cachepath</span><span class="p">(</span><span class="o">*</span><span class="n">relative_path_components</span><span class="p">),</span>
+                         <span class="n">escape_key</span><span class="o">=</span><span class="n">cache</span><span class="o">.</span><span class="n">escape_path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="must_exist"><a class="viewcode-back" href="../api/index.html#clgen.must_exist">[docs]</a><span class="k">def</span> <span class="nf">must_exist</span><span class="p">(</span><span class="o">*</span><span class="n">path_components</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Require that a file exists.</span>
 
@@ -176,97 +204,10 @@
         <span class="k">raise</span> <span class="n">e</span>
     <span class="k">return</span> <span class="n">path</span></div>
 
-
-<div class="viewcode-block" id="checksum"><a class="viewcode-back" href="../api/index.html#clgen.checksum">[docs]</a><span class="k">def</span> <span class="nf">checksum</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Checksum a byte stream.</span>
-
-<span class="sd">    Arguments:</span>
-<span class="sd">        data (bytes): Data.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        str: Checksum.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">sha1</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
-    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">InternalError</span><span class="p">(</span><span class="s2">&quot;failed to checksum &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">[:</span><span class="mi">100</span><span class="p">]))</span></div>
+<span class="n">_must_exist</span> <span class="o">=</span> <span class="n">must_exist</span>  <span class="c1"># prevent variable scope shadowing</span>
 
 
-<div class="viewcode-block" id="checksum_str"><a class="viewcode-back" href="../api/index.html#clgen.checksum_str">[docs]</a><span class="k">def</span> <span class="nf">checksum_str</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Checksum a string.</span>
-
-<span class="sd">    Arguments:</span>
-<span class="sd">        string (str): String.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        str: Checksum.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">checksum</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">string</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
-    <span class="k">except</span> <span class="ne">UnicodeEncodeError</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">InternalError</span><span class="p">(</span><span class="s2">&quot;failed to encode &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">string</span><span class="p">[:</span><span class="mi">100</span><span class="p">]))</span></div>
-
-
-<div class="viewcode-block" id="checksum_file"><a class="viewcode-back" href="../api/index.html#clgen.checksum_file">[docs]</a><span class="k">def</span> <span class="nf">checksum_file</span><span class="p">(</span><span class="o">*</span><span class="n">path_components</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Checksum a file.</span>
-
-<span class="sd">    Arguments:</span>
-<span class="sd">        path_components (str): Path.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        str: Checksum.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">path</span> <span class="o">=</span> <span class="n">must_exist</span><span class="p">(</span><span class="o">*</span><span class="n">path_components</span><span class="p">)</span>
-
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">checksum</span><span class="p">(</span><span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">CLgenError</span><span class="p">(</span><span class="s2">&quot;failed to read &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span></div>
-
-
-<div class="viewcode-block" id="unpack_archive"><a class="viewcode-back" href="../api/index.html#clgen.unpack_archive">[docs]</a><span class="k">def</span> <span class="nf">unpack_archive</span><span class="p">(</span><span class="o">*</span><span class="n">components</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Unpack a compressed archive.</span>
-
-<span class="sd">    Arguments:</span>
-<span class="sd">        *components (str[]): Absolute path.</span>
-<span class="sd">        **kwargs (dict, optional): Set &quot;compression&quot; to compression type.</span>
-<span class="sd">            Default: bz2. Set &quot;dir&quot; to destination directory. Defaults to the</span>
-<span class="sd">            directory of the archive.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">path</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="o">*</span><span class="n">components</span><span class="p">)</span>
-    <span class="n">compression</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;compression&quot;</span><span class="p">,</span> <span class="s2">&quot;bz2&quot;</span><span class="p">)</span>
-    <span class="nb">dir</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dir&quot;</span><span class="p">,</span> <span class="n">fs</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
-
-    <span class="n">fs</span><span class="o">.</span><span class="n">cd</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
-    <span class="n">tar</span> <span class="o">=</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r:&quot;</span> <span class="o">+</span> <span class="n">compression</span><span class="p">)</span>
-    <span class="n">tar</span><span class="o">.</span><span class="n">extractall</span><span class="p">()</span>
-    <span class="n">tar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="n">fs</span><span class="o">.</span><span class="n">cdpop</span><span class="p">()</span>
-
-    <span class="k">return</span> <span class="nb">dir</span></div>
-
-
-<div class="viewcode-block" id="get_substring_idxs"><a class="viewcode-back" href="../api/index.html#clgen.get_substring_idxs">[docs]</a><span class="k">def</span> <span class="nf">get_substring_idxs</span><span class="p">(</span><span class="n">substr</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Return a list of indexes of substr. If substr not found, list is</span>
-<span class="sd">    empty.</span>
-
-<span class="sd">    Arguments:</span>
-<span class="sd">        substr (str): Substring to match.</span>
-<span class="sd">        s (str): String to match in.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        list of int: Start indices of substr.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">substr</span><span class="p">,</span> <span class="n">s</span><span class="p">)]</span></div>
-
-
-<div class="viewcode-block" id="package_path"><a class="viewcode-back" href="../api/index.html#clgen.package_path">[docs]</a><span class="k">def</span> <span class="nf">package_path</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">):</span>
+<div class="viewcode-block" id="package_path"><a class="viewcode-back" href="../api/index.html#clgen.package_path">[docs]</a><span class="k">def</span> <span class="nf">package_path</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Path to package file.</span>
 
@@ -283,7 +224,7 @@
     <span class="k">return</span> <span class="n">must_exist</span><span class="p">(</span><span class="n">abspath</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="data_path"><a class="viewcode-back" href="../api/index.html#clgen.data_path">[docs]</a><span class="k">def</span> <span class="nf">data_path</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">):</span>
+<div class="viewcode-block" id="data_path"><a class="viewcode-back" href="../api/index.html#clgen.data_path">[docs]</a><span class="k">def</span> <span class="nf">data_path</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Path to package file.</span>
 
@@ -298,7 +239,7 @@
     <span class="k">return</span> <span class="n">package_path</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">path</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="package_data"><a class="viewcode-back" href="../api/index.html#clgen.package_data">[docs]</a><span class="k">def</span> <span class="nf">package_data</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">):</span>
+<div class="viewcode-block" id="package_data"><a class="viewcode-back" href="../api/index.html#clgen.package_data">[docs]</a><span class="k">def</span> <span class="nf">package_data</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read package data file.</span>
 
@@ -320,7 +261,7 @@
         <span class="k">raise</span> <span class="n">InternalError</span><span class="p">(</span><span class="s2">&quot;failed to read package data &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="package_str"><a class="viewcode-back" href="../api/index.html#clgen.package_str">[docs]</a><span class="k">def</span> <span class="nf">package_str</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">):</span>
+<div class="viewcode-block" id="package_str"><a class="viewcode-back" href="../api/index.html#clgen.package_str">[docs]</a><span class="k">def</span> <span class="nf">package_str</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read package data file as a string.</span>
 
@@ -339,7 +280,7 @@
         <span class="k">raise</span> <span class="n">InternalError</span><span class="p">(</span><span class="s2">&quot;failed to decode package data &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="sql_script"><a class="viewcode-back" href="../api/index.html#clgen.sql_script">[docs]</a><span class="k">def</span> <span class="nf">sql_script</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="sql_script"><a class="viewcode-back" href="../api/index.html#clgen.sql_script">[docs]</a><span class="k">def</span> <span class="nf">sql_script</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read SQL script to string.</span>
 
@@ -353,69 +294,6 @@
     <span class="k">return</span> <span class="n">package_str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="format_json"><a class="viewcode-back" href="../api/index.html#clgen.format_json">[docs]</a><span class="k">def</span> <span class="nf">format_json</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Pretty print JSON.</span>
-
-<span class="sd">    Arguments:</span>
-<span class="sd">        data (dict): JSON blob.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;: &#39;</span><span class="p">))</span></div>
-
-
-<div class="viewcode-block" id="loads"><a class="viewcode-back" href="../api/index.html#clgen.loads">[docs]</a><span class="k">def</span> <span class="nf">loads</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Deserialize `text` (a `str` or `unicode` instance containing a JSON</span>
-<span class="sd">    document with Python or JavaScript like comments) to a Python object.</span>
-
-<span class="sd">    Taken from `commentjson &lt;https://github.com/vaidik/commentjson&gt;`_, written</span>
-<span class="sd">    by `Vaidik Kapoor &lt;https://github.com/vaidik&gt;`_.</span>
-
-<span class="sd">    Copyright (c) 2014 Vaidik Kapoor, MIT license.</span>
-
-<span class="sd">    :param text: serialized JSON string with or without comments.</span>
-<span class="sd">    :param kwargs: all the arguments that `json.loads</span>
-<span class="sd">                   &lt;http://docs.python.org/2/library/json.html#json.loads&gt;`_</span>
-<span class="sd">                   accepts.</span>
-<span class="sd">    :returns: `dict` or `list`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">regex</span> <span class="o">=</span> <span class="s1">r&#39;\s*(#|\/</span><span class="si">{2}</span><span class="s1">).*$&#39;</span>
-    <span class="n">regex_inline</span> <span class="o">=</span> <span class="s1">r&#39;(:?(?:\s)*([A-Za-z\d\.</span><span class="si">{}</span><span class="s1">]*)|((?&lt;=\&quot;).*\&quot;),?)(?:\s)*(((#|(\/</span><span class="si">{2}</span><span class="s1">)).*)|)$&#39;</span>
-    <span class="n">lines</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">r&#39;^&#39;</span> <span class="o">+</span> <span class="n">regex</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">):</span>
-                <span class="n">lines</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">regex_inline</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
-                <span class="n">lines</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">regex_inline</span><span class="p">,</span> <span class="s1">r&#39;\1&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="load_json_file"><a class="viewcode-back" href="../api/index.html#clgen.load_json_file">[docs]</a><span class="k">def</span> <span class="nf">load_json_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Load a JSON data blob.</span>
-
-<span class="sd">    Arguments:</span>
-<span class="sd">        path (str): Path to file.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        array or dict: JSON data.</span>
-
-<span class="sd">    Raises:</span>
-<span class="sd">        File404: If path does not exist.</span>
-<span class="sd">        InvalidFile: If JSON is malformed.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">must_exist</span><span class="p">(</span><span class="n">path</span><span class="p">))</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">loads</span><span class="p">(</span><span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">InvalidFile</span><span class="p">(</span>
-            <span class="s2">&quot;malformed JSON file &#39;</span><span class="si">{path}</span><span class="s2">&#39;. Message from parser: </span><span class="si">{err}</span><span class="s2">&quot;</span>
-            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)),</span> <span class="n">err</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
-
-
 <span class="nd">@contextmanager</span>
 <div class="viewcode-block" id="terminating"><a class="viewcode-back" href="../api/index.html#clgen.terminating">[docs]</a><span class="k">def</span> <span class="nf">terminating</span><span class="p">(</span><span class="n">thing</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -427,33 +305,93 @@
         <span class="n">thing</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="write_file"><a class="viewcode-back" href="../api/index.html#clgen.write_file">[docs]</a><span class="k">def</span> <span class="nf">write_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">contents</span><span class="p">):</span>
-    <span class="n">fs</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
-        <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span></div>
+<div class="viewcode-block" id="platform_info"><a class="viewcode-back" href="../api/index.html#clgen.platform_info">[docs]</a><span class="k">def</span> <span class="nf">platform_info</span><span class="p">(</span><span class="n">printfn</span><span class="o">=</span><span class="nb">print</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Log platform information.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        printfn (fn, optional): Function to call to print output to. Default</span>
+<span class="sd">            `print()`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">USE_CUDA</span><span class="p">:</span>
+        <span class="n">features_str</span> <span class="o">=</span> <span class="s2">&quot;(with CUDA)&quot;</span>
+    <span class="k">elif</span> <span class="n">cfg</span><span class="o">.</span><span class="n">USE_OPENCL</span><span class="p">:</span>
+        <span class="n">features_str</span> <span class="o">=</span> <span class="s2">&quot;(with OpenCL)&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">features_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;CLgen:     &quot;</span><span class="p">,</span> <span class="n">version</span><span class="p">(),</span> <span class="n">features_str</span><span class="p">)</span>
+    <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;Platform:  &quot;</span><span class="p">,</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">())</span>
+    <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;Memory:    &quot;</span><span class="p">,</span>
+            <span class="nb">round</span><span class="p">(</span><span class="n">psutil</span><span class="o">.</span><span class="n">virtual_memory</span><span class="p">()</span><span class="o">.</span><span class="n">total</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)),</span> <span class="s2">&quot;MB&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">cfg</span><span class="o">.</span><span class="n">USE_OPENCL</span><span class="p">:</span>
+        <span class="n">printfn</span><span class="p">()</span>
+        <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;Device:     None&quot;</span><span class="p">)</span>
+
+    <span class="kn">import</span> <span class="nn">pyopencl</span> <span class="k">as</span> <span class="nn">cl</span>
+    <span class="k">for</span> <span class="n">pltfm</span> <span class="ow">in</span> <span class="n">cl</span><span class="o">.</span><span class="n">get_platforms</span><span class="p">():</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span><span class="n">properties</span><span class="o">=</span><span class="p">[(</span><span class="n">cl</span><span class="o">.</span><span class="n">context_properties</span><span class="o">.</span><span class="n">PLATFORM</span><span class="p">,</span> <span class="n">pltfm</span><span class="p">)])</span>
+        <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">context_info</span><span class="o">.</span><span class="n">DEVICES</span><span class="p">):</span>
+            <span class="n">devtype</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">device_type</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span>
+                <span class="n">device</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">TYPE</span><span class="p">))</span>
+            <span class="n">dev</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">NAME</span><span class="p">)</span>
+
+            <span class="n">printfn</span><span class="p">()</span>
+            <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;Device:    &quot;</span><span class="p">,</span> <span class="n">devtype</span><span class="p">,</span> <span class="n">dev</span><span class="p">)</span>
+            <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;Compute #.:&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span>
+                <span class="n">cl</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">MAX_COMPUTE_UNITS</span><span class="p">))</span>
+            <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;Frequency: &quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span>
+                <span class="n">cl</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">MAX_CLOCK_FREQUENCY</span><span class="p">),</span> <span class="s2">&quot;HZ&quot;</span><span class="p">)</span>
+            <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;Memory:    &quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span>
+                <span class="n">device</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span>
+                    <span class="n">cl</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">GLOBAL_MEM_SIZE</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)),</span> <span class="s2">&quot;MB&quot;</span><span class="p">)</span>
+            <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;Driver:    &quot;</span><span class="p">,</span>
+                    <span class="n">device</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">DRIVER_VERSION</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../api/index.html#clgen.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">sampler</span><span class="p">):</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../api/index.html#clgen.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span> <span class="n">print_file_list</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">print_corpus_dir</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+         <span class="n">print_model_dir</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">print_sampler_dir</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Main entry point for clgen.</span>
 
 <span class="sd">    Arguments:</span>
 <span class="sd">        model (str): Path to model.</span>
 <span class="sd">        sample (str): Path to sampler.</span>
+<span class="sd">        print_corpus_dir (bool, optional): If True, print cache path and exit.</span>
+<span class="sd">        print_model_dir (bool, optional): If True, print cache path and exit.</span>
+<span class="sd">        print_sampler_dir (bool, optional): If True, print cache path and exit.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">clgen.model</span>
     <span class="kn">import</span> <span class="nn">clgen.sampler</span>
+    <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
 
-    <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tar.bz2&quot;</span><span class="p">):</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">from_tar</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">model_json</span> <span class="o">=</span> <span class="n">load_json_file</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">model_json</span><span class="p">)</span>
-    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="n">model_json</span> <span class="o">=</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">model_json</span><span class="p">)</span>
 
-    <span class="n">sampler_json</span> <span class="o">=</span> <span class="n">load_json_file</span><span class="p">(</span><span class="n">sampler</span><span class="p">)</span>
+    <span class="n">sampler_json</span> <span class="o">=</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">sampler</span><span class="p">)</span>
     <span class="n">sampler</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">sampler_json</span><span class="p">)</span>
-    <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">model</span><span class="p">)</span></div>
+
+    <span class="c1"># print cache paths</span>
+    <span class="k">if</span> <span class="n">print_file_list</span><span class="p">:</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="n">fs</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">abspaths</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">+</span>
+            <span class="n">fs</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">abspaths</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">+</span>
+            <span class="n">fs</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">cache</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">abspaths</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">files</span><span class="p">))</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">print_corpus_dir</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">print_model_dir</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">print_sampler_dir</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">cache</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="n">quiet</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -490,7 +428,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2016, Chris Cummins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.3.
     </div>
   </body>
 </html>

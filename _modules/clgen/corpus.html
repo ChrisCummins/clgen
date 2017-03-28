@@ -17,7 +17,8 @@
         VERSION:     '0.2.13',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
@@ -25,9 +26,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="top" title="clgen 0.2.13 documentation" href="../../index.html" />
-    <link rel="up" title="clgen" href="../clgen.html" /> 
+    <link rel="search" title="Search" href="../../search.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -52,7 +51,7 @@
             
   <h1>Source code for clgen.corpus</h1><div class="highlight"><pre>
 <span></span><span class="c1">#</span>
-<span class="c1"># Copyright 2016 Chris Cummins &lt;chrisc.101@gmail.com&gt;.</span>
+<span class="c1"># Copyright 2016, 2017 Chris Cummins &lt;chrisc.101@gmail.com&gt;.</span>
 <span class="c1">#</span>
 <span class="c1"># This file is part of CLgen.</span>
 <span class="c1">#</span>
@@ -73,22 +72,53 @@
 <span class="sd">Manipulating and handling training corpuses.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">codecs</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">checksumdir</span> <span class="k">import</span> <span class="n">dirhash</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Counter</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">crypto</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">fs</span>
+<span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">jsonutil</span>
+<span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">lockfile</span>
+<span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">tar</span>
+<span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">types</span>
+<span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="n">cPickle</span>
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span>
+<span class="kn">from</span> <span class="nn">tempfile</span> <span class="k">import</span> <span class="n">NamedTemporaryFile</span>
 
 <span class="kn">import</span> <span class="nn">clgen</span>
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">atomizer</span>
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">clutil</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">dbutil</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">explore</span>
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">features</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">fetch</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">preprocess</span>
-<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">torch_rnn</span>
-<span class="kn">from</span> <span class="nn">clgen.cache</span> <span class="k">import</span> <span class="n">Cache</span>
-<span class="kn">from</span> <span class="nn">clgen.train</span> <span class="k">import</span> <span class="n">train</span>
 
 
-<div class="viewcode-block" id="unpack_directory_if_needed"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.unpack_directory_if_needed">[docs]</a><span class="k">def</span> <span class="nf">unpack_directory_if_needed</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<span class="c1"># Default options used for corpus. Any values provided by the user will override</span>
+<span class="c1"># these defaults.</span>
+<span class="n">DEFAULT_CORPUS_OPTS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;eof&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;batch_size&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+    <span class="s2">&quot;seq_length&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+    <span class="s2">&quot;vocabulary&quot;</span><span class="p">:</span> <span class="s2">&quot;char&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;encoding&quot;</span><span class="p">:</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;preserve_order&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="FeaturesError"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.FeaturesError">[docs]</a><span class="k">class</span> <span class="nc">FeaturesError</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Thrown in case of error during features encoding.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="unpack_directory_if_needed"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.unpack_directory_if_needed">[docs]</a><span class="k">def</span> <span class="nf">unpack_directory_if_needed</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    If path is a tarball, unpack it. If path doesn&#39;t exist but there is a</span>
 <span class="sd">    tarball with the same name, unpack it.</span>
@@ -104,124 +134,428 @@
 
     <span class="k">if</span> <span class="n">fs</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="ow">and</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tar.bz2&quot;</span><span class="p">):</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;unpacking &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
-        <span class="n">clgen</span><span class="o">.</span><span class="n">unpack_archive</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">tar</span><span class="o">.</span><span class="n">unpack_archive</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">r&#39;.tar.bz2$&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">fs</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;.tar.bz2&quot;</span><span class="p">):</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;unpacking &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;.tar.bz2&quot;</span><span class="p">))</span>
-        <span class="n">clgen</span><span class="o">.</span><span class="n">unpack_archive</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;.tar.bz2&quot;</span><span class="p">)</span>
+        <span class="n">tar</span><span class="o">.</span><span class="n">unpack_archive</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;.tar.bz2&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">path</span>
 
     <span class="k">return</span> <span class="n">path</span></div>
 
 
-<div class="viewcode-block" id="Corpus"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.Corpus">[docs]</a><span class="k">class</span> <span class="nc">Corpus</span><span class="p">:</span>
+<div class="viewcode-block" id="get_atomizer"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.get_atomizer">[docs]</a><span class="k">def</span> <span class="nf">get_atomizer</span><span class="p">(</span><span class="n">corpus</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">vocab</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;char&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get atomizer for a corpus.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        corpus (str): Corpus.</span>
+<span class="sd">        vocab (str, optional): Vocabularly type.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        atomizer.Atomizer: Atomizer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">atomizers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;char&quot;</span><span class="p">:</span> <span class="n">atomizer</span><span class="o">.</span><span class="n">CharacterAtomizer</span><span class="p">,</span>
+        <span class="s2">&quot;greedy&quot;</span><span class="p">:</span> <span class="n">atomizer</span><span class="o">.</span><span class="n">GreedyAtomizer</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">atomizerclass</span> <span class="o">=</span> <span class="n">atomizers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">vocab</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">atomizerclass</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span>
+            <span class="s2">&quot;Unknown vocabulary type &#39;</span><span class="si">{bad}</span><span class="s2">&#39;. Supported values: </span><span class="si">{good}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">bad</span><span class="o">=</span><span class="n">vocab</span><span class="p">,</span> <span class="n">good</span><span class="o">=</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">atomizers</span><span class="o">.</span><span class="n">keys</span><span class="p">()))))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">atomizerclass</span><span class="o">.</span><span class="n">from_text</span><span class="p">(</span><span class="n">corpus</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_features"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.get_features">[docs]</a><span class="k">def</span> <span class="nf">get_features</span><span class="p">(</span><span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get features for code.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        code (str): Source code.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.array: Feature values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">NamedTemporaryFile</span><span class="p">()</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+        <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">code</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+        <span class="n">outfile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">to_np_arrays</span><span class="p">([</span><span class="n">outfile</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;features:&quot;</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">FeaturesError</span><span class="p">(</span><span class="s2">&quot;code contains more than one kernel&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="encode"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.encode">[docs]</a><span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="n">kernels_db</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Encode a kernels database.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        kernels_db (str): Path to kernels database.</span>
+<span class="sd">        encoding (str): Encoding type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_default</span><span class="p">(</span><span class="n">kernels_db</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">_static_features</span><span class="p">(</span><span class="n">kernels_db</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">verbose</span><span class="p">(</span><span class="s2">&quot;Static feature encoding&quot;</span><span class="p">)</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">kernels_db</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT id,contents FROM PreprocessedFiles WHERE status=0&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()):</span>
+            <span class="nb">id</span><span class="p">,</span> <span class="n">contents</span> <span class="o">=</span> <span class="n">row</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DELETE FROM PreprocessedFiles WHERE id=?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nb">id</span><span class="p">,))</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">kernel</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">clutil</span><span class="o">.</span><span class="n">get_cl_kernels</span><span class="p">(</span><span class="n">contents</span><span class="p">)):</span>
+                <span class="n">features</span> <span class="o">=</span> <span class="n">get_features</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
+                <span class="n">kid</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">-</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">features</span><span class="p">)</span> <span class="o">==</span> <span class="mi">8</span><span class="p">:</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">verbose</span><span class="p">(</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> <span class="n">kid</span><span class="p">)</span>
+                    <span class="n">feature_str</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;/* </span><span class="si">{:10}</span><span class="s2"> </span><span class="si">{:10}</span><span class="s2"> </span><span class="si">{:10}</span><span class="s2"> </span><span class="si">{:10}</span><span class="s2"> </span><span class="si">{:10}</span><span class="s2"> </span><span class="si">{:10}</span><span class="s2">&quot;</span>
+                                   <span class="s2">&quot;</span><span class="si">{:10.3f}</span><span class="s2"> </span><span class="si">{:10.3f}</span><span class="s2"> */&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                       <span class="nb">int</span><span class="p">(</span><span class="n">features</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                                       <span class="nb">int</span><span class="p">(</span><span class="n">features</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                                       <span class="nb">int</span><span class="p">(</span><span class="n">features</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+                                       <span class="nb">int</span><span class="p">(</span><span class="n">features</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
+                                       <span class="nb">int</span><span class="p">(</span><span class="n">features</span><span class="p">[</span><span class="mi">4</span><span class="p">]),</span>
+                                       <span class="nb">int</span><span class="p">(</span><span class="n">features</span><span class="p">[</span><span class="mi">5</span><span class="p">]),</span>
+                                       <span class="n">features</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span>
+                                       <span class="n">features</span><span class="p">[</span><span class="mi">7</span><span class="p">]))</span>
+                    <span class="n">newsource</span> <span class="o">=</span> <span class="n">feature_str</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">kernel</span>
+                    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                        INSERT INTO PreprocessedFiles (id,contents,status)</span>
+<span class="s2">                        VALUES (?,?,?)</span>
+<span class="s2">                    &quot;&quot;&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">kid</span><span class="p">,</span> <span class="n">newsource</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">verbose</span><span class="p">(</span><span class="s2">&quot;ignored&quot;</span><span class="p">,</span> <span class="n">kid</span><span class="p">)</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+    <span class="c1"># dispatch encoder based on encoding</span>
+    <span class="n">encoders</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="n">_default</span><span class="p">,</span>
+        <span class="s2">&quot;static_features&quot;</span><span class="p">:</span> <span class="n">_static_features</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">encoder</span> <span class="o">=</span> <span class="n">encoders</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">encoding</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">encoder</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span>
+            <span class="s2">&quot;Unknown encoding type &#39;</span><span class="si">{bad}</span><span class="s2">&#39;. Supported values: </span><span class="si">{good}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">bad</span><span class="o">=</span><span class="n">encoding</span><span class="p">,</span> <span class="n">good</span><span class="o">=</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">encoders</span><span class="o">.</span><span class="n">keys</span><span class="p">()))))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">encoder</span><span class="p">(</span><span class="n">kernels_db</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Corpus"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.Corpus">[docs]</a><span class="k">class</span> <span class="nc">Corpus</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Representation of a training corpus.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">isgithub</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contentid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Instantiate a corpus.</span>
 
-<span class="sd">        If this is a new corpus, a database will be created for it</span>
+<span class="sd">        If this is a new corpus, a number of files will be created, which may</span>
+<span class="sd">        take some time.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            contentid (str): ID of corpus content.</span>
+<span class="sd">            path (str, optional): Path to corpus.</span>
+<span class="sd">            **opts: Keyword options.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="c1"># Validate options</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">opts</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">DEFAULT_CORPUS_OPTS</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span>
+                    <span class="s2">&quot;Unsupported corpus option &#39;</span><span class="si">{}</span><span class="s2">&#39;. Valid keys: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">key</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">DEFAULT_CORPUS_OPTS</span><span class="o">.</span><span class="n">keys</span><span class="p">()))))</span>
 
-        <span class="n">path</span> <span class="o">=</span> <span class="n">unpack_directory_if_needed</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opts</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">DEFAULT_CORPUS_OPTS</span><span class="p">)</span>
+        <span class="n">types</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">,</span> <span class="n">opts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">contentid</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">fs</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s2">&quot;Corpus path &#39;</span><span class="si">{}</span><span class="s2">&#39; is not a directory&quot;</span>
-                                  <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+        <span class="c1"># check that contentid exists</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span>
+            <span class="ow">not</span> <span class="n">fs</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">cachepath</span><span class="p">(</span><span class="s2">&quot;contentfiles&quot;</span><span class="p">,</span> <span class="n">contentid</span><span class="p">))):</span>
+            <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s2">&quot;corpus </span><span class="si">{contentid}</span><span class="s2"> not found&quot;</span>
+                                  <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">()))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">hash</span> <span class="o">=</span> <span class="n">dirhash</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;sha1&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">isgithub</span> <span class="o">=</span> <span class="n">isgithub</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contentid</span> <span class="o">=</span> <span class="n">contentid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">mkcache</span><span class="p">(</span><span class="s2">&quot;contentfiles&quot;</span><span class="p">,</span> <span class="n">contentid</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernels_db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="o">.</span><span class="n">keypath</span><span class="p">(</span><span class="s1">&#39;kernels.db&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash</span><span class="p">(</span><span class="n">contentid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">mkcache</span><span class="p">(</span><span class="s2">&quot;corpus&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;corpus </span><span class="si">{hash}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">hash</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="s2">&quot;corpus&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">))</span>
+        <span class="c1"># validate metadata against cache</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;META&quot;</span><span class="p">):</span>
+            <span class="n">cached_meta</span> <span class="o">=</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;META&quot;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">meta</span> <span class="o">!=</span> <span class="n">cached_meta</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">InternalError</span><span class="p">(</span><span class="s2">&quot;corpus metadata mismatch&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">jsonutil</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">keypath</span><span class="p">(</span><span class="s2">&quot;META&quot;</span><span class="p">),</span> <span class="n">meta</span><span class="p">)</span>
 
-        <span class="c1"># TODO: Wrap file creation in try blocks, if any stage fails, delete</span>
-        <span class="c1"># generated fail (if any)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_create_files</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
-        <span class="c1"># create corpus database if not exists</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">]:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_create_kernels_db</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_create_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">_init_error</span><span class="p">(</span><span class="n">err</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot; tidy up in case of error &quot;&quot;&quot;</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;corpus creation failed. Deleting corpus files&quot;</span><span class="p">)</span>
+            <span class="n">paths</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="o">.</span><span class="n">keypath</span><span class="p">(</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">keypath</span><span class="p">(</span><span class="s2">&quot;corpus.txt&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">keypath</span><span class="p">(</span><span class="s2">&quot;tensor.npy&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">keypath</span><span class="p">(</span><span class="s2">&quot;atomizer.pkl&quot;</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">fs</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;removing&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+                    <span class="n">fs</span><span class="o">.</span><span class="n">rm</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">err</span>
 
-        <span class="c1"># create corpus text if not exists</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;corpus.txt&quot;</span><span class="p">]:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_create_txt</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">fs</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span>
+                        <span class="s2">&quot;Corpus path &#39;</span><span class="si">{}</span><span class="s2">&#39; is not a directory&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+                <span class="c1"># create kernels database if necessary</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">]</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_create_kernels_db</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;encoding&quot;</span><span class="p">])</span>
 
-        <span class="c1"># create LSTM training files if not exists</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;corpus.json&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;corpus.h5&quot;</span><span class="p">]:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_lstm_preprocess</span><span class="p">()</span>
+            <span class="c1"># create corpus text if not exists</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;corpus.txt&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_create_txt</span><span class="p">()</span>
+                <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;corpus.txt&quot;</span><span class="p">])</span>
 
-    <span class="k">def</span> <span class="nf">_create_kernels_db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+            <span class="c1"># create atomizer if needed</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;atomizer.pkl&quot;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_load_atomizer</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_create_atomizer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;vocabulary&quot;</span><span class="p">])</span>
+                <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;atomizer.pkl&quot;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">_init_error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contentid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">opts</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; compute corpus hash &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">crypto</span><span class="o">.</span><span class="n">sha1_list</span><span class="p">(</span><span class="n">contentid</span><span class="p">,</span> <span class="o">*</span><span class="n">types</span><span class="o">.</span><span class="n">dict_values</span><span class="p">(</span><span class="n">opts</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_create_kernels_db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;creates and caches kernels.db&quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;creating database&quot;</span><span class="p">)</span>
 
         <span class="c1"># create a database and put it in the cache</span>
-        <span class="n">tmppath</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;kernels.db.tmp&quot;</span><span class="p">)</span>
-        <span class="n">dbutil</span><span class="o">.</span><span class="n">create_db</span><span class="p">(</span><span class="n">tmppath</span><span class="p">,</span> <span class="n">github</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">isgithub</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmppath</span>
+        <span class="n">tmppath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="o">.</span><span class="n">keypath</span><span class="p">(</span><span class="s2">&quot;kernels.db.tmp&quot;</span><span class="p">)</span>
+        <span class="n">dbutil</span><span class="o">.</span><span class="n">create_db</span><span class="p">(</span><span class="n">tmppath</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmppath</span>
 
         <span class="c1"># get a list of files in the corpus</span>
         <span class="n">filelist</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fs</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">abspaths</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">fs</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span>
 
         <span class="c1"># import files into database</span>
-        <span class="n">fetch</span><span class="o">.</span><span class="n">fetch_fs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">],</span> <span class="n">filelist</span><span class="p">)</span>
+        <span class="n">fetch</span><span class="o">.</span><span class="n">fetch_fs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">],</span> <span class="n">filelist</span><span class="p">)</span>
 
         <span class="c1"># preprocess files</span>
-        <span class="n">preprocess</span><span class="o">.</span><span class="n">preprocess_db</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span>
+        <span class="n">preprocess</span><span class="o">.</span><span class="n">preprocess_db</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span>
+
+        <span class="c1"># encode kernel db</span>
+        <span class="n">encode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">],</span> <span class="n">encoding</span><span class="p">)</span>
 
         <span class="c1"># print database stats</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isgithub</span><span class="p">:</span>
-            <span class="n">explore</span><span class="o">.</span><span class="n">explore_gh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">explore</span><span class="o">.</span><span class="n">explore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span>
+        <span class="n">explore</span><span class="o">.</span><span class="n">explore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span>
 
-    <span class="k">def</span> <span class="nf">_create_txt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_create_txt</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;creates and caches corpus.txt&quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;creating corpus&quot;</span><span class="p">)</span>
 
         <span class="c1"># TODO: additional options in corpus JSON to accomodate for EOF,</span>
         <span class="c1"># different encodings etc.</span>
-        <span class="n">tmppath</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;corpus.txt.tmp&quot;</span><span class="p">)</span>
-        <span class="n">train</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">],</span> <span class="n">tmppath</span><span class="p">)</span>
+        <span class="n">tmppath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">keypath</span><span class="p">(</span><span class="s2">&quot;corpus.txt.tmp&quot;</span><span class="p">)</span>
+        <span class="n">dbutil</span><span class="o">.</span><span class="n">dump_db</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">],</span> <span class="n">tmppath</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;corpus.txt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmppath</span>
 
-    <span class="k">def</span> <span class="nf">_lstm_preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;creating training set&quot;</span><span class="p">)</span>
-        <span class="n">tmppaths</span> <span class="o">=</span> <span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;corpus.json.tmp&quot;</span><span class="p">),</span>
-                    <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;corpus.h5.tmp&quot;</span><span class="p">))</span>
-        <span class="n">torch_rnn</span><span class="o">.</span><span class="n">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;corpus.txt&quot;</span><span class="p">],</span> <span class="o">*</span><span class="n">tmppaths</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;corpus.json&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmppaths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;corpus.h5&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmppaths</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">_read_txt</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">codecs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;corpus.txt&quot;</span><span class="p">],</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_create_atomizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocab</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;char&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;creates and caches atomizer.pkl&quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;creating vocab file&quot;</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_txt</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">atomizer</span> <span class="o">=</span> <span class="n">get_atomizer</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">vocab</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomizer</span><span class="o">.</span><span class="n">atoms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomizer</span><span class="o">.</span><span class="n">vocab_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomizer</span><span class="o">.</span><span class="n">vocab</span>
+
+        <span class="n">tmp_vocab_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">keypath</span><span class="p">(</span><span class="s2">&quot;atomizer.tmp.pkl&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_vocab_file</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">cPickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atomizer</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;atomizer.pkl&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp_vocab_file</span>
+
+    <span class="k">def</span> <span class="nf">_load_atomizer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;atomizer.pkl&quot;</span><span class="p">],</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">atomizer</span> <span class="o">=</span> <span class="n">cPickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomizer</span><span class="o">.</span><span class="n">atoms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomizer</span><span class="o">.</span><span class="n">vocab_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomizer</span><span class="o">.</span><span class="n">vocab</span>
+
+    <span class="k">def</span> <span class="nf">_generate_kernel_corpus</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; dump all kernels into a string in a random order &quot;&quot;&quot;</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+        <span class="c1"># if preservering order, order by line count. Else, order randomly</span>
+        <span class="n">orderby</span> <span class="o">=</span> <span class="s2">&quot;LC(contents)&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;preserve_order&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="s2">&quot;RANDOM()&quot;</span>
+
+        <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT PreprocessedFiles.Contents FROM PreprocessedFiles &quot;</span>
+                  <span class="s2">&quot;WHERE status=0 ORDER BY </span><span class="si">{orderby}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">orderby</span><span class="o">=</span><span class="n">orderby</span><span class="p">))</span>
+
+        <span class="c1"># If file separators are requested, insert EOF markers between files</span>
+        <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">// EOF</span><span class="se">\n\n</span><span class="s1">&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;eof&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span>
+
+        <span class="k">return</span> <span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchall</span><span class="p">())</span>
+
+<div class="viewcode-block" id="Corpus.create_batches"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.Corpus.create_batches">[docs]</a>    <span class="k">def</span> <span class="nf">create_batches</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create batches for training.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;creating batches&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_batch_pointer</span><span class="p">()</span>
+
+        <span class="c1"># generate a kernel corpus</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_kernel_corpus</span><span class="p">()</span>
+
+        <span class="c1"># encode corpus into vocab indices</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomizer</span><span class="o">.</span><span class="n">atomize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span>
+        <span class="n">seq_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq_length</span>
+
+        <span class="c1"># set corpus size and number of batches</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tensor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_batches</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">/</span> <span class="p">(</span><span class="n">batch_size</span> <span class="o">*</span> <span class="n">seq_length</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_batches</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span>
+                <span class="s2">&quot;Not enough data. Use a smaller seq_length and batch_size&quot;</span><span class="p">)</span>
+
+        <span class="c1"># split into batches</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tensor</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">num_batches</span> <span class="o">*</span> <span class="n">batch_size</span> <span class="o">*</span> <span class="n">seq_length</span><span class="p">]</span>
+        <span class="n">xdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tensor</span>
+        <span class="n">ydata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tensor</span><span class="p">)</span>
+        <span class="n">ydata</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">xdata</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">ydata</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">xdata</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x_batches</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">xdata</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">num_batches</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y_batches</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">ydata</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">num_batches</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">input_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Path to input JSON.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            str: Path.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s1">&#39;corpus.json&#39;</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">lock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">lockpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">keypath</span><span class="p">(</span><span class="s2">&quot;LOCK&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">lockfile</span><span class="o">.</span><span class="n">LockFile</span><span class="p">(</span><span class="n">lockpath</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">input_h5</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">batch_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;batch_size&quot;</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">seq_length</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;seq_length&quot;</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Path to input h5.</span>
+<span class="sd">        Return the atomized size of the corpus.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">create_batches</span><span class="p">()</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">num_batches</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_batches</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">create_batches</span><span class="p">()</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_batches</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">meta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get corpus metadata.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            str: Path.</span>
+<span class="sd">            dict: Metadata.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s1">&#39;corpus.h5&#39;</span><span class="p">]</span>
+        <span class="n">_meta</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">)</span>
+        <span class="n">_meta</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash</span>
+        <span class="k">return</span> <span class="n">_meta</span>
 
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">n</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">num_good_kernels</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s1">&#39;kernels.db&#39;</span><span class="p">])</span>
-        <span class="k">return</span> <span class="s2">&quot;corpus of </span><span class="si">{n}</span><span class="s2"> files&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+<div class="viewcode-block" id="Corpus.reset_batch_pointer"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.Corpus.reset_batch_pointer">[docs]</a>    <span class="k">def</span> <span class="nf">reset_batch_pointer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resets batch pointer to first batch.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pointer</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="Corpus.next_batch"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.Corpus.next_batch">[docs]</a>    <span class="k">def</span> <span class="nf">next_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch next batch indices.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (np.array, np.array): X, Y batch tuple.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_batches</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_pointer</span><span class="p">]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_batches</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_pointer</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pointer</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span></div>
+
+<div class="viewcode-block" id="Corpus.set_batch_pointer"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.Corpus.set_batch_pointer">[docs]</a>    <span class="k">def</span> <span class="nf">set_batch_pointer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pointer</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set batch pointer.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            pointer (int): New batch pointer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pointer</span> <span class="o">=</span> <span class="n">pointer</span></div>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="nb">hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash</span>
+        <span class="n">nf</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">num_good_kernels</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s1">&#39;kernels.db&#39;</span><span class="p">])</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;vocabulary&quot;</span><span class="p">]</span>
+        <span class="n">nt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomizer</span><span class="o">.</span><span class="n">vocab_size</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;corpus[</span><span class="si">{hash}</span><span class="s2">]: </span><span class="si">{nf}</span><span class="s2"> files, </span><span class="si">{v}</span><span class="s2"> vocabulary with </span><span class="si">{nt}</span><span class="s2"> tokens&quot;</span>
+                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">()))</span>
+
+<div class="viewcode-block" id="Corpus.to_json"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.Corpus.to_json">[docs]</a>    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span></div>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">Corpus</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">rhs</span><span class="o">.</span><span class="n">hash</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash</span>
+
+    <span class="k">def</span> <span class="nf">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__eq__</span><span class="p">(</span><span class="n">rhs</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="Corpus.from_json"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.Corpus.from_json">[docs]</a>    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="n">corpus_json</span><span class="p">):</span>
+<div class="viewcode-block" id="Corpus.from_json"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.Corpus.from_json">[docs]</a>    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="n">corpus_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Instantiate Corpus from JSON.</span>
 
@@ -231,14 +565,74 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            Corpus: Insantiated corpus.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;corpus from json&quot;</span><span class="p">)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">corpus_json</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">uid</span> <span class="o">=</span> <span class="n">corpus_json</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-        <span class="n">path</span> <span class="o">=</span> <span class="n">corpus_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s2">&quot;no path found for corpus&quot;</span><span class="p">)</span>
-        <span class="n">isgithub</span> <span class="o">=</span> <span class="n">corpus_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;github&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">path</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">unpack_directory_if_needed</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">fs</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span>
+                    <span class="s2">&quot;Corpus path &#39;</span><span class="si">{}</span><span class="s2">&#39; is not a directory&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+            <span class="n">uid</span> <span class="o">=</span> <span class="n">dirhash</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;sha1&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">uid</span><span class="p">:</span>
+            <span class="n">cache_path</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">mkcache</span><span class="p">(</span><span class="s2">&quot;contentfiles&quot;</span><span class="p">,</span> <span class="n">uid</span><span class="p">)</span><span class="o">.</span><span class="n">path</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">fs</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">cache_path</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s2">&quot;Corpus content </span><span class="si">{}</span><span class="s2"> not found&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">uid</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s2">&quot;No corpus path or ID provided&quot;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">Corpus</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">isgithub</span><span class="o">=</span><span class="n">isgithub</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">Corpus</span><span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">corpus_json</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="preprocessed_kernels"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.preprocessed_kernels">[docs]</a><span class="k">def</span> <span class="nf">preprocessed_kernels</span><span class="p">(</span><span class="n">corpus</span><span class="p">:</span> <span class="n">Corpus</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return an iterator over all preprocessed kernels.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        corpus (Corpus): Corpus.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        sequence of str: Kernel sources.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">corpus</span><span class="p">,</span> <span class="n">Corpus</span><span class="p">))</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">corpus</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT Contents FROM PreprocessedFiles WHERE status=0&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">query</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
+        <span class="k">yield</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="most_common_prototypes"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.most_common_prototypes">[docs]</a><span class="k">def</span> <span class="nf">most_common_prototypes</span><span class="p">(</span><span class="n">c</span><span class="p">:</span> <span class="n">Corpus</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the n most frequently occuring prototypes.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        c (Corpus): Corpus.</span>
+<span class="sd">        n (int): Number of prototypes to return:</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple of list of tuples, int:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">clutil</span>
+
+    <span class="n">prototypes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">kernel</span> <span class="ow">in</span> <span class="n">preprocessed_kernels</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">prototype</span> <span class="o">=</span> <span class="n">clutil</span><span class="o">.</span><span class="n">KernelPrototype</span><span class="o">.</span><span class="n">from_source</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">prototype</span><span class="o">.</span><span class="n">is_synthesizable</span><span class="p">:</span>
+                <span class="n">prototypes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">prototype</span><span class="o">.</span><span class="n">args</span><span class="p">))</span>
+        <span class="k">except</span> <span class="n">clutil</span><span class="o">.</span><span class="n">PrototypeException</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="c1"># Convert frequency into ratios</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">prototypes</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">counter</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">prototype</span><span class="p">,</span> <span class="n">freq</span> <span class="o">=</span> <span class="n">row</span>
+        <span class="n">ratio</span> <span class="o">=</span> <span class="n">freq</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">prototypes</span><span class="p">)</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">ratio</span><span class="p">,</span> <span class="n">prototype</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">prototypes</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -276,7 +670,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2016, Chris Cummins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.3.
     </div>
   </body>
 </html>

@@ -17,7 +17,8 @@
         VERSION:     '0.2.13',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
@@ -25,9 +26,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="top" title="clgen 0.2.13 documentation" href="../../index.html" />
-    <link rel="up" title="clgen" href="../clgen.html" /> 
+    <link rel="search" title="Search" href="../../search.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -52,7 +51,7 @@
             
   <h1>Source code for clgen.clutil</h1><div class="highlight"><pre>
 <span></span><span class="c1">#</span>
-<span class="c1"># Copyright 2016 Chris Cummins &lt;chrisc.101@gmail.com&gt;.</span>
+<span class="c1"># Copyright 2016, 2017 Chris Cummins &lt;chrisc.101@gmail.com&gt;.</span>
 <span class="c1">#</span>
 <span class="c1"># This file is part of CLgen.</span>
 <span class="c1">#</span>
@@ -72,13 +71,10 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">OpenCL utilities.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
-
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">platform</span>
-<span class="kn">import</span> <span class="nn">psutil</span>
 <span class="kn">import</span> <span class="nn">re</span>
 
+<span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">text</span>
 <span class="kn">from</span> <span class="nn">six</span> <span class="k">import</span> <span class="n">string_types</span>
 
 <span class="kn">import</span> <span class="nn">clgen</span>
@@ -143,7 +139,7 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">string</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the original string.</span>
 
@@ -160,7 +156,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_string</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">components</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">components</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Kernel argument components.</span>
 
@@ -177,7 +173,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_components</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the argument variable name.</span>
 
@@ -194,7 +190,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_components</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the argument type.</span>
 
@@ -211,7 +207,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_components</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">is_restrict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">is_restrict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Argument has restrict keyword.</span>
 
@@ -228,7 +224,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_restrict</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">qualifiers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">qualifiers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return all argument type qualifiers.</span>
 
@@ -245,7 +241,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_components</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">is_pointer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">is_pointer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns whether argument is a pointer.</span>
 
@@ -262,7 +258,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;*&#39;</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">is_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">is_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns whether argument is a vectory type, e.g. &#39;int4&#39;.</span>
 
@@ -280,9 +276,11 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">vector_width</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">vector_width</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns width of vector type.</span>
+
+<span class="sd">        If not a vector type, returned width is 1.</span>
 
 <span class="sd">        Examples:</span>
 
@@ -305,7 +303,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vector_width</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">bare_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">bare_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Type name, without vector or pointer qualifiers.</span>
 
@@ -326,7 +324,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bare_type</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">is_const</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">is_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Kernel arg is constant.</span>
 
@@ -347,7 +345,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_const</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">is_global</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">is_global</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Kernel arg is global.</span>
 
@@ -370,7 +368,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_global</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">is_local</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">is_local</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Kernel arg is local.</span>
 
@@ -445,7 +443,7 @@
 
 <span class="sd">    Requires source code to have been pre-processed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create OpenCL kernel prototype.</span>
 
@@ -459,7 +457,7 @@
             <span class="k">raise</span> <span class="n">PrototypeException</span><span class="p">(</span><span class="s1">&#39;malformed prototype&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_string</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Kernel function name.</span>
 
@@ -480,7 +478,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">args</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">args</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Kernel arguments.</span>
 
@@ -500,11 +498,20 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="p">[</span><span class="n">KernelArg</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">inner_brace</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)]</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_args</span>
 
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_synthesizable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">arg</span><span class="o">.</span><span class="n">numpy_type</span>
+            <span class="k">except</span> <span class="n">UnknownTypeException</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_string</span>
 
     <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="KernelPrototype.from_source"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.KernelPrototype.from_source">[docs]</a>    <span class="k">def</span> <span class="nf">from_source</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
+<div class="viewcode-block" id="KernelPrototype.from_source"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.KernelPrototype.from_source">[docs]</a>    <span class="k">def</span> <span class="nf">from_source</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create KernelPrototype from OpenCL kernel source.</span>
 
@@ -517,7 +524,7 @@
         <span class="k">return</span> <span class="n">extract_prototype</span><span class="p">(</span><span class="n">src</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="get_attribute_range"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.get_attribute_range">[docs]</a><span class="k">def</span> <span class="nf">get_attribute_range</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">):</span>
+<div class="viewcode-block" id="get_attribute_range"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.get_attribute_range">[docs]</a><span class="k">def</span> <span class="nf">get_attribute_range</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get string indices range of attributes.</span>
 
@@ -540,7 +547,7 @@
     <span class="k">return</span> <span class="p">(</span><span class="n">start_idx</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="strip_attributes"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.strip_attributes">[docs]</a><span class="k">def</span> <span class="nf">strip_attributes</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
+<div class="viewcode-block" id="strip_attributes"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.strip_attributes">[docs]</a><span class="k">def</span> <span class="nf">strip_attributes</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Remove attributes from OpenCL source.</span>
 
@@ -551,7 +558,7 @@
 <span class="sd">        str: OpenCL source, with ((attributes)) removed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># get list of __attribute__ substrings</span>
-    <span class="n">idxs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">get_substring_idxs</span><span class="p">(</span><span class="s1">&#39;__attribute__&#39;</span><span class="p">,</span> <span class="n">src</span><span class="p">))</span>
+    <span class="n">idxs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">get_substring_idxs</span><span class="p">(</span><span class="s1">&#39;__attribute__&#39;</span><span class="p">,</span> <span class="n">src</span><span class="p">))</span>
 
     <span class="c1"># get ((attribute)) ranges</span>
     <span class="n">attribute_ranges</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_attribute_range</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idxs</span><span class="p">]</span>
@@ -562,7 +569,7 @@
     <span class="k">return</span> <span class="n">src</span></div>
 
 
-<div class="viewcode-block" id="get_cl_kernel_end_idx"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.get_cl_kernel_end_idx">[docs]</a><span class="k">def</span> <span class="nf">get_cl_kernel_end_idx</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">start_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_len</span><span class="o">=</span><span class="mi">5000</span><span class="p">):</span>
+<div class="viewcode-block" id="get_cl_kernel_end_idx"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.get_cl_kernel_end_idx">[docs]</a><span class="k">def</span> <span class="nf">get_cl_kernel_end_idx</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_len</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">5000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the index of the character after the end of the OpenCL</span>
 <span class="sd">    kernel.</span>
@@ -588,7 +595,7 @@
     <span class="k">return</span> <span class="n">i</span></div>
 
 
-<div class="viewcode-block" id="get_cl_kernel"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.get_cl_kernel">[docs]</a><span class="k">def</span> <span class="nf">get_cl_kernel</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">,</span> <span class="n">max_len</span><span class="o">=</span><span class="mi">5000</span><span class="p">):</span>
+<div class="viewcode-block" id="get_cl_kernel"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.get_cl_kernel">[docs]</a><span class="k">def</span> <span class="nf">get_cl_kernel</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">max_len</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">5000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the OpenCL kernel.</span>
 
@@ -605,7 +612,7 @@
     <span class="k">return</span> <span class="n">src</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">get_cl_kernel_end_idx</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">)]</span></div>
 
 
-<div class="viewcode-block" id="get_cl_kernels"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.get_cl_kernels">[docs]</a><span class="k">def</span> <span class="nf">get_cl_kernels</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
+<div class="viewcode-block" id="get_cl_kernels"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.get_cl_kernels">[docs]</a><span class="k">def</span> <span class="nf">get_cl_kernels</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return OpenCL kernels.</span>
 
@@ -617,12 +624,12 @@
 
 <span class="sd">        str[]: OpenCL kernels.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">idxs</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">get_substring_idxs</span><span class="p">(</span><span class="s1">&#39;__kernel&#39;</span><span class="p">,</span> <span class="n">src</span><span class="p">)</span>
+    <span class="n">idxs</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">get_substring_idxs</span><span class="p">(</span><span class="s1">&#39;__kernel&#39;</span><span class="p">,</span> <span class="n">src</span><span class="p">)</span>
     <span class="n">kernels</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_cl_kernel</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idxs</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">kernels</span></div>
 
 
-<div class="viewcode-block" id="extract_prototype"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.extract_prototype">[docs]</a><span class="k">def</span> <span class="nf">extract_prototype</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
+<div class="viewcode-block" id="extract_prototype"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.extract_prototype">[docs]</a><span class="k">def</span> <span class="nf">extract_prototype</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KernelPrototype</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extract OpenCL kernel prototype from preprocessed file.</span>
 
@@ -634,7 +641,7 @@
 
 <span class="sd">        KernelPrototype: Prototype instance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">idxs</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">get_substring_idxs</span><span class="p">(</span><span class="s1">&#39;__kernel void &#39;</span><span class="p">,</span> <span class="n">src</span><span class="p">)</span>
+    <span class="n">idxs</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">get_substring_idxs</span><span class="p">(</span><span class="s1">&#39;__kernel void &#39;</span><span class="p">,</span> <span class="n">src</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idxs</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">PrototypeException</span><span class="p">(</span><span class="s2">&quot;Invalid number of kernels found: </span><span class="si">{}</span><span class="s2">&quot;</span>
                                  <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">idxs</span><span class="p">)))</span>
@@ -649,12 +656,12 @@
     <span class="k">return</span> <span class="n">KernelPrototype</span><span class="p">(</span><span class="n">prototype</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="get_contexts_and_devices"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.get_contexts_and_devices">[docs]</a><span class="k">def</span> <span class="nf">get_contexts_and_devices</span><span class="p">():</span>
+<div class="viewcode-block" id="get_contexts_and_devices"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.get_contexts_and_devices">[docs]</a><span class="k">def</span> <span class="nf">get_contexts_and_devices</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Instantiate OpenCL contexts for all platforms and return devices.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        dict: pyopencl.Context as key, pyopencl.Device[] as value</span>
+<span class="sd">        dict: pyopencl.Context keys, pyopencl.Device[] values.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">pyopencl</span> <span class="k">as</span> <span class="nn">cl</span>
 
@@ -665,43 +672,6 @@
         <span class="n">results</span><span class="p">[</span><span class="n">ctx</span><span class="p">]</span> <span class="o">=</span> <span class="n">devices</span>
 
     <span class="k">return</span> <span class="n">results</span></div>
-
-
-<div class="viewcode-block" id="platform_info"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.platform_info">[docs]</a><span class="k">def</span> <span class="nf">platform_info</span><span class="p">(</span><span class="n">printfn</span><span class="o">=</span><span class="nb">print</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Log platform information.</span>
-
-<span class="sd">    Arguments:</span>
-<span class="sd">        printfn (fn, optional): Function to call to print output to. Default</span>
-<span class="sd">            `print()`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;Platform:  &quot;</span><span class="p">,</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">())</span>
-    <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;Memory:    &quot;</span><span class="p">,</span>
-            <span class="nb">round</span><span class="p">(</span><span class="n">psutil</span><span class="o">.</span><span class="n">virtual_memory</span><span class="p">()</span><span class="o">.</span><span class="n">total</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)),</span> <span class="s2">&quot;MB&quot;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">cfg</span><span class="o">.</span><span class="n">USE_OPENCL</span><span class="p">:</span>
-        <span class="n">printfn</span><span class="p">()</span>
-        <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;Device:     None&quot;</span><span class="p">)</span>
-
-    <span class="kn">import</span> <span class="nn">pyopencl</span> <span class="k">as</span> <span class="nn">cl</span>
-    <span class="k">for</span> <span class="n">pltfm</span> <span class="ow">in</span> <span class="n">cl</span><span class="o">.</span><span class="n">get_platforms</span><span class="p">():</span>
-        <span class="n">ctx</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span><span class="n">properties</span><span class="o">=</span><span class="p">[(</span><span class="n">cl</span><span class="o">.</span><span class="n">context_properties</span><span class="o">.</span><span class="n">PLATFORM</span><span class="p">,</span> <span class="n">pltfm</span><span class="p">)])</span>
-        <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">context_info</span><span class="o">.</span><span class="n">DEVICES</span><span class="p">):</span>
-            <span class="n">devtype</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">device_type</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span>
-                <span class="n">device</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">TYPE</span><span class="p">))</span>
-            <span class="n">dev</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">NAME</span><span class="p">)</span>
-
-            <span class="n">printfn</span><span class="p">()</span>
-            <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;Device:    &quot;</span><span class="p">,</span> <span class="n">devtype</span><span class="p">,</span> <span class="n">dev</span><span class="p">)</span>
-            <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;Compute #.:&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span>
-                <span class="n">cl</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">MAX_COMPUTE_UNITS</span><span class="p">))</span>
-            <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;Frequency: &quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span>
-                <span class="n">cl</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">MAX_CLOCK_FREQUENCY</span><span class="p">),</span> <span class="s2">&quot;HZ&quot;</span><span class="p">)</span>
-            <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;Memory:    &quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span>
-                <span class="n">device</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span>
-                    <span class="n">cl</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">GLOBAL_MEM_SIZE</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)),</span> <span class="s2">&quot;MB&quot;</span><span class="p">)</span>
-            <span class="n">printfn</span><span class="p">(</span><span class="s2">&quot;Driver:    &quot;</span><span class="p">,</span>
-                    <span class="n">device</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">DRIVER_VERSION</span><span class="p">))</span></div>
 </pre></div>
 
           </div>
@@ -739,7 +709,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2016, Chris Cummins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.3.
     </div>
   </body>
 </html>
