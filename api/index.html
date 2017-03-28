@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Python API &#8212; clgen 0.2.9 documentation</title>
+    <title>Python API &#8212; clgen 0.2.10 documentation</title>
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.9',
+        VERSION:     '0.2.10',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="clgen 0.2.9 documentation" href="../index.html" />
+    <link rel="top" title="clgen 0.2.10 documentation" href="../index.html" />
     <link rel="next" title="Command Line Interface" href="../bin/index.html" />
     <link rel="prev" title="Building the Development Version" href="../installation.html" /> 
   </head>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../installation.html" title="Building the Development Version"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.9 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.10 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -438,84 +438,6 @@ operators for comparing versions are == and !=.</p>
 </div>
 <div class="section" id="clgen-atomizer">
 <h2>clgen.atomizer<a class="headerlink" href="#clgen-atomizer" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-clgen.cache">
-<span id="clgen-cache"></span><h2>clgen.cache<a class="headerlink" href="#module-clgen.cache" title="Permalink to this headline">¶</a></h2>
-<p>CLgen persistent cache mechanism.</p>
-<dl class="class">
-<dt id="clgen.cache.Cache">
-<em class="property">class </em><code class="descclassname">clgen.cache.</code><code class="descname">Cache</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cache.html#Cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cache.Cache" title="Permalink to this definition">¶</a></dt>
-<dd><p>Persistent filesystem cache.</p>
-<dl class="method">
-<dt id="clgen.cache.Cache.empty">
-<code class="descname">empty</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cache.html#Cache.empty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cache.Cache.empty" title="Permalink to this definition">¶</a></dt>
-<dd><p>Empty the filesystem cache.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="clgen.cache.Cache.escape">
-<code class="descname">escape</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cache.html#Cache.escape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cache.Cache.escape" title="Permalink to this definition">¶</a></dt>
-<dd><p>Escape key to path.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<em>str</em>) &#8211; Key.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Escaped key.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="clgen.cache.Cache.keypath">
-<code class="descname">keypath</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cache.html#Cache.keypath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cache.Cache.keypath" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return path to key in cache.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<em>str</em>) &#8211; Key.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Absolute path.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="clgen.cache.Cache.mapkey">
-<code class="descname">mapkey</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cache.html#Cache.mapkey"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cache.Cache.mapkey" title="Permalink to this definition">¶</a></dt>
-<dd><p>Map a key to an internal key.</p>
-<p>Key mapping in case the keys stored in the cache should be distinct
-from the keys used to access the cache.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<em>str</em>) &#8211; Key.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Mapped key.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="exception">
-<dt id="clgen.cache.Cache404">
-<em class="property">exception </em><code class="descclassname">clgen.cache.</code><code class="descname">Cache404</code><a class="reference internal" href="../_modules/clgen/cache.html#Cache404"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cache.Cache404" title="Permalink to this definition">¶</a></dt>
-<dd><p>Error thrown for cache misses.</p>
-</dd></dl>
-
 </div>
 <div class="section" id="module-clgen.cldrive">
 <span id="clgen-cldrive"></span><h2>clgen.cldrive<a class="headerlink" href="#module-clgen.cldrive" title="Permalink to this headline">¶</a></h2>
@@ -2570,9 +2492,6 @@ sample.</li>
 </dd></dl>
 
 </div>
-<div class="section" id="clgen-lockfile">
-<h2>clgen.lockfile<a class="headerlink" href="#clgen-lockfile" title="Permalink to this headline">¶</a></h2>
-</div>
 <div class="section" id="module-clgen.log">
 <span id="clgen-log"></span><h2>clgen.log<a class="headerlink" href="#module-clgen.log" title="Permalink to this headline">¶</a></h2>
 <p>clgen logging interface.</p>
@@ -3466,7 +3385,7 @@ exits.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Cache.</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#clgen.cache.Cache" title="clgen.cache.Cache">Cache</a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Cache</td>
 </tr>
 </tbody>
 </table>
@@ -3636,7 +3555,6 @@ exits.</p>
 <li><a class="reference internal" href="#">Python API</a><ul>
 <li><a class="reference internal" href="#module-clgen">clgen</a></li>
 <li><a class="reference internal" href="#clgen-atomizer">clgen.atomizer</a></li>
-<li><a class="reference internal" href="#module-clgen.cache">clgen.cache</a></li>
 <li><a class="reference internal" href="#module-clgen.cldrive">clgen.cldrive</a></li>
 <li><a class="reference internal" href="#module-clgen.cli">clgen.cli</a></li>
 <li><a class="reference internal" href="#module-clgen.clutil">clgen.clutil</a></li>
@@ -3646,7 +3564,6 @@ exits.</p>
 <li><a class="reference internal" href="#module-clgen.explore">clgen.explore</a></li>
 <li><a class="reference internal" href="#module-clgen.features">clgen.features</a></li>
 <li><a class="reference internal" href="#module-clgen.fetch">clgen.fetch</a></li>
-<li><a class="reference internal" href="#clgen-lockfile">clgen.lockfile</a></li>
 <li><a class="reference internal" href="#module-clgen.log">clgen.log</a></li>
 <li><a class="reference internal" href="#module-clgen.model">clgen.model</a></li>
 <li><a class="reference internal" href="#module-clgen.native">clgen.native</a></li>
@@ -3699,7 +3616,7 @@ exits.</p>
         <li class="right" >
           <a href="../installation.html" title="Building the Development Version"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.9 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.10 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
