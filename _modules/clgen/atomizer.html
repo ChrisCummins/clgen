@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.atomizer &#8212; clgen 0.2.13 documentation</title>
+    <title>clgen.atomizer &#8212; clgen 0.2.14 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.13',
+        VERSION:     '0.2.14',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.13 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.14 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -190,7 +190,7 @@
     <span class="s1">&#39;while&#39;</span><span class="p">,</span>
     <span class="s1">&#39;wide&#39;</span><span class="p">,</span>
     <span class="s1">&#39;write_only&#39;</span><span class="p">,</span>
-<span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="nb">chr</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">128</span><span class="p">)])</span>
+<span class="p">])</span>
 
 
 <div class="viewcode-block" id="VocabError"><a class="viewcode-back" href="../../api/index.html#clgen.atomizer.VocabError">[docs]</a><span class="k">class</span> <span class="nc">VocabError</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenError</span><span class="p">):</span>
@@ -209,10 +209,8 @@
 <span class="sd">                atomizing text from atoms into indices.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">vocab</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span> <span class="o">=</span> <span class="n">vocab</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vocab</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">val</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">vocab</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vocab_update</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -221,6 +219,11 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">indices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vocab</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+    <span class="k">def</span> <span class="nf">_vocab_update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; call this when vocab is modified &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vocab</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">val</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
 
 <div class="viewcode-block" id="Atomizer.atomize"><a class="viewcode-back" href="../../api/index.html#clgen.atomizer.Atomizer.atomize">[docs]</a>    <span class="k">def</span> <span class="nf">atomize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -306,13 +309,22 @@
 <span class="sd">    Greedy encoding for multi-characten modelling.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">determine_chars</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;determine_chars&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GreedyAtomizer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
         <span class="n">multichars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">first_chars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">multichars</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lookup</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">c</span><span class="p">,</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">multichars</span> <span class="k">if</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">c</span><span class="p">])</span>
                            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">first_chars</span><span class="p">)</span>
 
 <div class="viewcode-block" id="GreedyAtomizer.atomize"><a class="viewcode-back" href="../../api/index.html#clgen.atomizer.GreedyAtomizer.atomize">[docs]</a>    <span class="k">def</span> <span class="nf">atomize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">_add_to_vocab</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">determine_chars</span> <span class="ow">and</span> <span class="n">token</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span><span class="p">:</span>
+                <span class="n">maxind</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vocab</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span><span class="p">[</span><span class="n">token</span><span class="p">]</span> <span class="o">=</span> <span class="n">maxind</span> <span class="o">+</span> <span class="mi">1</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span><span class="p">[</span><span class="n">token</span><span class="p">]</span>
+
         <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">j</span> <span class="o">=</span> <span class="mi">2</span>
@@ -333,15 +345,18 @@
                             <span class="k">else</span><span class="p">:</span>
                                 <span class="n">j</span> <span class="o">-=</span> <span class="mi">1</span>
                         <span class="k">else</span><span class="p">:</span>
-                            <span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vocab</span><span class="p">[</span><span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
+                            <span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_add_to_vocab</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
                             <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
                             <span class="n">j</span> <span class="o">=</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">2</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vocab</span><span class="p">[</span><span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
+                    <span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_add_to_vocab</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
                     <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
                     <span class="n">j</span> <span class="o">=</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">2</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">VocabError</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">determine_chars</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_vocab_update</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span></div>
 
@@ -351,7 +366,7 @@
     <span class="nd">@staticmethod</span>
 <div class="viewcode-block" id="GreedyAtomizer.from_text"><a class="viewcode-back" href="../../api/index.html#clgen.atomizer.GreedyAtomizer.from_text">[docs]</a>    <span class="k">def</span> <span class="nf">from_text</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Atomizer</span><span class="p">:</span>
         <span class="n">opencl_vocab</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">OPENCL_ATOMS</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">OPENCL_ATOMS</span><span class="p">))))</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="n">GreedyAtomizer</span><span class="p">(</span><span class="n">opencl_vocab</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">GreedyAtomizer</span><span class="p">(</span><span class="n">opencl_vocab</span><span class="p">,</span> <span class="n">determine_chars</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">tokens</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">text</span><span class="p">))))</span>
         <span class="n">vocab</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">))))</span>
@@ -386,7 +401,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.13 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.14 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

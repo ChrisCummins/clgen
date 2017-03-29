@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.model &#8212; clgen 0.2.13 documentation</title>
+    <title>clgen.model &#8212; clgen 0.2.14 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.13',
+        VERSION:     '0.2.14',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.13 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.14 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -71,26 +71,22 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">CLgen model.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">progressbar</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">tarfile</span>
-<span class="kn">import</span> <span class="nn">time</span>
 
 <span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
-<span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">iglob</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">time</span>
+
+<span class="kn">import</span> <span class="nn">progressbar</span>
+
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">crypto</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">fs</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">jsonutil</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">lockfile</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">system</span>
-<span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">time</span> <span class="k">as</span> <span class="n">labtime</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">types</span>
-<span class="kn">from</span> <span class="nn">six</span> <span class="k">import</span> <span class="n">string_types</span>
-<span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="n">cPickle</span>
-<span class="kn">from</span> <span class="nn">tempfile</span> <span class="k">import</span> <span class="n">mktemp</span>
 
 <span class="kn">import</span> <span class="nn">clgen</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">config</span> <span class="k">as</span> <span class="n">cfg</span>
@@ -118,16 +114,16 @@
 <span class="n">DEFAULT_MODEL_OPTS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;author&quot;</span><span class="p">:</span> <span class="n">get_default_author</span><span class="p">(),</span>
     <span class="s2">&quot;architecture&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;lstm&quot;</span><span class="p">,</span>  <span class="c1"># {lstm,rnn.gru}</span>
-      <span class="s2">&quot;rnn_size&quot;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>  <span class="c1"># num nodes in layer</span>
-      <span class="s2">&quot;num_layers&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1"># num layers</span>
+        <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;lstm&quot;</span><span class="p">,</span>  <span class="c1"># {lstm,rnn.gru}</span>
+        <span class="s2">&quot;rnn_size&quot;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>  <span class="c1"># num nodes in layer</span>
+        <span class="s2">&quot;num_layers&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1"># num layers</span>
     <span class="p">},</span>
     <span class="s2">&quot;train_opts&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="s2">&quot;epochs&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
-      <span class="s2">&quot;grad_clip&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-      <span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="n">e</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span>  <span class="c1"># initial learning rate</span>
-      <span class="s2">&quot;lr_decary_rate&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>  <span class="c1"># % to reduce learning rate by per epoch</span>
-      <span class="s2">&quot;intermediate_checkpoints&quot;</span><span class="p">:</span> <span class="kc">True</span>
+        <span class="s2">&quot;epochs&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="s2">&quot;grad_clip&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="n">e</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span>  <span class="c1"># initial learning rate</span>
+        <span class="s2">&quot;lr_decary_rate&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>  <span class="c1"># % to reduce learning rate by per epoch</span>
+        <span class="s2">&quot;intermediate_checkpoints&quot;</span><span class="p">:</span> <span class="kc">True</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
@@ -149,13 +145,16 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        Model: Model instance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">model_json</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">)</span>
+    <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">model_json</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="s2">&quot;corpus&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">model_json</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s2">&quot;model JSON has no corpus entry&quot;</span><span class="p">)</span>
 
     <span class="c1"># create corpus and remove from JSON</span>
     <span class="n">corpus</span> <span class="o">=</span> <span class="n">Corpus</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">model_json</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;corpus&quot;</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="s2">&quot;stats&quot;</span> <span class="ow">in</span> <span class="n">model_json</span><span class="p">:</span>  <span class="c1"># ignore stats</span>
+        <span class="k">del</span> <span class="n">model_json</span><span class="p">[</span><span class="s2">&quot;stats&quot;</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">Model</span><span class="p">(</span><span class="n">corpus</span><span class="p">,</span> <span class="o">**</span><span class="n">model_json</span><span class="p">)</span></div>
 
@@ -181,7 +180,7 @@
         <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">corpus</span><span class="p">,</span> <span class="n">Corpus</span><span class="p">))</span>
 
         <span class="c1"># Validate options</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">opts</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">opts</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">DEFAULT_MODEL_OPTS</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span>
                     <span class="s2">&quot;Unsupported model option &#39;</span><span class="si">{}</span><span class="s2">&#39;. Valid keys: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
@@ -195,15 +194,27 @@
 
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
 
-        <span class="c1"># validate metadata against cache</span>
+        <span class="c1"># validate metadata against cache, and restore stats</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stats</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;epoch_times&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;epoch_costs&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;epoch_batches&quot;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_json</span><span class="p">())</span>
-        <span class="k">del</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;train_opts&quot;</span><span class="p">][</span><span class="s2">&quot;epochs&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;META&quot;</span><span class="p">):</span>
             <span class="n">cached_meta</span> <span class="o">=</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;META&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stats</span> <span class="o">=</span> <span class="n">cached_meta</span><span class="p">[</span><span class="s2">&quot;stats&quot;</span><span class="p">]</span>  <span class="c1"># restore stats</span>
+
+            <span class="k">del</span> <span class="n">cached_meta</span><span class="p">[</span><span class="s2">&quot;stats&quot;</span><span class="p">]</span>
+            <span class="k">del</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;stats&quot;</span><span class="p">]</span>
+
+            <span class="k">del</span> <span class="n">cached_meta</span><span class="p">[</span><span class="s2">&quot;train_opts&quot;</span><span class="p">][</span><span class="s2">&quot;epochs&quot;</span><span class="p">]</span>
+            <span class="k">del</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;train_opts&quot;</span><span class="p">][</span><span class="s2">&quot;epochs&quot;</span><span class="p">]</span>
+
             <span class="k">if</span> <span class="n">meta</span> <span class="o">!=</span> <span class="n">cached_meta</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">InternalError</span><span class="p">(</span><span class="s2">&quot;model metadata mismatch&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">jsonutil</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">keypath</span><span class="p">(</span><span class="s2">&quot;META&quot;</span><span class="p">),</span> <span class="n">meta</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_flush_meta</span><span class="p">()</span>
 
 
     <span class="k">def</span> <span class="nf">_init_tensorflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infer</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -247,8 +258,8 @@
         <span class="n">vocab_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">vocab_size</span>
 
         <span class="n">cell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_fn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rnn_size</span><span class="p">,</span> <span class="n">state_is_tuple</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cell</span> <span class="o">=</span> <span class="n">cell</span> <span class="o">=</span> <span class="n">rnn</span><span class="o">.</span><span class="n">MultiRNNCell</span><span class="p">([</span><span class="n">cell</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span><span class="p">,</span>
-                                                 <span class="n">state_is_tuple</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cell</span> <span class="o">=</span> <span class="n">cell</span> <span class="o">=</span> <span class="n">rnn</span><span class="o">.</span><span class="n">MultiRNNCell</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">cell</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span><span class="p">,</span> <span class="n">state_is_tuple</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_data</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="p">[</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">seq_length</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">targets</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="p">[</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">seq_length</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initial_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">zero_state</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
@@ -348,7 +359,6 @@
             <span class="k">if</span> <span class="n">ckpt_paths</span><span class="p">:</span>
                 <span class="n">saver</span><span class="o">.</span><span class="n">recover_last_checkpoints</span><span class="p">(</span><span class="n">ckpt_paths</span><span class="p">)</span>
 
-            <span class="n">start_batch</span> <span class="o">=</span> <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">num_batches</span>
             <span class="n">max_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">epochs</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">num_batches</span>
 
             <span class="c1"># progress bar</span>
@@ -358,6 +368,7 @@
                 <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;training&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epochs</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">epoch_start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
 
                 <span class="c1"># decay and set learning rate</span>
                 <span class="n">new_learning_rate</span> <span class="o">=</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="p">(</span>
@@ -374,7 +385,7 @@
                     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_state</span><span class="p">):</span>
                         <span class="n">feed</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">c</span>
                         <span class="n">feed</span><span class="p">[</span><span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">h</span>
-                    <span class="n">train_loss</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                    <span class="n">train_cost</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
                         <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_op</span><span class="p">],</span> <span class="n">feed</span><span class="p">)</span>
 
                     <span class="c1"># update progress bar</span>
@@ -393,7 +404,19 @@
                              <span class="s2">&quot;next checkpoint at batch </span><span class="si">{next_checkpoint}</span><span class="s2">&quot;</span>
                              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">()))</span>
 
+                    <span class="c1"># update training time</span>
+                    <span class="n">epoch_duration</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">epoch_start</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="p">[</span><span class="s2">&quot;epoch_costs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">train_cost</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="p">[</span><span class="s2">&quot;epoch_times&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">epoch_duration</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="p">[</span><span class="s2">&quot;epoch_batches&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">batch_num</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_flush_meta</span><span class="p">()</span>
+
         <span class="k">return</span> <span class="bp">self</span>
+
+
+    <span class="k">def</span> <span class="nf">_flush_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">jsonutil</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">keypath</span><span class="p">(</span><span class="s2">&quot;META&quot;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_json</span><span class="p">())</span>
+
 
 <div class="viewcode-block" id="Model.train"><a class="viewcode-back" href="../../api/index.html#clgen.model.Model.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -452,6 +475,7 @@
 <div class="viewcode-block" id="Model.to_json"><a class="viewcode-back" href="../../api/index.html#clgen.model.Model.to_json">[docs]</a>    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">)</span>
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;corpus&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;stats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stats</span>
         <span class="k">return</span> <span class="n">d</span></div>
 
     <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -510,7 +534,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.13 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.14 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

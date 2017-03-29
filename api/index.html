@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Python API &#8212; clgen 0.2.13 documentation</title>
+    <title>Python API &#8212; clgen 0.2.14 documentation</title>
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.13',
+        VERSION:     '0.2.14',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../installation.html" title="Building the Development Version"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.13 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.14 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -2550,7 +2550,7 @@ tarball with the same name, unpack it.</p>
 
 <dl class="function">
 <dt id="clgen.dbutil.set_version_meta">
-<code class="descclassname">clgen.dbutil.</code><code class="descname">set_version_meta</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.2.13'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#set_version_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.set_version_meta" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.dbutil.</code><code class="descname">set_version_meta</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.2.14'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#set_version_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.set_version_meta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the &#8220;version&#8221; key in an database.</p>
 <p>This is useful for marking version requirements of specific datasets, e.g.
 a databse schema which requires a particular CLgen version, or a scheme
@@ -2626,7 +2626,7 @@ which is likely to change in the future.</p>
 
 <dl class="function">
 <dt id="clgen.dbutil.version_meta_matches">
-<code class="descclassname">clgen.dbutil.</code><code class="descname">version_meta_matches</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.2.13'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#version_meta_matches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.version_meta_matches" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.dbutil.</code><code class="descname">version_meta_matches</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.2.14'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#version_meta_matches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.version_meta_matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check that the &#8220;version&#8221; key in a database matches the expected value.</p>
 <p>If the database does not have a &#8220;version&#8221; key in the Meta table, returns
 False.</p>
@@ -4112,7 +4112,7 @@ exits.</p>
 
 <dl class="function">
 <dt id="clgen.preprocess.preprocess_inplace">
-<code class="descclassname">clgen.preprocess.</code><code class="descname">preprocess_inplace</code><span class="sig-paren">(</span><em>paths</em>, <em>max_num_workers=4</em>, <em>attempt=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/preprocess.html#preprocess_inplace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.preprocess_inplace" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.preprocess.</code><code class="descname">preprocess_inplace</code><span class="sig-paren">(</span><em>paths</em>, <em>max_num_workers=16</em>, <em>attempt=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/preprocess.html#preprocess_inplace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.preprocess_inplace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Preprocess a list of files in place.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -4214,7 +4214,7 @@ exits.</p>
 <p>Sample a CLgen model.</p>
 <dl class="class">
 <dt id="clgen.sampler.SampleConsumer">
-<em class="property">class </em><code class="descclassname">clgen.sampler.</code><code class="descname">SampleConsumer</code><span class="sig-paren">(</span><em>db_path</em>, <em>sampler</em>, <em>condition</em>, <em>queue</em>, <em>quiet=False</em>, <em>**sampler_opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/sampler.html#SampleConsumer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.sampler.SampleConsumer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">clgen.sampler.</code><code class="descname">SampleConsumer</code><span class="sig-paren">(</span><em>db_path</em>, <em>producer</em>, <em>sampler</em>, <em>cache</em>, <em>condition</em>, <em>queue</em>, <em>quiet=False</em>, <em>**sampler_opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/sampler.html#SampleConsumer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.sampler.SampleConsumer" title="Permalink to this definition">¶</a></dt>
 <dd><p>handle generated samples</p>
 <dl class="method">
 <dt id="clgen.sampler.SampleConsumer.min_kernels_and_samples_cond">
@@ -4346,7 +4346,7 @@ exits.</p>
 
 <dl class="method">
 <dt id="clgen.sampler.Sampler.to_json">
-<code class="descname">to_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/sampler.html#Sampler.to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.sampler.Sampler.to_json" title="Permalink to this definition">¶</a></dt>
+<code class="descname">to_json</code><span class="sig-paren">(</span><em>cache=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/sampler.html#Sampler.to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.sampler.Sampler.to_json" title="Permalink to this definition">¶</a></dt>
 <dd><p>JSON representation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -4472,7 +4472,7 @@ exits.</p>
         <li class="right" >
           <a href="../installation.html" title="Building the Development Version"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.13 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.14 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

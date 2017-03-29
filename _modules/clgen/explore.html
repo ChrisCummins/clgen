@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.explore &#8212; clgen 0.2.13 documentation</title>
+    <title>clgen.explore &#8212; clgen 0.2.14 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.13',
+        VERSION:     '0.2.14',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.13 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.14 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -72,12 +72,6 @@
 <span class="sd">Exploratory analysis of OpenCL dataset</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">locale</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">sqlite3</span>
-
-<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="k">import</span> <span class="n">Pool</span>
-
-<span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">fs</span>
 
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">dbutil</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
@@ -328,16 +322,10 @@
         <span class="n">explore_gh</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
         <span class="k">return</span>
 
-    <span class="c1"># Worker process pool</span>
-    <span class="n">pool</span><span class="p">,</span> <span class="n">jobs</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span> <span class="p">[]</span>
-    <span class="n">future_stats</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">apply_async</span><span class="p">(</span><span class="n">stats_worker</span><span class="p">,</span> <span class="p">(</span><span class="n">db_path</span><span class="p">,))</span>
-
-    <span class="c1"># Wait for jobs to finish</span>
-    <span class="p">[</span><span class="n">job</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span> <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">jobs</span><span class="p">]</span>
+    <span class="n">stats</span> <span class="o">=</span> <span class="n">stats_worker</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
 
     <span class="c1"># Print stats</span>
     <span class="nb">print</span><span class="p">()</span>
-    <span class="n">stats</span> <span class="o">=</span> <span class="n">future_stats</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
     <span class="n">maxlen</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">stats</span><span class="p">])</span>
     <span class="k">for</span> <span class="n">stat</span> <span class="ow">in</span> <span class="n">stats</span><span class="p">:</span>
         <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">stat</span>
@@ -360,17 +348,10 @@
 
     <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
 
-    <span class="c1"># Worker process pool</span>
-    <span class="n">pool</span><span class="p">,</span> <span class="n">jobs</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span> <span class="p">[]</span>
-
-    <span class="n">future_stats</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">apply_async</span><span class="p">(</span><span class="n">gh_stats_worker</span><span class="p">,</span> <span class="p">(</span><span class="n">db_path</span><span class="p">,))</span>
-
-    <span class="c1"># Wait for jobs to finish</span>
-    <span class="p">[</span><span class="n">job</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span> <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">jobs</span><span class="p">]</span>
+    <span class="n">stats</span> <span class="o">=</span> <span class="n">gh_stats_worker</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
 
     <span class="c1"># Print stats</span>
     <span class="nb">print</span><span class="p">()</span>
-    <span class="n">stats</span> <span class="o">=</span> <span class="n">future_stats</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
     <span class="n">maxlen</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">stats</span><span class="p">])</span>
     <span class="k">for</span> <span class="n">stat</span> <span class="ow">in</span> <span class="n">stats</span><span class="p">:</span>
         <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">stat</span>
@@ -410,7 +391,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.13 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.14 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

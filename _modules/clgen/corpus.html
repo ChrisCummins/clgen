@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.corpus &#8212; clgen 0.2.13 documentation</title>
+    <title>clgen.corpus &#8212; clgen 0.2.14 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.13',
+        VERSION:     '0.2.14',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.13 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.14 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -87,6 +87,7 @@
 <span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="n">cPickle</span>
 <span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span>
 <span class="kn">from</span> <span class="nn">tempfile</span> <span class="k">import</span> <span class="n">NamedTemporaryFile</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">time</span>
 
 <span class="kn">import</span> <span class="nn">clgen</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">atomizer</span>
@@ -295,16 +296,27 @@
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;corpus </span><span class="si">{hash}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">hash</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">))</span>
 
         <span class="c1"># validate metadata against cache</span>
-        <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stats</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;preprocess_time&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_json</span><span class="p">())</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;META&quot;</span><span class="p">):</span>
             <span class="n">cached_meta</span> <span class="o">=</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;META&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stats</span> <span class="o">=</span> <span class="n">cached_meta</span><span class="p">[</span><span class="s2">&quot;stats&quot;</span><span class="p">]</span>  <span class="c1"># restore stats</span>
+
+            <span class="k">del</span> <span class="n">cached_meta</span><span class="p">[</span><span class="s2">&quot;stats&quot;</span><span class="p">]</span>
+            <span class="k">del</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;stats&quot;</span><span class="p">]</span>
+
             <span class="k">if</span> <span class="n">meta</span> <span class="o">!=</span> <span class="n">cached_meta</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">InternalError</span><span class="p">(</span><span class="s2">&quot;corpus metadata mismatch&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">jsonutil</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">keypath</span><span class="p">(</span><span class="s2">&quot;META&quot;</span><span class="p">),</span> <span class="n">meta</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_flush_meta</span><span class="p">()</span>
 
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_create_files</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_flush_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">jsonutil</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">keypath</span><span class="p">(</span><span class="s2">&quot;META&quot;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_json</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">_create_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="k">def</span> <span class="nf">_init_error</span><span class="p">(</span><span class="n">err</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -331,7 +343,20 @@
                 <span class="k">try</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">]</span>
                 <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_create_kernels_db</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;encoding&quot;</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_create_kernels_db</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+            <span class="c1"># preprocess and encode kernel db</span>
+            <span class="n">modified</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">preprocess_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+            <span class="n">encoding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;encoding&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">preprocess</span><span class="o">.</span><span class="n">preprocess_db</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">]):</span>
+                <span class="n">modified</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">encode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">],</span> <span class="n">encoding</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">modified</span><span class="p">:</span>
+                <span class="n">preprocess_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">preprocess_time</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="p">[</span><span class="s2">&quot;preprocess_time&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">preprocess_time</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_flush_meta</span><span class="p">()</span>
 
             <span class="c1"># create corpus text if not exists</span>
             <span class="k">try</span><span class="p">:</span>
@@ -354,7 +379,7 @@
         <span class="sd">&quot;&quot;&quot; compute corpus hash &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">crypto</span><span class="o">.</span><span class="n">sha1_list</span><span class="p">(</span><span class="n">contentid</span><span class="p">,</span> <span class="o">*</span><span class="n">types</span><span class="o">.</span><span class="n">dict_values</span><span class="p">(</span><span class="n">opts</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">_create_kernels_db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_create_kernels_db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;creates and caches kernels.db&quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;creating database&quot;</span><span class="p">)</span>
 
@@ -369,15 +394,6 @@
 
         <span class="c1"># import files into database</span>
         <span class="n">fetch</span><span class="o">.</span><span class="n">fetch_fs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">],</span> <span class="n">filelist</span><span class="p">)</span>
-
-        <span class="c1"># preprocess files</span>
-        <span class="n">preprocess</span><span class="o">.</span><span class="n">preprocess_db</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span>
-
-        <span class="c1"># encode kernel db</span>
-        <span class="n">encode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">],</span> <span class="n">encoding</span><span class="p">)</span>
-
-        <span class="c1"># print database stats</span>
-        <span class="n">explore</span><span class="o">.</span><span class="n">explore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">_create_txt</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;creates and caches corpus.txt&quot;&quot;&quot;</span>
@@ -439,7 +455,6 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create batches for training.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;creating batches&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset_batch_pointer</span><span class="p">()</span>
 
         <span class="c1"># generate a kernel corpus</span>
@@ -602,7 +617,9 @@
                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">()))</span>
 
 <div class="viewcode-block" id="Corpus.to_json"><a class="viewcode-back" href="../../api/index.html#clgen.corpus.Corpus.to_json">[docs]</a>    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span></div>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">)</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;stats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stats</span>
+        <span class="k">return</span> <span class="n">d</span></div>
 
     <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">Corpus</span><span class="p">):</span>
@@ -639,6 +656,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s2">&quot;No corpus path or ID provided&quot;</span><span class="p">)</span>
 
+        <span class="k">if</span> <span class="s2">&quot;stats&quot;</span> <span class="ow">in</span> <span class="n">corpus_json</span><span class="p">:</span>  <span class="c1"># ignore stats</span>
+            <span class="k">del</span> <span class="n">corpus_json</span><span class="p">[</span><span class="s2">&quot;stats&quot;</span><span class="p">]</span>
+
         <span class="k">return</span> <span class="n">Corpus</span><span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">corpus_json</span><span class="p">)</span></div></div>
 </pre></div>
 
@@ -670,7 +690,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.13 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.14 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.sampler &#8212; clgen 0.2.13 documentation</title>
+    <title>clgen.sampler &#8212; clgen 0.2.14 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.13',
+        VERSION:     '0.2.14',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.13 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.14 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -85,6 +85,7 @@
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">system</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">types</span>
 <span class="kn">from</span> <span class="nn">threading</span> <span class="k">import</span> <span class="n">Condition</span><span class="p">,</span> <span class="n">Event</span><span class="p">,</span> <span class="n">Thread</span><span class="p">,</span> <span class="n">Lock</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">time</span>
 
 <span class="kn">import</span> <span class="nn">clgen</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">clutil</span>
@@ -265,18 +266,25 @@
 
 <div class="viewcode-block" id="SampleConsumer"><a class="viewcode-back" href="../../api/index.html#clgen.sampler.SampleConsumer">[docs]</a><span class="k">class</span> <span class="nc">SampleConsumer</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; handle generated samples &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sampler</span><span class="p">:</span> <span class="n">SampleProducer</span><span class="p">,</span>
-                 <span class="n">condition</span><span class="p">:</span> <span class="n">Condition</span><span class="p">,</span> <span class="n">queue</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">quiet</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">producer</span><span class="p">:</span> <span class="n">SampleProducer</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span>
+                 <span class="n">cache</span><span class="p">,</span> <span class="n">condition</span><span class="p">:</span> <span class="n">Condition</span><span class="p">,</span> <span class="n">queue</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">quiet</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="o">**</span><span class="n">sampler_opts</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Arguments:</span>
 <span class="sd">            db_path (str): Path to samples database.</span>
-<span class="sd">            sampler (SampleProducer):</span>
+<span class="sd">            producer (SampleProducer): Sample producer thread.</span>
+<span class="sd">            sampler (Sampler): Host sampler.</span>
+<span class="sd">            condition (Condition): For locking.</span>
+<span class="sd">            queue (list): output result queue.</span>
+<span class="sd">            quiet (bool, optional): If true, quiet output.</span>
+<span class="sd">            **sampler_opts: Sampler options.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SampleConsumer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">db_path</span> <span class="o">=</span> <span class="n">db_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">producer</span> <span class="o">=</span> <span class="n">producer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="n">cache</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">condition</span> <span class="o">=</span> <span class="n">condition</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">queue</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler_opts</span> <span class="o">=</span> <span class="n">sampler_opts</span>
@@ -337,6 +345,7 @@
 
         <span class="k">try</span><span class="p">:</span>
             <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">sample_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
                 <span class="c1"># get the next sample</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">:</span>
@@ -376,16 +385,21 @@
                 <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
                 <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
+                <span class="n">sample_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">sample_time</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">stats</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">sample_time</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">_flush_meta</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">)</span>
+
                 <span class="c1"># update progress bar</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">quiet</span><span class="p">:</span>
                     <span class="n">bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">())</span>
 
                 <span class="c1"># determine if we are done sampling</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">term_condition</span><span class="p">():</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">producer</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
                     <span class="k">return</span>
         <span class="k">finally</span><span class="p">:</span>  <span class="c1"># always kill the sampler thread</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span></div></div>
+            <span class="nb">print</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">producer</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span></div></div>
 
 
 <div class="viewcode-block" id="Sampler"><a class="viewcode-back" href="../../api/index.html#clgen.sampler.Sampler">[docs]</a><span class="k">class</span> <span class="nc">Sampler</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
@@ -468,18 +482,32 @@
         <span class="n">cache</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">mkcache</span><span class="p">(</span><span class="s2">&quot;sampler&quot;</span><span class="p">,</span> <span class="n">sampler_model_hash</span><span class="p">)</span>
 
         <span class="c1"># validate metadata against cache</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stats</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;progress&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_json</span><span class="p">())</span>
-        <span class="k">del</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;sampler&quot;</span><span class="p">][</span><span class="s2">&quot;min_samples&quot;</span><span class="p">]</span>
-        <span class="k">del</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;sampler&quot;</span><span class="p">][</span><span class="s2">&quot;min_kernels&quot;</span><span class="p">]</span>
-
         <span class="k">if</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;META&quot;</span><span class="p">):</span>
             <span class="n">cached_meta</span> <span class="o">=</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;META&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stats</span> <span class="o">=</span> <span class="n">cached_meta</span><span class="p">[</span><span class="s2">&quot;stats&quot;</span><span class="p">]</span>
+
+            <span class="k">del</span> <span class="n">cached_meta</span><span class="p">[</span><span class="s2">&quot;sampler&quot;</span><span class="p">][</span><span class="s2">&quot;min_samples&quot;</span><span class="p">]</span>
+            <span class="k">del</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;sampler&quot;</span><span class="p">][</span><span class="s2">&quot;min_samples&quot;</span><span class="p">]</span>
+
+            <span class="k">del</span> <span class="n">cached_meta</span><span class="p">[</span><span class="s2">&quot;sampler&quot;</span><span class="p">][</span><span class="s2">&quot;min_kernels&quot;</span><span class="p">]</span>
+            <span class="k">del</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;sampler&quot;</span><span class="p">][</span><span class="s2">&quot;min_kernels&quot;</span><span class="p">]</span>
+
+            <span class="k">del</span> <span class="n">cached_meta</span><span class="p">[</span><span class="s2">&quot;stats&quot;</span><span class="p">]</span>
+
             <span class="k">if</span> <span class="n">meta</span> <span class="o">!=</span> <span class="n">cached_meta</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">InternalError</span><span class="p">(</span><span class="s2">&quot;sampler metadata mismatch&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">jsonutil</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="n">cache</span><span class="o">.</span><span class="n">keypath</span><span class="p">(</span><span class="s2">&quot;META&quot;</span><span class="p">),</span> <span class="n">meta</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_flush_meta</span><span class="p">(</span><span class="n">cache</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">cache</span></div>
+
+    <span class="k">def</span> <span class="nf">_flush_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cache</span><span class="p">):</span>
+        <span class="n">jsonutil</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="n">cache</span><span class="o">.</span><span class="n">keypath</span><span class="p">(</span><span class="s2">&quot;META&quot;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">cache</span><span class="p">))</span>
 
 <div class="viewcode-block" id="Sampler.sample"><a class="viewcode-back" href="../../api/index.html#clgen.sampler.Sampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">quiet</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -505,13 +533,14 @@
                                  <span class="n">quiet</span><span class="o">=</span><span class="n">quiet</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_opts</span><span class="p">)</span>
         <span class="n">sampler</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
-        <span class="n">consumer</span> <span class="o">=</span> <span class="n">SampleConsumer</span><span class="p">(</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">],</span> <span class="n">sampler</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span>
-                                  <span class="n">queue</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="n">quiet</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler_opts</span><span class="p">)</span>
+        <span class="n">consumer</span> <span class="o">=</span> <span class="n">SampleConsumer</span><span class="p">(</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">],</span> <span class="n">sampler</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">cache</span><span class="p">,</span>
+                                  <span class="n">condition</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="n">quiet</span><span class="p">,</span>
+                                  <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler_opts</span><span class="p">)</span>
         <span class="n">consumer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
         <span class="n">sampler</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
         <span class="n">consumer</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">()</span>
+
         <span class="n">explore</span><span class="p">(</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">])</span></div>
 
     <span class="nd">@property</span>
@@ -530,14 +559,19 @@
     <span class="k">def</span> <span class="nf">num_good_kernels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">num_good_kernels</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Sampler.to_json"><a class="viewcode-back" href="../../api/index.html#clgen.sampler.Sampler.to_json">[docs]</a>    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="Sampler.to_json"><a class="viewcode-back" href="../../api/index.html#clgen.sampler.Sampler.to_json">[docs]</a>    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        JSON representation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">{</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;kernels&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_opts</span><span class="p">,</span>
             <span class="s2">&quot;sampler&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler_opts</span>
-        <span class="p">}</span></div>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">cache</span><span class="p">:</span>
+            <span class="n">d</span><span class="p">[</span><span class="s2">&quot;stats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stats</span>
+
+        <span class="k">return</span> <span class="n">d</span></div>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -588,7 +622,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.13 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.14 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>
