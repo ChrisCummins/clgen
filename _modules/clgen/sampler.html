@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.sampler &#8212; clgen 0.2.17 documentation</title>
+    <title>clgen.sampler &#8212; clgen 0.2.18 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.17',
+        VERSION:     '0.2.18',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.17 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.18 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -148,7 +148,7 @@
 <div class="viewcode-block" id="SampleProducer"><a class="viewcode-back" href="../../api/index.html#clgen.sampler.SampleProducer">[docs]</a><span class="k">class</span> <span class="nc">SampleProducer</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">start_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">condition</span><span class="p">:</span> <span class="n">Condition</span><span class="p">,</span>
                  <span class="n">queue</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">quiet</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kernel_opts</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">SampleProducer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SampleProducer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">start_text</span> <span class="o">=</span> <span class="n">start_text</span>
@@ -279,7 +279,7 @@
 <span class="sd">            quiet (bool, optional): If true, quiet output.</span>
 <span class="sd">            **sampler_opts: Sampler options.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">SampleConsumer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SampleConsumer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">db_path</span> <span class="o">=</span> <span class="n">db_path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">producer</span> <span class="o">=</span> <span class="n">producer</span>
@@ -313,7 +313,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">term_condition</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">null_cond</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">max_i</span> <span class="o">=</span> <span class="n">progressbar</span><span class="o">.</span><span class="n">UnknownLength</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">progress</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_samples_progress</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">progress</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">null_progress</span>
 
 <div class="viewcode-block" id="SampleConsumer.min_kernels_and_samples_cond"><a class="viewcode-back" href="../../api/index.html#clgen.sampler.SampleConsumer.min_kernels_and_samples_cond">[docs]</a>    <span class="k">def</span> <span class="nf">min_kernels_and_samples_cond</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_kernels_cond</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_samples_cond</span><span class="p">()</span></div>
@@ -335,6 +335,9 @@
 <div class="viewcode-block" id="SampleConsumer.min_samples_progress"><a class="viewcode-back" href="../../api/index.html#clgen.sampler.SampleConsumer.min_samples_progress">[docs]</a>    <span class="k">def</span> <span class="nf">min_samples_progress</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">dbutil</span><span class="o">.</span><span class="n">num_rows_in</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">,</span> <span class="s2">&quot;ContentFiles&quot;</span><span class="p">),</span>
                    <span class="bp">self</span><span class="o">.</span><span class="n">sampler_opts</span><span class="p">[</span><span class="s2">&quot;min_samples&quot;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="SampleConsumer.null_progress"><a class="viewcode-back" href="../../api/index.html#clgen.sampler.SampleConsumer.null_progress">[docs]</a>    <span class="k">def</span> <span class="nf">null_progress</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">num_rows_in</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">,</span> <span class="s2">&quot;ContentFiles&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SampleConsumer.run"><a class="viewcode-back" href="../../api/index.html#clgen.sampler.SampleConsumer.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">i</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">num_rows_in</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">,</span> <span class="s2">&quot;ContentFiles&quot;</span><span class="p">)</span>
@@ -589,7 +592,7 @@
         <span class="k">return</span> <span class="n">rhs</span><span class="o">.</span><span class="n">hash</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash</span>
 
     <span class="k">def</span> <span class="nf">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__eq__</span><span class="p">(</span><span class="n">rhs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">rhs</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
 <div class="viewcode-block" id="Sampler.from_json"><a class="viewcode-back" href="../../api/index.html#clgen.sampler.Sampler.from_json">[docs]</a>    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="n">sampler_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
@@ -624,14 +627,14 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.17 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.18 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2016, Chris Cummins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.5.
     </div>
   </body>
 </html>
