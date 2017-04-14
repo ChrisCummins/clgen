@@ -1,27 +1,53 @@
+# bazel boiler plate mostly taken from rules_go/.travis.yml. See:
+#   https://github.com/bazelbuild/rules_go/blob/master/.travis.yml
+
+# trusty beta image has jdk8, gcc4.8.4
 dist: trusty
 sudo: required
+# xcode8 has jdk8
+osx_image: xcode8
+# Not technically required but suppresses 'Ruby' in Job status message.
+language: java
 
 os:
   - linux
+  - osx
 
-language: python
-
-python:
-  - "3.6"
-
-env:
-  global:
-    - CC=clang
-    - CXX=clang++
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - gcc-5
+      - g++-5
 
 before_install:
-  - sudo apt-get install -y pkg-config libltdl3-dev libhwloc-dev llvm-dev clang libclang-dev ocl-icd-opencl-dev libedit-dev
-  - wget http://portablecl.org/downloads/pocl-0.12.tar.gz
-  - tar xzf pocl-0.12.tar.gz
-  - cd pocl-0.12/ && ./configure && make && sudo make install
-
-install:
-  - make install
+  - |
+    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      brew update
+      brew install bazel
+    else
+      echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+      curl https://bazel.build/bazel-release.pub.gpg | sudo apt-key add -
+      sudo apt-get update
+      dpkg -s 'bazel' &>/dev/null || sudo apt-get install -y bazel
+    fi
 
 script:
-  - make test
+  - |
+    if [[ "${TRAVIS_OS_NAME}" != "osx" ]]; then
+      export CC=gcc-5
+      export CXX=g++-5
+    fi
+    $CC --version   # c compiler
+    $CXX --version  # c++ compiler
+    bazel \
+      test \
+        --verbose_failures \
+        --sandbox_debug \
+        --test_output=errors \
+        --test_strategy=standalone \
+        --spawn_strategy=standalone \
+        --genrule_strategy=standalone \
+        --local_resources=400,1,1.0 \
+        //...
