@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.log &#8212; clgen 0.2.18 documentation</title>
+    <title>clgen.log &#8212; clgen 0.2.19 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.18',
+        VERSION:     '0.2.19',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.18 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.19 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -94,6 +94,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">level</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_verbose"><a class="viewcode-back" href="../../api/index.html#clgen.log.is_verbose">[docs]</a><span class="k">def</span> <span class="nf">is_verbose</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span><span class="o">.</span><span class="n">getEffectiveLevel</span><span class="p">()</span> <span class="o">==</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span></div>
 
 
 <div class="viewcode-block" id="debug"><a class="viewcode-back" href="../../api/index.html#clgen.log.debug">[docs]</a><span class="k">def</span> <span class="nf">debug</span><span class="p">(</span><span class="o">*</span><span class="n">msg</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -201,7 +205,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.18 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.19 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

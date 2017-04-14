@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Python API &#8212; clgen 0.2.18 documentation</title>
+    <title>Python API &#8212; clgen 0.2.19 documentation</title>
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.18',
+        VERSION:     '0.2.19',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../installation.html" title="Building the Development Version"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.18 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.19 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -139,7 +139,7 @@ of the module into user code.</p>
 
 <dl class="function">
 <dt id="clgen.main">
-<code class="descclassname">clgen.</code><code class="descname">main</code><span class="sig-paren">(</span><em>model</em>, <em>sampler</em>, <em>print_file_list=False</em>, <em>print_corpus_dir=False</em>, <em>print_model_dir=False</em>, <em>print_sampler_dir=False</em>, <em>quiet=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.main" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.</code><code class="descname">main</code><span class="sig-paren">(</span><em>model</em>, <em>sampler</em>, <em>print_file_list=False</em>, <em>print_corpus_dir=False</em>, <em>print_model_dir=False</em>, <em>print_sampler_dir=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.main" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main entry point for clgen.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -221,7 +221,7 @@ of the module into user code.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">File contents.</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#clgen.cldrive.KernelPayload.bytes" title="clgen.cldrive.KernelPayload.bytes">bytes</a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bytes</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="#clgen.InternalError" title="clgen.InternalError"><code class="xref py py-exc docutils literal"><span class="pre">InternalError</span></code></a> &#8211; In case of IO error.</td>
 </tr>
@@ -503,491 +503,6 @@ operators for comparing versions are == and !=.</p>
 <dt id="clgen.atomizer.VocabError">
 <em class="property">exception </em><code class="descclassname">clgen.atomizer.</code><code class="descname">VocabError</code><a class="reference internal" href="../_modules/clgen/atomizer.html#VocabError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.atomizer.VocabError" title="Permalink to this definition">¶</a></dt>
 <dd><p>A character sequence is not in the atomizer&#8217;s vocab</p>
-</dd></dl>
-
-</div>
-<div class="section" id="module-clgen.cldrive">
-<span id="clgen-cldrive"></span><h2>clgen.cldrive<a class="headerlink" href="#module-clgen.cldrive" title="Permalink to this headline">¶</a></h2>
-<p>OpenCL kernel driver</p>
-<dl class="exception">
-<dt id="clgen.cldrive.CLDriveException">
-<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">CLDriveException</code><a class="reference internal" href="../_modules/clgen/cldrive.html#CLDriveException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.CLDriveException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Module error.</p>
-</dd></dl>
-
-<dl class="exception">
-<dt id="clgen.cldrive.E_BAD_ARGS">
-<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_BAD_ARGS</code><a class="reference internal" href="../_modules/clgen/cldrive.html#E_BAD_ARGS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_BAD_ARGS" title="Permalink to this definition">¶</a></dt>
-<dd><p>Kernel has invalid arguments.</p>
-</dd></dl>
-
-<dl class="exception">
-<dt id="clgen.cldrive.E_BAD_CODE">
-<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_BAD_CODE</code><a class="reference internal" href="../_modules/clgen/cldrive.html#E_BAD_CODE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_BAD_CODE" title="Permalink to this definition">¶</a></dt>
-<dd><p>Thrown for bad code.</p>
-</dd></dl>
-
-<dl class="exception">
-<dt id="clgen.cldrive.E_BAD_DRIVER">
-<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_BAD_DRIVER</code><a class="reference internal" href="../_modules/clgen/cldrive.html#E_BAD_DRIVER"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_BAD_DRIVER" title="Permalink to this definition">¶</a></dt>
-<dd><p>Thrown in case of CLdrive errors.</p>
-</dd></dl>
-
-<dl class="exception">
-<dt id="clgen.cldrive.E_BAD_PROFILE">
-<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_BAD_PROFILE</code><a class="reference internal" href="../_modules/clgen/cldrive.html#E_BAD_PROFILE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_BAD_PROFILE" title="Permalink to this definition">¶</a></dt>
-<dd><p>OpenCL profiling failed.</p>
-</dd></dl>
-
-<dl class="exception">
-<dt id="clgen.cldrive.E_INPUT_INSENSITIVE">
-<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_INPUT_INSENSITIVE</code><a class="reference internal" href="../_modules/clgen/cldrive.html#E_INPUT_INSENSITIVE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_INPUT_INSENSITIVE" title="Permalink to this definition">¶</a></dt>
-<dd><p>Kernel is input insensitive.</p>
-</dd></dl>
-
-<dl class="exception">
-<dt id="clgen.cldrive.E_NONDETERMINISTIC">
-<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_NONDETERMINISTIC</code><a class="reference internal" href="../_modules/clgen/cldrive.html#E_NONDETERMINISTIC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_NONDETERMINISTIC" title="Permalink to this definition">¶</a></dt>
-<dd><p>Kernel is nondeterministic.</p>
-</dd></dl>
-
-<dl class="exception">
-<dt id="clgen.cldrive.E_NON_TERMINATING">
-<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_NON_TERMINATING</code><a class="reference internal" href="../_modules/clgen/cldrive.html#E_NON_TERMINATING"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_NON_TERMINATING" title="Permalink to this definition">¶</a></dt>
-<dd><p>Kernel did not terminate.</p>
-</dd></dl>
-
-<dl class="exception">
-<dt id="clgen.cldrive.E_NO_INPUT">
-<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_NO_INPUT</code><a class="reference internal" href="../_modules/clgen/cldrive.html#E_NO_INPUT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_NO_INPUT" title="Permalink to this definition">¶</a></dt>
-<dd><p>Thrown if there&#8217;s no kernel to drive.</p>
-</dd></dl>
-
-<dl class="exception">
-<dt id="clgen.cldrive.E_NO_OUTPUTS">
-<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_NO_OUTPUTS</code><a class="reference internal" href="../_modules/clgen/cldrive.html#E_NO_OUTPUTS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_NO_OUTPUTS" title="Permalink to this definition">¶</a></dt>
-<dd><p>Kernel does not compute an output.</p>
-</dd></dl>
-
-<dl class="exception">
-<dt id="clgen.cldrive.E_UGLY_CODE">
-<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">E_UGLY_CODE</code><a class="reference internal" href="../_modules/clgen/cldrive.html#E_UGLY_CODE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.E_UGLY_CODE" title="Permalink to this definition">¶</a></dt>
-<dd><p>Thrown for ugly code.</p>
-</dd></dl>
-
-<dl class="class">
-<dt id="clgen.cldrive.KernelDriver">
-<em class="property">class </em><code class="descclassname">clgen.cldrive.</code><code class="descname">KernelDriver</code><span class="sig-paren">(</span><em>ctx</em>, <em>source</em>, <em>source_path='&lt;stdin&gt;'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cldrive.html#KernelDriver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelDriver" title="Permalink to this definition">¶</a></dt>
-<dd><p>OpenCL Kernel driver. Drives a single OpenCL kernel.</p>
-<dl class="staticmethod">
-<dt id="clgen.cldrive.KernelDriver.build_program">
-<em class="property">static </em><code class="descname">build_program</code><span class="sig-paren">(</span><em>src</em>, <em>quiet=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cldrive.html#KernelDriver.build_program"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelDriver.build_program" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compile an OpenCL program.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ctx</strong> (<em>cl.Context</em>) &#8211; OpenCL context.</li>
-<li><strong>src</strong> (<em>str</em>) &#8211; Kernel source.</li>
-<li><strong>quiet</strong> (<em>bool</em><em>, </em><em>optional</em>) &#8211; suppress compiler output.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Program instance.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">cl.Program</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#clgen.cldrive.E_BAD_CODE" title="clgen.cldrive.E_BAD_CODE"><code class="xref py py-exc docutils literal"><span class="pre">E_BAD_CODE</span></code></a> &#8211; If does not build.</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="clgen.cldrive.KernelDriver.context">
-<code class="descname">context</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.context" title="Permalink to this definition">¶</a></dt>
-<dd><p>OpenCL context.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="clgen.cldrive.KernelDriver.kernel">
-<code class="descname">kernel</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.kernel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Kernel instance.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="clgen.cldrive.KernelDriver.name">
-<code class="descname">name</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Kernel name.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="clgen.cldrive.KernelDriver.profile">
-<code class="descname">profile</code><span class="sig-paren">(</span><em>queue</em>, <em>size=16</em>, <em>must_validate=False</em>, <em>out=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='UTF-8'&gt;</em>, <em>metaout=&lt;_io.TextIOWrapper name='&lt;stderr&gt;' mode='w' encoding='UTF-8'&gt;</em>, <em>min_num_iterations=10</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cldrive.html#KernelDriver.profile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelDriver.profile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run kernel and profile runtime.</p>
-<p>Output format (CSV):</p>
-<blockquote>
-<div>out:      &lt;kernel&gt; &lt;platform&gt; &lt;device&gt; &lt;wgsize&gt; &lt;transfer&gt; &lt;runtime&gt;
-metaout:  &lt;kernel&gt; &lt;platform&gt; &lt;device&gt; &lt;error&gt;</div></blockquote>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="clgen.cldrive.KernelDriver.program">
-<code class="descname">program</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.program" title="Permalink to this definition">¶</a></dt>
-<dd><p>OpenCL program instance.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="clgen.cldrive.KernelDriver.prototype">
-<code class="descname">prototype</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.prototype" title="Permalink to this definition">¶</a></dt>
-<dd><p>Kernel prototype instance.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="clgen.cldrive.KernelDriver.runtimes">
-<code class="descname">runtimes</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.runtimes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Runtimes recorded.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="clgen.cldrive.KernelDriver.source">
-<code class="descname">source</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.source" title="Permalink to this definition">¶</a></dt>
-<dd><p>Kernel source code.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="clgen.cldrive.KernelDriver.transfers">
-<code class="descname">transfers</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.transfers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Size of data transfers (in bytes).</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="clgen.cldrive.KernelDriver.validate">
-<code class="descname">validate</code><span class="sig-paren">(</span><em>queue</em>, <em>size=16</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cldrive.html#KernelDriver.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelDriver.validate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run dynamic checker on OpenCL kernel.</p>
-<dl class="docutils">
-<dt>This is a 3 step process:</dt>
-<dd><ol class="first last arabic simple">
-<li>Create 4 equal size payloads A1in, B1in, A2in, B2in, subject to
-restrictions: A1in = A2in , B1in = B2in , A1in != B1in.</li>
-<li>Execute kernel k 4 times: k(A1in) → A1out, k(B1in) → B1out,
-k(A2in) → A2out, k(B2in) → B2out.</li>
-<li>Assert:
-a. A1out != A1in or B1out != B1in, else k has no output.
-b. A1out == A2out and B1out == B2out, else k is nondeterministic.
-c. A1out != B1out, else k is input insensitive.</li>
-</ol>
-</dd>
-</dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
-<li><a class="reference internal" href="#clgen.cldrive.E_BAD_DRIVER" title="clgen.cldrive.E_BAD_DRIVER"><code class="xref py py-exc docutils literal"><span class="pre">E_BAD_DRIVER</span></code></a> &#8211; If unable to synthesize payloads (see step 1 above).</li>
-<li><a class="reference internal" href="#clgen.cldrive.E_NO_OUTPUTS" title="clgen.cldrive.E_NO_OUTPUTS"><code class="xref py py-exc docutils literal"><span class="pre">E_NO_OUTPUTS</span></code></a> &#8211; If kernel has no outputs (step 3a above).</li>
-<li><a class="reference internal" href="#clgen.cldrive.E_NONDETERMINISTIC" title="clgen.cldrive.E_NONDETERMINISTIC"><code class="xref py py-exc docutils literal"><span class="pre">E_NONDETERMINISTIC</span></code></a> &#8211; If kernel is nondeterministic (step 3b above).</li>
-<li><a class="reference internal" href="#clgen.cldrive.E_INPUT_INSENSITIVE" title="clgen.cldrive.E_INPUT_INSENSITIVE"><code class="xref py py-exc docutils literal"><span class="pre">E_INPUT_INSENSITIVE</span></code></a> &#8211; If kernel is input insensitive (step 3c above).</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="clgen.cldrive.KernelDriver.wgsizes">
-<code class="descname">wgsizes</code><a class="headerlink" href="#clgen.cldrive.KernelDriver.wgsizes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Workgroup sizes used.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="exception">
-<dt id="clgen.cldrive.KernelDriverException">
-<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">KernelDriverException</code><a class="reference internal" href="../_modules/clgen/cldrive.html#KernelDriverException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelDriverException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Kernel driver exception.</p>
-</dd></dl>
-
-<dl class="class">
-<dt id="clgen.cldrive.KernelPayload">
-<em class="property">class </em><code class="descclassname">clgen.cldrive.</code><code class="descname">KernelPayload</code><span class="sig-paren">(</span><em>ctx</em>, <em>args</em>, <em>ndrange</em>, <em>transfersize</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cldrive.html#KernelPayload"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelPayload" title="Permalink to this definition">¶</a></dt>
-<dd><p>Abstraction of data for OpenCL kernel.</p>
-<dl class="attribute">
-<dt id="clgen.cldrive.KernelPayload.args">
-<code class="descname">args</code><a class="headerlink" href="#clgen.cldrive.KernelPayload.args" title="Permalink to this definition">¶</a></dt>
-<dd><p>Argument instances.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="clgen.cldrive.KernelPayload.bytes">
-<code class="descname">bytes</code><a class="headerlink" href="#clgen.cldrive.KernelPayload.bytes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a raw byte array of host data.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="clgen.cldrive.KernelPayload.context">
-<code class="descname">context</code><a class="headerlink" href="#clgen.cldrive.KernelPayload.context" title="Permalink to this definition">¶</a></dt>
-<dd><p>OpenCL context.</p>
-</dd></dl>
-
-<dl class="staticmethod">
-<dt id="clgen.cldrive.KernelPayload.create_random">
-<em class="property">static </em><code class="descname">create_random</code><span class="sig-paren">(</span><em>size</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cldrive.html#KernelPayload.create_random"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelPayload.create_random" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a payload of random values.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>driver</strong> (<a class="reference internal" href="#clgen.cldrive.KernelDriver" title="clgen.cldrive.KernelDriver"><em>KernelDriver</em></a>) &#8211; Driver instance.</li>
-<li><strong>size</strong> (<em>int</em>) &#8211; Payload size.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Generated payload.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference internal" href="#clgen.cldrive.KernelPayload" title="clgen.cldrive.KernelPayload">KernelPayload</a></p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#clgen.cldrive.E_BAD_ARGS" title="clgen.cldrive.E_BAD_ARGS"><code class="xref py py-exc docutils literal"><span class="pre">E_BAD_ARGS</span></code></a> &#8211; If payload can&#8217;t be synthesized for kernel argument(s).</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="staticmethod">
-<dt id="clgen.cldrive.KernelPayload.create_sequential">
-<em class="property">static </em><code class="descname">create_sequential</code><span class="sig-paren">(</span><em>size</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cldrive.html#KernelPayload.create_sequential"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelPayload.create_sequential" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a payload of sequential values.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>driver</strong> (<a class="reference internal" href="#clgen.cldrive.KernelDriver" title="clgen.cldrive.KernelDriver"><em>KernelDriver</em></a>) &#8211; Driver instance.</li>
-<li><strong>size</strong> (<em>int</em>) &#8211; Payload size.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Generated payload.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference internal" href="#clgen.cldrive.KernelPayload" title="clgen.cldrive.KernelPayload">KernelPayload</a></p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#clgen.cldrive.E_BAD_ARGS" title="clgen.cldrive.E_BAD_ARGS"><code class="xref py py-exc docutils literal"><span class="pre">E_BAD_ARGS</span></code></a> &#8211; If payload can&#8217;t be synthesized for kernel argument(s).</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="clgen.cldrive.KernelPayload.device_to_host">
-<code class="descname">device_to_host</code><span class="sig-paren">(</span><em>queue</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cldrive.html#KernelPayload.device_to_host"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelPayload.device_to_host" title="Permalink to this definition">¶</a></dt>
-<dd><p>Transfer payload from device to host.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>queue</strong> (<em>cl.Queue</em>) &#8211; Device Queue.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Elapsed time, in milliseconds.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="clgen.cldrive.KernelPayload.host_to_device">
-<code class="descname">host_to_device</code><span class="sig-paren">(</span><em>queue</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cldrive.html#KernelPayload.host_to_device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelPayload.host_to_device" title="Permalink to this definition">¶</a></dt>
-<dd><p>Transfer payload from host to device.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>queue</strong> (<em>cl.Queue</em>) &#8211; Device Queue.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Elapsed time, in milliseconds.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">float</span></code></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="clgen.cldrive.KernelPayload.json">
-<code class="descname">json</code><span class="sig-paren">(</span><em>roundval=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cldrive.html#KernelPayload.json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.KernelPayload.json" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return JSON arrays of host data, with optional decimal rounding.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="clgen.cldrive.KernelPayload.kargs">
-<code class="descname">kargs</code><a class="headerlink" href="#clgen.cldrive.KernelPayload.kargs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Device data for arguments.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="clgen.cldrive.KernelPayload.ndrange">
-<code class="descname">ndrange</code><a class="headerlink" href="#clgen.cldrive.KernelPayload.ndrange" title="Permalink to this definition">¶</a></dt>
-<dd><p>ND-range</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="clgen.cldrive.KernelPayload.transfersize">
-<code class="descname">transfersize</code><a class="headerlink" href="#clgen.cldrive.KernelPayload.transfersize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns transfer size (in bytes).</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="exception">
-<dt id="clgen.cldrive.OpenCLDeviceNotFound">
-<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">OpenCLDeviceNotFound</code><a class="reference internal" href="../_modules/clgen/cldrive.html#OpenCLDeviceNotFound"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.OpenCLDeviceNotFound" title="Permalink to this definition">¶</a></dt>
-<dd><p>Could not find a matching device.</p>
-</dd></dl>
-
-<dl class="exception">
-<dt id="clgen.cldrive.OpenCLDriverException">
-<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">OpenCLDriverException</code><a class="reference internal" href="../_modules/clgen/cldrive.html#OpenCLDriverException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.OpenCLDriverException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Error from OpenCL driver.</p>
-</dd></dl>
-
-<dl class="exception">
-<dt id="clgen.cldrive.OpenCLNotSupported">
-<em class="property">exception </em><code class="descclassname">clgen.cldrive.</code><code class="descname">OpenCLNotSupported</code><a class="reference internal" href="../_modules/clgen/cldrive.html#OpenCLNotSupported"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.OpenCLNotSupported" title="Permalink to this definition">¶</a></dt>
-<dd><p>Thrown if attempting to use OpenCL, but CLgen is configured with OpenCL
-support enabled.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="clgen.cldrive.device_type_matches">
-<code class="descclassname">clgen.cldrive.</code><code class="descname">device_type_matches</code><span class="sig-paren">(</span><em>device</em>, <em>devtype=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cldrive.html#device_type_matches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.device_type_matches" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check that device type matches.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>device</strong> (<em>pyopencl.Device</em>) &#8211; Device.</li>
-<li><strong>devtype</strong> (<em>cl.device_info.TYPE</em>) &#8211; Requested device type.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True if device is of type devtype, else False.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">bool</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal"><span class="pre">bool</span></code></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="clgen.cldrive.file">
-<code class="descclassname">clgen.cldrive.</code><code class="descname">file</code><span class="sig-paren">(</span><em>path</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cldrive.html#file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Drive an OpenCL kernel file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> (<em>str</em>) &#8211; Path to file</li>
-<li><strong>**kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) &#8211; Arguments to kernel()</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#clgen.cldrive.E_NO_INPUT" title="clgen.cldrive.E_NO_INPUT"><code class="xref py py-exc docutils literal"><span class="pre">E_NO_INPUT</span></code></a> &#8211; If file contains no OpenCL kernels.</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="clgen.cldrive.get_event_time">
-<code class="descclassname">clgen.cldrive.</code><code class="descname">get_event_time</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cldrive.html#get_event_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.get_event_time" title="Permalink to this definition">¶</a></dt>
-<dd><p>Block until OpenCL event has completed and return time delta
-between event submission and end, in milliseconds.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> (<em>cl.Event</em>) &#8211; Event handle.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Elapsed time, in milliseconds.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="#clgen.cldrive.E_BAD_PROFILE" title="clgen.cldrive.E_BAD_PROFILE"><code class="xref py py-exc docutils literal"><span class="pre">E_BAD_PROFILE</span></code></a> &#8211; In case of error.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">float</span></code></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="clgen.cldrive.init_opencl">
-<code class="descclassname">clgen.cldrive.</code><code class="descname">init_opencl</code><span class="sig-paren">(</span><em>devtype=None</em>, <em>queue_flags=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cldrive.html#init_opencl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.init_opencl" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialise an OpenCL context and device queue for a requested device type.</p>
-<p>Iterates over the available OpenCL platforms and devices looking for a
-device matching the requested type. Constructs and returns an OpenCL
-context and queue for the matching device. Note that OpenCL profiling is
-enabled.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>devtype</strong> (<em>pyopencl.device_type</em><em>, </em><em>optional</em>) &#8211; OpenCL device type.
-If not specified, the first available device will be used.</li>
-<li><strong>queue_flags</strong> (<em>cl.command_queue_properties</em><em>, </em><em>optional</em>) &#8211; Bitfield of
-OpenCL queue constructor options.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Tuple of OpenCL context and device queue.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">(cl.Context, cl.Queue)</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
-<li><a class="reference internal" href="#clgen.cldrive.OpenCLNotSupported" title="clgen.cldrive.OpenCLNotSupported"><code class="xref py py-exc docutils literal"><span class="pre">OpenCLNotSupported</span></code></a> &#8211; If host does not support OpenCL.</li>
-<li><a class="reference internal" href="#clgen.cldrive.OpenCLDriverException" title="clgen.cldrive.OpenCLDriverException"><code class="xref py py-exc docutils literal"><span class="pre">OpenCLDriverException</span></code></a> &#8211; In case of error.</li>
-<li><a class="reference internal" href="#clgen.cldrive.OpenCLDeviceNotFound" title="clgen.cldrive.OpenCLDeviceNotFound"><code class="xref py py-exc docutils literal"><span class="pre">OpenCLDeviceNotFound</span></code></a> &#8211; If no matching type found.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="clgen.cldrive.kernel">
-<code class="descclassname">clgen.cldrive.</code><code class="descname">kernel</code><span class="sig-paren">(</span><em>src</em>, <em>filename='&lt;stdin&gt;'</em>, <em>devtype=None</em>, <em>size=None</em>, <em>must_validate=False</em>, <em>fatal_errors=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cldrive.html#kernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cldrive.kernel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Drive a kernel.</p>
-<p>Output format (CSV):</p>
-<blockquote>
-<div>out:      &lt;file&gt; &lt;size&gt; &lt;profile() out...&gt;
-metaout:  &lt;file&gt; &lt;size&gt; &lt;profile() metaout...&gt;</div></blockquote>
 </dd></dl>
 
 </div>
@@ -1621,24 +1136,6 @@ kernel.</p>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str[]</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">list</span></code></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="clgen.clutil.get_contexts_and_devices">
-<code class="descclassname">clgen.clutil.</code><code class="descname">get_contexts_and_devices</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/clutil.html#get_contexts_and_devices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.clutil.get_contexts_and_devices" title="Permalink to this definition">¶</a></dt>
-<dd><p>Instantiate OpenCL contexts for all platforms and return devices.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">pyopencl.Context keys, pyopencl.Device[] values.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">dict</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -2550,7 +2047,7 @@ tarball with the same name, unpack it.</p>
 
 <dl class="function">
 <dt id="clgen.dbutil.set_version_meta">
-<code class="descclassname">clgen.dbutil.</code><code class="descname">set_version_meta</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.2.17'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#set_version_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.set_version_meta" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.dbutil.</code><code class="descname">set_version_meta</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.2.18.dev0'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#set_version_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.set_version_meta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the &#8220;version&#8221; key in an database.</p>
 <p>This is useful for marking version requirements of specific datasets, e.g.
 a databse schema which requires a particular CLgen version, or a scheme
@@ -2626,7 +2123,7 @@ which is likely to change in the future.</p>
 
 <dl class="function">
 <dt id="clgen.dbutil.version_meta_matches">
-<code class="descclassname">clgen.dbutil.</code><code class="descname">version_meta_matches</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.2.17'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#version_meta_matches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.version_meta_matches" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.dbutil.</code><code class="descname">version_meta_matches</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.2.18.dev0'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#version_meta_matches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.version_meta_matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check that the &#8220;version&#8221; key in a database matches the expected value.</p>
 <p>If the database does not have a &#8220;version&#8221; key in the Meta table, returns
 False.</p>
@@ -3480,6 +2977,19 @@ This function does not return.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="clgen.log.is_verbose">
+<code class="descclassname">clgen.log.</code><code class="descname">is_verbose</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/log.html#is_verbose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.log.is_verbose" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">bool</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="clgen.log.verbose">
 <code class="descclassname">clgen.log.</code><code class="descname">verbose</code><span class="sig-paren">(</span><em>*msg</em>, <em>**opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/log.html#verbose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.log.verbose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calls debug().</p>
@@ -3596,17 +3106,15 @@ This function does not return.</p>
 
 <dl class="method">
 <dt id="clgen.model.Model.train">
-<code class="descname">train</code><span class="sig-paren">(</span><em>quiet=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/model.html#Model.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.model.Model.train" title="Permalink to this definition">¶</a></dt>
+<code class="descname">train</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/model.html#Model.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.model.Model.train" title="Permalink to this definition">¶</a></dt>
 <dd><p>Train model.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>quiet</strong> (<em>bool</em><em>, </em><em>optional</em>) &#8211; If true, print less.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">self.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">self.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#clgen.model.Model" title="clgen.model.Model">Model</a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#clgen.model.Model" title="clgen.model.Model">Model</a></td>
 </tr>
 </tbody>
 </table>
@@ -4019,7 +3527,7 @@ then the instruction density of add operations is .2.</p>
 
 <dl class="function">
 <dt id="clgen.preprocess.preprocess">
-<code class="descclassname">clgen.preprocess.</code><code class="descname">preprocess</code><span class="sig-paren">(</span><em>src</em>, <em>id='anon'</em>, <em>use_shim=True</em>, <em>use_dynamic_checker=False</em>, <em>use_gpuverify=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/preprocess.html#preprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.preprocess" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.preprocess.</code><code class="descname">preprocess</code><span class="sig-paren">(</span><em>src</em>, <em>id='anon'</em>, <em>use_shim=True</em>, <em>use_gpuverify=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/preprocess.html#preprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.preprocess.preprocess" title="Permalink to this definition">¶</a></dt>
 <dd><p>Preprocess an OpenCL source. There are three possible outcomes:</p>
 <ol class="arabic simple">
 <li>Good. Code is preprocessed and ready to be put into a training set.</li>
@@ -4036,8 +3544,6 @@ then the instruction density of add operations is .2.</p>
 <li><strong>id</strong> (<em>str</em><em>, </em><em>optional</em>) &#8211; An identifying name for the source code
 (used in exception messages).</li>
 <li><strong>use_shim</strong> (<em>bool</em><em>, </em><em>optional</em>) &#8211; Inject shim header.</li>
-<li><strong>use_dynamic_checker</strong> (<em>bool</em><em>, </em><em>optional</em>) &#8211; Whether to run the dynamic
-checker on the code.</li>
 <li><strong>use_gpuverify</strong> (<em>bool</em><em>, </em><em>optional</em>) &#8211; Whether to run GPUVerify on the code.</li>
 </ul>
 </td>
@@ -4214,7 +3720,7 @@ exits.</p>
 <p>Sample a CLgen model.</p>
 <dl class="class">
 <dt id="clgen.sampler.SampleConsumer">
-<em class="property">class </em><code class="descclassname">clgen.sampler.</code><code class="descname">SampleConsumer</code><span class="sig-paren">(</span><em>db_path</em>, <em>producer</em>, <em>sampler</em>, <em>cache</em>, <em>condition</em>, <em>queue</em>, <em>quiet=False</em>, <em>**sampler_opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/sampler.html#SampleConsumer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.sampler.SampleConsumer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">clgen.sampler.</code><code class="descname">SampleConsumer</code><span class="sig-paren">(</span><em>db_path</em>, <em>producer</em>, <em>sampler</em>, <em>cache</em>, <em>condition</em>, <em>queue</em>, <em>**sampler_opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/sampler.html#SampleConsumer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.sampler.SampleConsumer" title="Permalink to this definition">¶</a></dt>
 <dd><p>handle generated samples</p>
 <dl class="method">
 <dt id="clgen.sampler.SampleConsumer.min_kernels_and_samples_cond">
@@ -4268,7 +3774,7 @@ exits.</p>
 
 <dl class="class">
 <dt id="clgen.sampler.SampleProducer">
-<em class="property">class </em><code class="descclassname">clgen.sampler.</code><code class="descname">SampleProducer</code><span class="sig-paren">(</span><em>model</em>, <em>start_text</em>, <em>condition</em>, <em>queue</em>, <em>quiet=False</em>, <em>**kernel_opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/sampler.html#SampleProducer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.sampler.SampleProducer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">clgen.sampler.</code><code class="descname">SampleProducer</code><span class="sig-paren">(</span><em>model</em>, <em>start_text</em>, <em>condition</em>, <em>queue</em>, <em>**kernel_opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/sampler.html#SampleProducer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.sampler.SampleProducer" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="clgen.sampler.SampleProducer.run">
 <code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/sampler.html#SampleProducer.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.sampler.SampleProducer.run" title="Permalink to this definition">¶</a></dt>
@@ -4335,7 +3841,7 @@ exits.</p>
 
 <dl class="method">
 <dt id="clgen.sampler.Sampler.sample">
-<code class="descname">sample</code><span class="sig-paren">(</span><em>model</em>, <em>quiet=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/sampler.html#Sampler.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.sampler.Sampler.sample" title="Permalink to this definition">¶</a></dt>
+<code class="descname">sample</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/sampler.html#Sampler.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.sampler.Sampler.sample" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sample CLgen model.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -4417,7 +3923,6 @@ exits.</p>
 <li><a class="reference internal" href="#">Python API</a><ul>
 <li><a class="reference internal" href="#module-clgen">clgen</a></li>
 <li><a class="reference internal" href="#module-clgen.atomizer">clgen.atomizer</a></li>
-<li><a class="reference internal" href="#module-clgen.cldrive">clgen.cldrive</a></li>
 <li><a class="reference internal" href="#module-clgen.cli">clgen.cli</a></li>
 <li><a class="reference internal" href="#module-clgen.clutil">clgen.clutil</a></li>
 <li><a class="reference internal" href="#module-clgen.config">clgen.config</a></li>
@@ -4477,7 +3982,7 @@ exits.</p>
         <li class="right" >
           <a href="../installation.html" title="Building the Development Version"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.18 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.19 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

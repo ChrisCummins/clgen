@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.clutil &#8212; clgen 0.2.18 documentation</title>
+    <title>clgen.clutil &#8212; clgen 0.2.19 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.18',
+        VERSION:     '0.2.19',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.18 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.19 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -654,24 +654,6 @@
         <span class="k">raise</span> <span class="n">PrototypeException</span><span class="p">(</span><span class="s2">&quot;malformed seed&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">KernelPrototype</span><span class="p">(</span><span class="n">prototype</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="get_contexts_and_devices"><a class="viewcode-back" href="../../api/index.html#clgen.clutil.get_contexts_and_devices">[docs]</a><span class="k">def</span> <span class="nf">get_contexts_and_devices</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Instantiate OpenCL contexts for all platforms and return devices.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        dict: pyopencl.Context keys, pyopencl.Device[] values.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">pyopencl</span> <span class="k">as</span> <span class="nn">cl</span>
-
-    <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">pltfm</span> <span class="ow">in</span> <span class="n">cl</span><span class="o">.</span><span class="n">get_platforms</span><span class="p">():</span>
-        <span class="n">ctx</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span><span class="n">properties</span><span class="o">=</span><span class="p">[(</span><span class="n">cl</span><span class="o">.</span><span class="n">context_properties</span><span class="o">.</span><span class="n">PLATFORM</span><span class="p">,</span> <span class="n">pltfm</span><span class="p">)])</span>
-        <span class="n">devices</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="n">cl</span><span class="o">.</span><span class="n">context_info</span><span class="o">.</span><span class="n">DEVICES</span><span class="p">)</span>
-        <span class="n">results</span><span class="p">[</span><span class="n">ctx</span><span class="p">]</span> <span class="o">=</span> <span class="n">devices</span>
-
-    <span class="k">return</span> <span class="n">results</span></div>
 </pre></div>
 
           </div>
@@ -702,7 +684,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.18 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.19 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

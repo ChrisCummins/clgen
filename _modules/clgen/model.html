@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.model &#8212; clgen 0.2.18 documentation</title>
+    <title>clgen.model &#8212; clgen 0.2.19 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.18',
+        VERSION:     '0.2.19',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.18 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.19 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -323,7 +323,7 @@
         <span class="k">return</span> <span class="n">closest_path</span><span class="p">,</span> <span class="n">paths</span>
 
 
-    <span class="k">def</span> <span class="nf">_locked_train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_locked_train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">tf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_tensorflow</span><span class="p">(</span><span class="n">infer</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="c1"># training options</span>
@@ -350,7 +350,7 @@
             <span class="k">if</span> <span class="n">ckpt_path</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;restoring&quot;</span><span class="p">,</span> <span class="n">ckpt_path</span><span class="p">)</span>
                 <span class="n">saver</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="n">sess</span><span class="p">,</span> <span class="n">ckpt_path</span><span class="p">)</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;restored checkpoint </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ckpt_path</span><span class="p">))</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">verbose</span><span class="p">(</span><span class="s2">&quot;restored checkpoint </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ckpt_path</span><span class="p">))</span>
 
             <span class="c1"># make sure we don&#39;t lose track of other checkpoints</span>
             <span class="k">if</span> <span class="n">ckpt_paths</span><span class="p">:</span>
@@ -397,9 +397,9 @@
 
                     <span class="n">next_checkpoint</span> <span class="o">=</span> <span class="n">e</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">num_batches</span> <span class="o">+</span> <span class="n">b</span>
                     <span class="n">max_epoch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">epochs</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{self}</span><span class="s2"> epoch </span><span class="si">{e}</span><span class="s2"> / </span><span class="si">{max_epoch}</span><span class="s2">. &quot;</span>
-                             <span class="s2">&quot;next checkpoint at batch </span><span class="si">{next_checkpoint}</span><span class="s2">&quot;</span>
-                             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">()))</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">verbose</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{self}</span><span class="s2"> epoch </span><span class="si">{e}</span><span class="s2"> / </span><span class="si">{max_epoch}</span><span class="s2">. &quot;</span>
+                                <span class="s2">&quot;next checkpoint at batch </span><span class="si">{next_checkpoint}</span><span class="s2">&quot;</span>
+                                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">()))</span>
 
                     <span class="c1"># update training time</span>
                     <span class="n">epoch_duration</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">epoch_start</span>
@@ -415,18 +415,15 @@
         <span class="n">jsonutil</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">keypath</span><span class="p">(</span><span class="s2">&quot;META&quot;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_json</span><span class="p">())</span>
 
 
-<div class="viewcode-block" id="Model.train"><a class="viewcode-back" href="../../api/index.html#clgen.model.Model.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.train"><a class="viewcode-back" href="../../api/index.html#clgen.model.Model.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Train model.</span>
-
-<span class="sd">        Arguments:</span>
-<span class="sd">            quiet (bool, optional): If true, print less.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Model: self.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">():</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_locked_train</span><span class="p">(</span><span class="n">quiet</span><span class="p">)</span></div>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_locked_train</span><span class="p">()</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">lock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -531,7 +528,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.18 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.19 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

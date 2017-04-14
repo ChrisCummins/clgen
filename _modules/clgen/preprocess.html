@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.preprocess &#8212; clgen 0.2.18 documentation</title>
+    <title>clgen.preprocess &#8212; clgen 0.2.19 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.18',
+        VERSION:     '0.2.19',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.18 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.19 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -572,7 +572,6 @@
 
 
 <div class="viewcode-block" id="preprocess"><a class="viewcode-back" href="../../api/index.html#clgen.preprocess.preprocess">[docs]</a><span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">,</span> <span class="n">use_shim</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-               <span class="n">use_dynamic_checker</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                <span class="n">use_gpuverify</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Preprocess an OpenCL source. There are three possible outcomes:</span>
@@ -587,8 +586,6 @@
 <span class="sd">        id (str, optional): An identifying name for the source code</span>
 <span class="sd">            (used in exception messages).</span>
 <span class="sd">        use_shim (bool, optional): Inject shim header.</span>
-<span class="sd">        use_dynamic_checker (bool, optional): Whether to run the dynamic</span>
-<span class="sd">            checker on the code.</span>
 <span class="sd">        use_gpuverify (bool, optional): Whether to run GPUVerify on the code.</span>
 
 <span class="sd">    Returns:</span>
@@ -610,9 +607,6 @@
     <span class="n">src</span> <span class="o">=</span> <span class="n">clangformat_ocl</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="n">src</span> <span class="o">=</span> <span class="n">ensure_has_code</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
     <span class="n">src</span> <span class="o">=</span> <span class="n">sanitize_prototype</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">use_dynamic_checker</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Dynamic checker&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">use_gpuverify</span><span class="p">:</span>
         <span class="n">gpuverify</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
@@ -884,7 +878,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.18 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.19 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>
