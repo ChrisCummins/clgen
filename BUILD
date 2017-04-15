@@ -1,16 +1,16 @@
-# sources and data glob.
+# clgen sources and data glob.
 sh_library(
-    name = 'cldrive',
+    name = 'clgen',
     srcs = glob([
-        'bin/cldrive',
-        'cldrive/*.py',
+        'bin/*',
+        'clgen/**/*.py',
+        'clgen/data/**/*',
+        'configure',
+        'make/**/*',
         'Makefile',
-        'pytest.ini',
-        'requirements.txt',
-        'setup.cfg',
+        'native/*.cpp',
         'setup.py',
-        'tests/*.py',
-        'tests/data/**/*',
+        'tests/**/*',
     ]),
     visibility = ['//visibility:public'],
 )
@@ -19,7 +19,7 @@ sh_library(
 sh_test(
     name = 'main',
     srcs = ['tests/.runner.sh'],
-    args = ['src/cldrive', 'python3.6'],
-    deps = [':cldrive'],
+    args = ['src/clgen', 'python3.6'],
+    deps = [':clgen'],
     timeout = 'eternal',
 )
