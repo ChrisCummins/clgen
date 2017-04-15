@@ -1,15 +1,13 @@
 # clgen sources and data glob.
 sh_library(
-    name = 'clgen',
+    name = 'labm8',
     srcs = glob([
-        'bin/*',
-        'clgen/**/*.py',
-        'clgen/data/**/*',
-        'configure',
+        'labm8/*.py',
         'make/**/*',
         'Makefile',
-        'native/*.cpp',
+        'requirements.txt',
         'setup.py',
+        'setup.cfg',
         'tests/**/*',
     ]),
     visibility = ['//visibility:public'],
@@ -19,7 +17,7 @@ sh_library(
 sh_test(
     name = 'main',
     srcs = ['tests/.runner.sh'],
-    args = ['src/clgen', 'python3.6'],
-    deps = [':clgen'],
+    args = ['src/labm8', 'python3.6'],
+    deps = [':labm8'],
     timeout = 'eternal',
 )
