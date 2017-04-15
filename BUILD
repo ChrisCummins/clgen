@@ -1,14 +1,25 @@
-cc_library(
-    name = 'opencl',
-    hdrs = [
-        'third_party/opencl/include/cl.h',
-        'third_party/opencl/include/cl.hpp'
-    ],
-    visibility = ["//visibility:public"],
+# sources and data glob.
+sh_library(
+    name = 'cldrive',
+    srcs = glob([
+        'bin/cldrive',
+        'cldrive/*.py',
+        'Makefile',
+        'pytest.ini',
+        'requirements.txt',
+        'setup.cfg',
+        'setup.py',
+        'tests/*.py',
+        'tests/data/**/*',
+    ]),
+    visibility = ['//visibility:public'],
 )
 
-config_setting(
-    name = "darwin",
-    values = {"cpu": "darwin"},
-    visibility = ["//visibility:public"],
+# a script which sets up a virtualenv and runs the test suite.
+sh_test(
+    name = 'main',
+    srcs = ['tests/.runner.sh'],
+    args = ['src/cldrive', 'python3.6'],
+    deps = [':cldrive'],
+    timeout = 'eternal',
 )
