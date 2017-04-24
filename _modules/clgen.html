@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen &#8212; clgen 0.2.19 documentation</title>
+    <title>clgen &#8212; clgen 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.19',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.19 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -90,8 +90,15 @@
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">jsonutil</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">system</span>
 
-<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">config</span> <span class="k">as</span> <span class="n">cfg</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Chris Cummins&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2017, Chris Cummins&quot;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;GPL v3&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s2">&quot;clgen&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">version</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="n">__author__</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;chrisc.101@gmail.com&quot;</span>
+<span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Prototype&quot;</span>
 
+<span class="kn">from</span> <span class="nn">clgen._config</span> <span class="k">import</span> <span class="o">*</span>
 
 <div class="viewcode-block" id="CLgenError"><a class="viewcode-back" href="../api/index.html#clgen.CLgenError">[docs]</a><span class="k">class</span> <span class="nc">CLgenError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -147,7 +154,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        str: Version string.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">require</span><span class="p">(</span><span class="s2">&quot;clgen&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">version</span></div>
+    <span class="k">return</span> <span class="n">__version__</span></div>
 
 
 <div class="viewcode-block" id="cachepath"><a class="viewcode-back" href="../api/index.html#clgen.cachepath">[docs]</a><span class="k">def</span> <span class="nf">cachepath</span><span class="p">(</span><span class="o">*</span><span class="n">relative_path_components</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -313,7 +320,7 @@
 <span class="sd">        printfn (fn, optional): Function to call to print output to. Default</span>
 <span class="sd">            `print()`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">USE_CUDA</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">USE_CUDA</span><span class="p">:</span>
         <span class="n">features_str</span> <span class="o">=</span> <span class="s2">&quot;(with CUDA)&quot;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">features_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -324,8 +331,9 @@
             <span class="nb">round</span><span class="p">(</span><span class="n">psutil</span><span class="o">.</span><span class="n">virtual_memory</span><span class="p">()</span><span class="o">.</span><span class="n">total</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)),</span> <span class="s2">&quot;MB&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../api/index.html#clgen.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span> <span class="n">print_file_list</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">print_corpus_dir</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-         <span class="n">print_model_dir</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">print_sampler_dir</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../api/index.html#clgen.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sampler</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">print_file_list</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+         <span class="n">print_corpus_dir</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">print_model_dir</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+         <span class="n">print_sampler_dir</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Main entry point for clgen.</span>
 
@@ -336,15 +344,13 @@
 <span class="sd">        print_model_dir (bool, optional): If True, print cache path and exit.</span>
 <span class="sd">        print_sampler_dir (bool, optional): If True, print cache path and exit.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">clgen.model</span>
-    <span class="kn">import</span> <span class="nn">clgen.sampler</span>
     <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
 
     <span class="n">model_json</span> <span class="o">=</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">model_json</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Model</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">model_json</span><span class="p">)</span>
 
     <span class="n">sampler_json</span> <span class="o">=</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">sampler</span><span class="p">)</span>
-    <span class="n">sampler</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">sampler_json</span><span class="p">)</span>
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Sampler</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">sampler_json</span><span class="p">)</span>
 
     <span class="c1"># print cache paths</span>
     <span class="k">if</span> <span class="n">print_file_list</span><span class="p">:</span>
@@ -366,6 +372,16 @@
 
     <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
     <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">model</span><span class="p">)</span></div>
+
+
+<span class="c1"># package level imports</span>
+<span class="kn">from</span> <span class="nn">clgen._fetch</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">clgen._explore</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">clgen._atomizer</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">clgen._corpus</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">clgen._model</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">clgen._preprocess</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">clgen._sampler</span> <span class="k">import</span> <span class="o">*</span>
 </pre></div>
 
           </div>
@@ -396,7 +412,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.2.19 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

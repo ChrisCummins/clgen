@@ -1,0 +1,347 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>clgen._explore &#8212; clgen 0.3.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for clgen._explore</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Copyright 2016, 2017 Chris Cummins &lt;chrisc.101@gmail.com&gt;.</span>
+<span class="c1">#</span>
+<span class="c1"># This file is part of CLgen.</span>
+<span class="c1">#</span>
+<span class="c1"># CLgen is free software: you can redistribute it and/or modify</span>
+<span class="c1"># it under the terms of the GNU General Public License as published by</span>
+<span class="c1"># the Free Software Foundation, either version 3 of the License, or</span>
+<span class="c1"># (at your option) any later version.</span>
+<span class="c1">#</span>
+<span class="c1"># CLgen is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1"># GNU General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License</span>
+<span class="c1"># along with CLgen.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1">#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Exploratory analysis of OpenCL dataset</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">locale</span>
+
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">dbutil</span>
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
+
+
+<span class="n">IMG_DIR</span> <span class="o">=</span> <span class="s1">&#39;img&#39;</span>
+
+
+<span class="k">def</span> <span class="nf">_safe_div</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Zero-safe _safe_division.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        x (Number): Numerator</span>
+<span class="sd">        y (Number): Denominator</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Number: x / y</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span>
+    <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+
+<span class="k">def</span> <span class="nf">_bigint</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return comma seperated big numbers.</span>
+
+<span class="sd">    Arugments:</span>
+<span class="sd">        n (Number): Value.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Comma separated value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">locale</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">grouping</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_seq_stats</span><span class="p">(</span><span class="n">sorted_arr</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return stats on a sequence.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        sorted_arr (Number[]): Sequence.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Sequnece stats.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sorted_arr</span> <span class="o">=</span> <span class="n">sorted_arr</span> <span class="ow">or</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">avg</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">sorted_arr</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_arr</span><span class="p">)</span>
+    <span class="n">midpoint</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sorted_arr</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_arr</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">median</span> <span class="o">=</span> <span class="n">sorted_arr</span><span class="p">[</span><span class="n">midpoint</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">median</span> <span class="o">=</span> <span class="p">(</span><span class="n">sorted_arr</span><span class="p">[</span><span class="n">midpoint</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">sorted_arr</span><span class="p">[</span><span class="n">midpoint</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="s1">&#39;min: </span><span class="si">{}</span><span class="s1">, med: </span><span class="si">{}</span><span class="s1">, avg: </span><span class="si">{}</span><span class="s1">, max: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">_bigint</span><span class="p">(</span><span class="n">sorted_arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">_bigint</span><span class="p">(</span><span class="n">median</span><span class="p">),</span> <span class="n">_bigint</span><span class="p">(</span><span class="n">avg</span><span class="p">),</span>
+            <span class="n">_bigint</span><span class="p">(</span><span class="n">sorted_arr</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">sorted_arr</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])))</span>
+
+
+<div class="viewcode-block" id="explore"><a class="viewcode-back" href="../../api/index.html#clgen._explore.explore">[docs]</a><span class="k">def</span> <span class="nf">explore</span><span class="p">(</span><span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run exploratory analysis on dataset.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        db_path (str): Path to dataset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">LC_ALL</span><span class="p">,</span> <span class="s1">&#39;en_GB.utf-8&#39;</span><span class="p">)</span>
+
+    <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">is_github</span><span class="p">(</span><span class="n">db</span><span class="p">):</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">explore_gh</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">stats</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># ContentFiles</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT Count(DISTINCT id) from ContentFiles&quot;</span><span class="p">)</span>
+    <span class="n">nb_uniq_ocl_files</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;Number of content files&#39;</span><span class="p">,</span> <span class="n">_bigint</span><span class="p">(</span><span class="n">nb_uniq_ocl_files</span><span class="p">)))</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT contents FROM ContentFiles&quot;</span><span class="p">)</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+    <span class="n">code_lcs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">code</span><span class="p">]</span>
+    <span class="n">code_lcs</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="n">code_lc</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">code_lcs</span><span class="p">)</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;Total content line count&#39;</span><span class="p">,</span> <span class="n">_bigint</span><span class="p">(</span><span class="n">code_lc</span><span class="p">)))</span>
+
+    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;Content file line counts&#39;</span><span class="p">,</span> <span class="n">_seq_stats</span><span class="p">(</span><span class="n">code_lcs</span><span class="p">)))</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+
+    <span class="c1"># Preprocessed</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT Count(*) FROM PreprocessedFiles&quot;</span><span class="p">)</span>
+    <span class="n">nb_pp_files</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">ratio_pp_files</span> <span class="o">=</span> <span class="n">_safe_div</span><span class="p">(</span><span class="n">nb_pp_files</span><span class="p">,</span> <span class="n">nb_uniq_ocl_files</span><span class="p">)</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;Number of preprocessed files&#39;</span><span class="p">,</span>
+                  <span class="n">_bigint</span><span class="p">(</span><span class="n">nb_pp_files</span><span class="p">)</span> <span class="o">+</span>
+                  <span class="s1">&#39; (</span><span class="si">{:.0f}</span><span class="s1">%)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ratio_pp_files</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)))</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT Count(*) FROM PreprocessedFiles WHERE status=0&quot;</span><span class="p">)</span>
+    <span class="n">nb_pp_files</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">ratio_pp_files</span> <span class="o">=</span> <span class="n">_safe_div</span><span class="p">(</span><span class="n">nb_pp_files</span><span class="p">,</span> <span class="n">nb_uniq_ocl_files</span><span class="p">)</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;Number of good preprocessed files&#39;</span><span class="p">,</span>
+                  <span class="n">_bigint</span><span class="p">(</span><span class="n">nb_pp_files</span><span class="p">)</span> <span class="o">+</span>
+                  <span class="s1">&#39; (</span><span class="si">{:.0f}</span><span class="s1">%)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ratio_pp_files</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)))</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT contents FROM PreprocessedFiles WHERE status=0&#39;</span><span class="p">)</span>
+    <span class="n">bc</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+    <span class="n">pp_lcs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bc</span><span class="p">]</span>
+    <span class="n">pp_lcs</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="n">pp_lc</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">pp_lcs</span><span class="p">)</span>
+    <span class="n">ratio_pp_lcs</span> <span class="o">=</span> <span class="n">_safe_div</span><span class="p">(</span><span class="n">pp_lc</span><span class="p">,</span> <span class="n">code_lc</span><span class="p">)</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;Lines of good preprocessed code&#39;</span><span class="p">,</span>
+                  <span class="n">_bigint</span><span class="p">(</span><span class="n">pp_lc</span><span class="p">)</span> <span class="o">+</span>
+                  <span class="s1">&#39; (</span><span class="si">{:.0f}</span><span class="s1">%)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ratio_pp_lcs</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)))</span>
+
+    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;Good preprocessed line counts&#39;</span><span class="p">,</span>
+                  <span class="n">_seq_stats</span><span class="p">(</span><span class="n">pp_lcs</span><span class="p">)))</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+
+    <span class="c1"># Print stats</span>
+    <span class="nb">print</span><span class="p">()</span>
+    <span class="n">maxlen</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">stats</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">stat</span> <span class="ow">in</span> <span class="n">stats</span><span class="p">:</span>
+        <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">stat</span>
+        <span class="k">if</span> <span class="n">k</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="p">(</span><span class="n">maxlen</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="p">),</span> <span class="n">v</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="explore_gh"><a class="viewcode-back" href="../../api/index.html#clgen._explore.explore_gh">[docs]</a><span class="k">def</span> <span class="nf">explore_gh</span><span class="p">(</span><span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run exploratory analysis on GitHub dataset.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        db_path (str): Path to dataset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">LC_ALL</span><span class="p">,</span> <span class="s1">&#39;en_GB.utf-8&#39;</span><span class="p">)</span>
+
+    <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+
+    <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">stats</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Repositories</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT Count(*) from Repositories&quot;</span><span class="p">)</span>
+    <span class="n">nb_repos</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;Number of repositories visited&#39;</span><span class="p">,</span> <span class="n">_bigint</span><span class="p">(</span><span class="n">nb_repos</span><span class="p">)))</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT Count(DISTINCT repo_url) from ContentMeta&quot;</span><span class="p">)</span>
+    <span class="n">nb_ocl_repos</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;Number of content file repositories&#39;</span><span class="p">,</span> <span class="n">_bigint</span><span class="p">(</span><span class="n">nb_ocl_repos</span><span class="p">)))</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT Count(*) FROM Repositories WHERE fork=1 AND url IN &#39;</span>
+              <span class="s1">&#39;(SELECT repo_url FROM ContentMeta)&#39;</span><span class="p">)</span>
+    <span class="n">nb_forks</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">ratio_forks</span> <span class="o">=</span> <span class="n">_safe_div</span><span class="p">(</span><span class="n">nb_forks</span><span class="p">,</span> <span class="n">nb_ocl_repos</span><span class="p">)</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;Number of forked repositories&#39;</span><span class="p">,</span>
+                  <span class="n">_bigint</span><span class="p">(</span><span class="n">nb_forks</span><span class="p">)</span> <span class="o">+</span>
+                  <span class="s1">&#39; (</span><span class="si">{:.0f}</span><span class="s1">%)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ratio_forks</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)))</span>
+
+    <span class="c1"># ContentFiles</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT Count(DISTINCT id) from ContentFiles&quot;</span><span class="p">)</span>
+    <span class="n">nb_uniq_ocl_files</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">ratio_uniq_ocl_files</span> <span class="o">=</span> <span class="n">_safe_div</span><span class="p">(</span><span class="n">nb_uniq_ocl_files</span><span class="p">,</span> <span class="n">nb_uniq_ocl_files</span><span class="p">)</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;Number of unique content files&#39;</span><span class="p">,</span>
+                  <span class="n">_bigint</span><span class="p">(</span><span class="n">nb_uniq_ocl_files</span><span class="p">)))</span>
+
+    <span class="n">avg_nb_ocl_files_per_repo</span> <span class="o">=</span> <span class="n">_safe_div</span><span class="p">(</span><span class="n">nb_uniq_ocl_files</span><span class="p">,</span> <span class="n">nb_ocl_repos</span><span class="p">)</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;Content files per repository&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;avg: </span><span class="si">{:.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">avg_nb_ocl_files_per_repo</span><span class="p">)))</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT contents FROM ContentFiles&quot;</span><span class="p">)</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+    <span class="n">code_lcs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">code</span><span class="p">]</span>
+    <span class="n">code_lcs</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="n">code_lc</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">code_lcs</span><span class="p">)</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;Total content line count&#39;</span><span class="p">,</span> <span class="n">_bigint</span><span class="p">(</span><span class="n">code_lc</span><span class="p">)))</span>
+
+    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;Content file line counts&#39;</span><span class="p">,</span> <span class="n">_seq_stats</span><span class="p">(</span><span class="n">code_lcs</span><span class="p">)))</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+
+    <span class="c1"># Preprocessed</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT Count(*) FROM PreprocessedFiles&quot;</span><span class="p">)</span>
+    <span class="n">nb_pp_files</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">ratio_pp_files</span> <span class="o">=</span> <span class="n">_safe_div</span><span class="p">(</span><span class="n">nb_pp_files</span><span class="p">,</span> <span class="n">nb_uniq_ocl_files</span><span class="p">)</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;Number of preprocessed files&#39;</span><span class="p">,</span>
+                  <span class="n">_bigint</span><span class="p">(</span><span class="n">nb_pp_files</span><span class="p">)</span> <span class="o">+</span>
+                  <span class="s1">&#39; (</span><span class="si">{:.0f}</span><span class="s1">%)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ratio_pp_files</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)))</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT Count(*) FROM PreprocessedFiles WHERE status=0&quot;</span><span class="p">)</span>
+    <span class="n">nb_pp_files</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">ratio_pp_files</span> <span class="o">=</span> <span class="n">_safe_div</span><span class="p">(</span><span class="n">nb_pp_files</span><span class="p">,</span> <span class="n">nb_uniq_ocl_files</span><span class="p">)</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;Number of good preprocessed files&#39;</span><span class="p">,</span>
+                  <span class="n">_bigint</span><span class="p">(</span><span class="n">nb_pp_files</span><span class="p">)</span> <span class="o">+</span>
+                  <span class="s1">&#39; (</span><span class="si">{:.0f}</span><span class="s1">%)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ratio_pp_files</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)))</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT contents FROM PreprocessedFiles WHERE status=0&#39;</span><span class="p">)</span>
+    <span class="n">bc</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+    <span class="n">pp_lcs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bc</span><span class="p">]</span>
+    <span class="n">pp_lcs</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="n">pp_lc</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">pp_lcs</span><span class="p">)</span>
+    <span class="n">ratio_pp_lcs</span> <span class="o">=</span> <span class="n">_safe_div</span><span class="p">(</span><span class="n">pp_lc</span><span class="p">,</span> <span class="n">code_lc</span><span class="p">)</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;Lines of good preprocessed code&#39;</span><span class="p">,</span>
+                  <span class="n">_bigint</span><span class="p">(</span><span class="n">pp_lc</span><span class="p">)</span> <span class="o">+</span>
+                  <span class="s1">&#39; (</span><span class="si">{:.0f}</span><span class="s1">%)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ratio_pp_lcs</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)))</span>
+
+    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;Good preprocessed line counts&#39;</span><span class="p">,</span>
+                  <span class="n">_seq_stats</span><span class="p">(</span><span class="n">pp_lcs</span><span class="p">)))</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+
+    <span class="c1"># Print stats</span>
+    <span class="nb">print</span><span class="p">()</span>
+    <span class="n">maxlen</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">stats</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">stat</span> <span class="ow">in</span> <span class="n">stats</span><span class="p">:</span>
+        <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">stat</span>
+        <span class="k">if</span> <span class="n">k</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="p">(</span><span class="n">maxlen</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="p">),</span> <span class="n">v</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">()</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Chris Cummins.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.5.
+    </div>
+  </body>
+</html>

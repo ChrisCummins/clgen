@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.clutil &#8212; clgen 0.2.19 documentation</title>
+    <title>clgen.clutil &#8212; clgen 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.19',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.19 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -78,7 +78,6 @@
 <span class="kn">from</span> <span class="nn">six</span> <span class="k">import</span> <span class="n">string_types</span>
 
 <span class="kn">import</span> <span class="nn">clgen</span>
-<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">config</span> <span class="k">as</span> <span class="n">cfg</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
 
 
@@ -145,10 +144,10 @@
 
 <span class="sd">        Examples:</span>
 
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global float4* a&quot;).string</span>
-<span class="sd">            &quot;__global float4* a&quot;</span>
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;const int b&quot;).string</span>
-<span class="sd">            &quot;const int b&quot;</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;__global float4* a&#39;).string</span>
+<span class="sd">            &#39;__global float4* a&#39;</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;const int b&#39;).string</span>
+<span class="sd">            &#39;const int b&#39;</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            str: String, as passed to constructor.</span>
@@ -162,10 +161,10 @@
 
 <span class="sd">        Examples:</span>
 
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global float4* a&quot;).components</span>
-<span class="sd">            [&quot;__global&quot;, &quot;float4*&quot;, &quot;a&quot;]</span>
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;const int b&quot;).components</span>
-<span class="sd">            [&quot;const&quot;, &quot;int&quot;, &quot;b&quot;]</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;__global float4* a&#39;).components</span>
+<span class="sd">            [&#39;__global&#39;, &#39;float4*&#39;, &#39;a&#39;]</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;const int b&#39;).components</span>
+<span class="sd">            [&#39;const&#39;, &#39;int&#39;, &#39;b&#39;]</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            str[]: Argument components.</span>
@@ -179,10 +178,10 @@
 
 <span class="sd">        Examples:</span>
 
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global float4* a&quot;).name</span>
-<span class="sd">            &quot;a&quot;</span>
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;const int b&quot;).name</span>
-<span class="sd">            &quot;b&quot;</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;__global float4* a&#39;).name</span>
+<span class="sd">            &#39;a&#39;</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;const int b&#39;).name</span>
+<span class="sd">            &#39;b&#39;</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            str: Argument name.</span>
@@ -196,10 +195,10 @@
 
 <span class="sd">        Examples:</span>
 
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global float4* a&quot;).type</span>
-<span class="sd">            &quot;float4*&quot;</span>
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;const int b&quot;).type</span>
-<span class="sd">            &quot;int&quot;</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;__global float4* a&#39;).type</span>
+<span class="sd">            &#39;float4*&#39;</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;const int b&#39;).type</span>
+<span class="sd">            &#39;int&#39;</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            str: Argument type, including pointer &#39;*&#39; symbol, if present.</span>
@@ -213,9 +212,9 @@
 
 <span class="sd">        Examples:</span>
 
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global float4* a&quot;).is_restrict</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;__global float4* a&#39;).is_restrict</span>
 <span class="sd">            False</span>
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;restrict int* b&quot;).is_restrict</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;restrict int* b&#39;).is_restrict</span>
 <span class="sd">            True</span>
 
 <span class="sd">        Returns:</span>
@@ -230,10 +229,10 @@
 
 <span class="sd">        Examples:</span>
 
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global float4* a&quot;).qualifiers</span>
-<span class="sd">            [&quot;__global&quot;]</span>
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;const int b&quot;).qualifiers</span>
-<span class="sd">            [&quot;const&quot;]</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;__global float4* a&#39;).qualifiers</span>
+<span class="sd">            [&#39;__global&#39;]</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;const int b&#39;).qualifiers</span>
+<span class="sd">            [&#39;const&#39;]</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            str[]: Type qualifiers.</span>
@@ -247,9 +246,9 @@
 
 <span class="sd">        Examples:</span>
 
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global float4* a&quot;).is_pointer</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;__global float4* a&#39;).is_pointer</span>
 <span class="sd">            True</span>
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;const int b&quot;).is_pointer</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;const int b&#39;).is_pointer</span>
 <span class="sd">            False</span>
 
 <span class="sd">        Returns:</span>
@@ -264,9 +263,9 @@
 
 <span class="sd">        Examples:</span>
 
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global float4* a&quot;).is_vector</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;__global float4* a&#39;).is_vector</span>
 <span class="sd">            True</span>
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;const int b&quot;).is_vector</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;const int b&#39;).is_vector</span>
 <span class="sd">            False</span>
 
 <span class="sd">        Returns:</span>
@@ -284,9 +283,9 @@
 
 <span class="sd">        Examples:</span>
 
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global float4* a&quot;).vector_width</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;__global float4* a&#39;).vector_width</span>
 <span class="sd">            4</span>
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global int* a&quot;).vector_width</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;__global int* a&#39;).vector_width</span>
 <span class="sd">            1</span>
 
 <span class="sd">        Returns:</span>
@@ -309,10 +308,10 @@
 
 <span class="sd">        Examples:</span>
 
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global float4* a&quot;).bare_type</span>
-<span class="sd">            &quot;float&quot;</span>
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;const int b&quot;).bare_type</span>
-<span class="sd">            &quot;uchar&quot;</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;__global float4* a&#39;).bare_type</span>
+<span class="sd">            &#39;float&#39;</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;const int b&#39;).bare_type</span>
+<span class="sd">            &#39;int&#39;</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            str: Bare type.</span>
@@ -330,9 +329,9 @@
 
 <span class="sd">        Examples:</span>
 
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global float4* a&quot;).is_const</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;__global float4* a&#39;).is_const</span>
 <span class="sd">            False</span>
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;const int b&quot;).is_const</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;const int b&#39;).is_const</span>
 <span class="sd">            True</span>
 
 <span class="sd">        Returns:</span>
@@ -351,9 +350,9 @@
 
 <span class="sd">        Examples:</span>
 
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__global float4* a&quot;).is_global</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;__global float4* a&#39;).is_global</span>
 <span class="sd">            True</span>
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;const int b&quot;).is_global</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;const int b&#39;).is_global</span>
 <span class="sd">            False</span>
 
 <span class="sd">        Returns:</span>
@@ -374,9 +373,9 @@
 
 <span class="sd">        Examples:</span>
 
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__local float4* a&quot;).is_local</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;__local float4* a&#39;).is_local</span>
 <span class="sd">            True</span>
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;const int b&quot;).is_local</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;const int b&#39;).is_local</span>
 <span class="sd">            False</span>
 
 <span class="sd">        Returns:</span>
@@ -397,10 +396,10 @@
 
 <span class="sd">        Examples:</span>
 
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;__local float4* a&quot;).numpy_type</span>
-<span class="sd">            np.float32</span>
-<span class="sd">            &gt;&gt;&gt; KernelArg(&quot;const int b&quot;).numpy_type</span>
-<span class="sd">            np.int32</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;__local float4* a&#39;).numpy_type</span>
+<span class="sd">            &lt;class &#39;numpy.float32&#39;&gt;</span>
+<span class="sd">            &gt;&gt;&gt; KernelArg(&#39;const int b&#39;).numpy_type</span>
+<span class="sd">            &lt;class &#39;numpy.int32&#39;&gt;</span>
 
 <span class="sd">        Return:</span>
 
@@ -463,8 +462,8 @@
 
 <span class="sd">        Examples:</span>
 
-<span class="sd">            &gt;&gt;&gt; KernelPrototype(&quot;__kernel void A() {&quot;).name</span>
-<span class="sd">            &quot;A&quot;</span>
+<span class="sd">            &gt;&gt;&gt; KernelPrototype(&#39;__kernel void A() {&#39;).name</span>
+<span class="sd">            &#39;A&#39;</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            str: Kernel name.</span>
@@ -684,7 +683,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.2.19 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

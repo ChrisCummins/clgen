@@ -21,7 +21,7 @@ CLgen requirements automatically:
 
 ::
 
-    $ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.2.19/install-deps.sh | bash
+    $ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.3.0/install-deps.sh | bash
 
 Note that on Ubuntu, sudo privileges are required to install these requirements
 - you may be prompted for your password.
@@ -29,7 +29,7 @@ Note that on Ubuntu, sudo privileges are required to install these requirements
 For **other Linux distributions** and older versions of Ubuntu, please check
 each for each of the following requirements:
 
--  `Python <https://www.python.org/>`_ >= 3.5.
+-  `Python <https://www.python.org/>`_ >= 3.6.
 -  `Mono <http://www.mono-project.com/>`_.
 -  `GCC <https://gcc.gnu.org/>`_ >= 4.8.2 or
    `clang <http://llvm.org/releases/download.html>`_ >= 3.1.
@@ -71,21 +71,14 @@ Activate this environment:
 
     $ source ~/clgen/bin/activate
 
-Install the latest release of CLgen using one of the two configurations:
-
-**1. CPU-only:** *slow performance.*
+Install the latest release of CLgen:
 
 ::
 
-    (clgen)$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.2.19/install-cpu.sh | bash
-
-**2. CUDA enabled:** *fast performance.*
-Requires NVIDIA GPU with
-`CUDA 8.0 and cuDNN <https://www.tensorflow.org/get_started/os_setup#optional_install_cuda_gpus_on_linux>`_.
-
-::
-
-    (clgen)$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.2.19/install-cuda.sh | bash
+    # if you have an NVIDIA GPU with CUDA 8.0 and cuDNN:
+    (clgen)$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.3.0/install-cuda.sh | bash
+    # CPU only:
+    (clgen)$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.3.0/install-cpu.sh | bash
 
 When you are done using CLgen, deactivate the virtualenv environment:
 
@@ -108,29 +101,14 @@ activating a virtualenv environment. This may update some of the previously
 installed Python packages. System-wide installation requires sudo priveledges -
 you may be prompted for your password.
 
-Install the latest release of CLgen system-wide using one of the following
-configurations:
-
-**1. CPU-only:** *slow performance, some features disabled.*
+Install the latest release of CLgen:
 
 ::
 
-    $ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.2.19/install-cpu.sh | bash
-
-**2. OpenCL enabled:** *slow performance, all features enabled.*
-Requires `OpenCL <https://www.khronos.org/opencl/>`__.
-
-::
-
-    $ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.2.19/install-opencl.sh | bash
-
-**3. CUDA enabled:** *fast performance, all features enabled.*
-Requires NVIDIA GPU with
-`CUDA 8.0 and cuDNN <https://www.tensorflow.org/get_started/os_setup#optional_install_cuda_gpus_on_linux>`_.
-
-::
-
-    $ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.2.19/install-cuda.sh | bash
+    # if you have an NVIDIA GPU with CUDA 8.0 and cuDNN:
+    $ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.3.0/install-cuda.sh | bash
+    # CPU only:
+    $ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.3.0/install-cpu.sh | bash
 
 
 Contents
@@ -151,7 +129,7 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-.. |Documentation Status| image:: https://img.shields.io/badge/docs-0.2.19-brightgreen.svg?style=flat
+.. |Documentation Status| image:: https://img.shields.io/badge/docs-0.3.0-brightgreen.svg?style=flat
    :target: http://chriscummins.cc/clgen/
 
 .. |Build Status| image:: https://img.shields.io/travis/ChrisCummins/clgen/master.svg?style=flat
@@ -160,7 +138,7 @@ Indices and tables
 .. |Coverage Status| image:: https://img.shields.io/coveralls/ChrisCummins/clgen/master.svg?style=flat
    :target: https://coveralls.io/github/ChrisCummins/clgen?branch=master
 
-.. |Release Version| image:: https://img.shields.io/badge/release-0.2.19-blue.svg?style=flat
+.. |Release Version| image:: https://img.shields.io/badge/release-0.3.0-blue.svg?style=flat
    :target: https://github.com/ChrisCummins/clgen/releases
 
 .. |License Badge| image:: https://img.shields.io/badge/license-GNU%20GPL%20v3-blue.svg?style=flat
