@@ -1,41 +1,76 @@
-<h1>
-  lmk - let me know
-  <a href="https://badge.fury.io/py/lmk">
-    <img src="https://img.shields.io/pypi/v/lmk.svg?colorB=green&style=flat">
-  </a> <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">
-    <img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat">
+<div align="center">
+  <a href="https://github.com/ChrisCummins/clgen">
+    <img src="https://raw.githubusercontent.com/ChrisCummins/clgen/master/docs/assets/logo.png" width="420">
   </a>
-</h1>
+</div>
 
-Email notifications from the command line.
+-------
 
-**Step 1** Wrap your long running job in `lmk`:
+<div align="center">
+  <a href="http://chriscummins.cc/clgen/" target="_blank">
+    <img src="https://img.shields.io/badge/docs-0.3.0-brightgreen.svg?style=flat">
+  </a>
+  <a href="https://travis-ci.org/ChrisCummins/clgen" target="_blank">
+    <img src="https://img.shields.io/travis/ChrisCummins/clgen/master.svg?style=flat">
+  </a>
+  <a href="https://coveralls.io/github/ChrisCummins/clgen?branch=master">
+    <img src="https://img.shields.io/coveralls/ChrisCummins/clgen/master.svg?style=flat">
+  </a>
+   <a href="https://github.com/ChrisCummins/clgen/releases" target="_blank">
+    <img src="https://img.shields.io/badge/release-0.3.0-blue.svg?style=flat">
+  </a>
+  <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">
+    <img src="https://img.shields.io/badge/license-GNU%20GPL%20v3-blue.svg?style=flat">
+  </a>
+</div>
+
+**CLgen** is an open source application for generating runnable programs using
+deep learning. CLgen *learns* to program using neural networks which model the
+semantics and usage from large volumes of program fragments, generating
+many-core OpenCL programs that are representative of, but *distinct* from, the
+programs it learns from.
+
+<img src="https://raw.githubusercontent.com/ChrisCummins/clgen/master/docs/assets/pipeline.png" width="500">
+
+
+## Getting Started
+
+See the [online documentation](http://chriscummins.cc/clgen/) for instructions
+on how to download and install CLgen.
+
+Download a tiny example dataset to train and sample your first CLgen model:
 
 ```sh
-$ lmk 'bash ./experiments.sh'
-...  # command runs and outputs normally
-[lmk] chrisc.101@gmail.com notified
+$ wget https://github.com/ChrisCummins/clgen/raw/master/tests/data/tiny.tar.bz2
+$ tar xf tiny.tar.bz2
+$ clgen model.json sampler.json
 ```
 
-**Step 2** ☕
+<img src="https://raw.githubusercontent.com/ChrisCummins/clgen/master/docs/assets/clgen.gif" width="500">
 
-**Step 3** Receive an email when it's done:
 
-![](demo.png)
+## Resources
 
-Alternatively, `lmk -` reads passively from stdin:
+Presentation slides:
 
-```sh
-$ (./experiment1.sh; experiment2.py) 2>&1 | lmk -
-... # commands run and output normally
-[lmk] chrisc.101@gmail.com notified
-```
+<a href="https://speakerdeck.com/chriscummins/synthesizing-benchmarks-for-predictive-modelling-cgo-17">
+  <img src="https://raw.githubusercontent.com/ChrisCummins/clgen/master/docs/assets/slides.png" width="500">
+</a>
 
-## Installation
-```sh
-$ pip install lmk
-```
+Publication
+["Synthesizing Benchmarks for Predictive Modeling"](https://github.com/ChrisCummins/paper-synthesizing-benchmarks)
+(CGO'17).
+
+[Jupyter notebook](https://github.com/ChrisCummins/paper-synthesizing-benchmarks/blob/master/code/Paper.ipynb) containing experimental evaluation of
+CLgen.
+
+Documentation for the [Python API](http://chriscummins.cc/clgen/api/) and
+[command line interface](http://chriscummins.cc/clgen/bin/).
+
 
 ## License
 
-Made with ❤️ by [Chris Cummins](http://chriscummins.cc). Released under [MIT License](https://tldrlegal.com/license/mit-license).
+Copyright 2016, 2017 Chris Cummins <chrisc.101@gmail.com>.
+
+Released under the terms of the GPLv3 license. See [LICENSE.txt](/LICENSE.txt)
+for details.
