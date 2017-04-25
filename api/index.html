@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Python API &#8212; clgen 0.3.2 documentation</title>
+    <title>Python API &#8212; clgen 0.3.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.3.2',
+        VERSION:     '0.3.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../installation.html" title="Building the Development Version"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.2 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -2067,7 +2067,7 @@ tarball with the same name, unpack it.</p>
 
 <dl class="function">
 <dt id="clgen.dbutil.set_version_meta">
-<code class="descclassname">clgen.dbutil.</code><code class="descname">set_version_meta</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.3.1.dev0'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#set_version_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.set_version_meta" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.dbutil.</code><code class="descname">set_version_meta</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.3.2.dev0'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#set_version_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.set_version_meta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the &#8220;version&#8221; key in an database.</p>
 <p>This is useful for marking version requirements of specific datasets, e.g.
 a databse schema which requires a particular CLgen version, or a scheme
@@ -2143,7 +2143,7 @@ which is likely to change in the future.</p>
 
 <dl class="function">
 <dt id="clgen.dbutil.version_meta_matches">
-<code class="descclassname">clgen.dbutil.</code><code class="descname">version_meta_matches</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.3.1.dev0'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#version_meta_matches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.version_meta_matches" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.dbutil.</code><code class="descname">version_meta_matches</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.3.2.dev0'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#version_meta_matches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.version_meta_matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check that the &#8220;version&#8221; key in a database matches the expected value.</p>
 <p>If the database does not have a &#8220;version&#8221; key in the Meta table, returns
 False.</p>
@@ -2775,17 +2775,6 @@ is <a class="reference external" href="mailto:$USER&#37;&#52;&#48;$HOSTNAME">$US
 <dd><p>clang-format error.</p>
 </dd></dl>
 
-<dl class="class">
-<dt id="clgen._preprocess.DbImportWorker">
-<em class="property">class </em><code class="descclassname">clgen._preprocess.</code><code class="descname">DbImportWorker</code><span class="sig-paren">(</span><em>db_path</em>, <em>numjobs</em>, <em>condition</em>, <em>queue</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_preprocess.html#DbImportWorker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._preprocess.DbImportWorker" title="Permalink to this definition">¶</a></dt>
-<dd><p>insert preprocessed results into database</p>
-<dl class="method">
-<dt id="clgen._preprocess.DbImportWorker.run">
-<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_preprocess.html#DbImportWorker.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._preprocess.DbImportWorker.run" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
 <dl class="exception">
 <dt id="clgen._preprocess.GPUVerifyException">
 <em class="property">exception </em><code class="descclassname">clgen._preprocess.</code><code class="descname">GPUVerifyException</code><a class="reference internal" href="../_modules/clgen/_preprocess.html#GPUVerifyException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._preprocess.GPUVerifyException" title="Permalink to this definition">¶</a></dt>
@@ -2818,7 +2807,7 @@ is <a class="reference external" href="mailto:$USER&#37;&#52;&#48;$HOSTNAME">$US
 
 <dl class="class">
 <dt id="clgen._preprocess.PreprocessWorker">
-<em class="property">class </em><code class="descclassname">clgen._preprocess.</code><code class="descname">PreprocessWorker</code><span class="sig-paren">(</span><em>jobs</em>, <em>condition</em>, <em>queue</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_preprocess.html#PreprocessWorker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._preprocess.PreprocessWorker" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">clgen._preprocess.</code><code class="descname">PreprocessWorker</code><span class="sig-paren">(</span><em>jobs</em>, <em>queue</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_preprocess.html#PreprocessWorker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._preprocess.PreprocessWorker" title="Permalink to this definition">¶</a></dt>
 <dd><p>preprocessor worker thread</p>
 <dl class="method">
 <dt id="clgen._preprocess.PreprocessWorker.run">
@@ -3282,7 +3271,7 @@ exits.</p>
 <p>Sample a CLgen model.</p>
 <dl class="class">
 <dt id="clgen._sampler.SampleConsumer">
-<em class="property">class </em><code class="descclassname">clgen._sampler.</code><code class="descname">SampleConsumer</code><span class="sig-paren">(</span><em>db_path</em>, <em>producer</em>, <em>sampler</em>, <em>cache</em>, <em>condition</em>, <em>queue</em>, <em>**sampler_opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_sampler.html#SampleConsumer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._sampler.SampleConsumer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">clgen._sampler.</code><code class="descname">SampleConsumer</code><span class="sig-paren">(</span><em>db_path</em>, <em>producer</em>, <em>sampler</em>, <em>cache</em>, <em>queue</em>, <em>**sampler_opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_sampler.html#SampleConsumer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._sampler.SampleConsumer" title="Permalink to this definition">¶</a></dt>
 <dd><p>handle generated samples</p>
 <dl class="method">
 <dt id="clgen._sampler.SampleConsumer.min_kernels_and_samples_cond">
@@ -3336,7 +3325,7 @@ exits.</p>
 
 <dl class="class">
 <dt id="clgen._sampler.SampleProducer">
-<em class="property">class </em><code class="descclassname">clgen._sampler.</code><code class="descname">SampleProducer</code><span class="sig-paren">(</span><em>model</em>, <em>start_text</em>, <em>condition</em>, <em>queue</em>, <em>**kernel_opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_sampler.html#SampleProducer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._sampler.SampleProducer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">clgen._sampler.</code><code class="descname">SampleProducer</code><span class="sig-paren">(</span><em>model</em>, <em>start_text</em>, <em>queue</em>, <em>**kernel_opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_sampler.html#SampleProducer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._sampler.SampleProducer" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="clgen._sampler.SampleProducer.run">
 <code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_sampler.html#SampleProducer.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._sampler.SampleProducer.run" title="Permalink to this definition">¶</a></dt>
@@ -3541,7 +3530,7 @@ exits.</p>
         <li class="right" >
           <a href="../installation.html" title="Building the Development Version"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.2 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen._sampler &#8212; clgen 0.3.2 documentation</title>
+    <title>clgen._sampler &#8212; clgen 0.3.3 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.2',
+        VERSION:     '0.3.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -73,6 +73,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">progressbar</span>
+<span class="kn">import</span> <span class="nn">queue</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
@@ -84,7 +85,8 @@
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">lockfile</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">system</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">types</span>
-<span class="kn">from</span> <span class="nn">threading</span> <span class="k">import</span> <span class="n">Condition</span><span class="p">,</span> <span class="n">Event</span><span class="p">,</span> <span class="n">Thread</span><span class="p">,</span> <span class="n">Lock</span>
+<span class="kn">from</span> <span class="nn">queue</span> <span class="k">import</span> <span class="n">Queue</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="k">import</span> <span class="n">Event</span><span class="p">,</span> <span class="n">Thread</span>
 <span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">time</span>
 
 <span class="kn">import</span> <span class="nn">clgen</span>
@@ -124,13 +126,12 @@
 
 
 <div class="viewcode-block" id="SampleProducer"><a class="viewcode-back" href="../../api/index.html#clgen._sampler.SampleProducer">[docs]</a><span class="k">class</span> <span class="nc">SampleProducer</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Model</span><span class="p">,</span> <span class="n">start_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                 <span class="n">condition</span><span class="p">:</span> <span class="n">Condition</span><span class="p">,</span> <span class="n">queue</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="o">**</span><span class="n">kernel_opts</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Model</span><span class="p">,</span> <span class="n">start_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">queue</span><span class="p">:</span> <span class="n">Queue</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kernel_opts</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SampleProducer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">start_text</span> <span class="o">=</span> <span class="n">start_text</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">condition</span> <span class="o">=</span> <span class="n">condition</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">queue</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stop_signal</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kernel_opts</span> <span class="o">=</span> <span class="n">kernel_opts</span>
@@ -224,11 +225,7 @@
                         <span class="k">break</span>
 
                 <span class="c1"># submit sample to processing queue</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">buf</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
-
-                <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="o">.</span><span class="n">notify</span><span class="p">()</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">buf</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
 
             <span class="k">if</span> <span class="n">log</span><span class="o">.</span><span class="n">is_verbose</span><span class="p">():</span>
                 <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
@@ -244,14 +241,14 @@
 <div class="viewcode-block" id="SampleConsumer"><a class="viewcode-back" href="../../api/index.html#clgen._sampler.SampleConsumer">[docs]</a><span class="k">class</span> <span class="nc">SampleConsumer</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; handle generated samples &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">producer</span><span class="p">:</span> <span class="n">SampleProducer</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span>
-                 <span class="n">cache</span><span class="p">,</span> <span class="n">condition</span><span class="p">:</span> <span class="n">Condition</span><span class="p">,</span> <span class="n">queue</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="o">**</span><span class="n">sampler_opts</span><span class="p">):</span>
+                 <span class="n">cache</span><span class="p">,</span> <span class="n">queue</span><span class="p">:</span> <span class="n">Queue</span><span class="p">,</span> <span class="o">**</span><span class="n">sampler_opts</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Arguments:</span>
 <span class="sd">            db_path (str): Path to samples database.</span>
 <span class="sd">            producer (SampleProducer): Sample producer thread.</span>
 <span class="sd">            sampler (Sampler): Host sampler.</span>
 <span class="sd">            condition (Condition): For locking.</span>
-<span class="sd">            queue (list): output result queue.</span>
+<span class="sd">            queue (Queue): output result queue.</span>
 <span class="sd">            **sampler_opts: Sampler options.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SampleConsumer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -260,7 +257,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">producer</span> <span class="o">=</span> <span class="n">producer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="n">cache</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">condition</span> <span class="o">=</span> <span class="n">condition</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">queue</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler_opts</span> <span class="o">=</span> <span class="n">sampler_opts</span>
 
@@ -323,12 +319,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
                 <span class="n">sample_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
-                <span class="c1"># get the next sample</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
-                <span class="n">sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+                <span class="n">sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
 
                 <span class="n">kernels</span> <span class="o">=</span> <span class="n">clutil</span><span class="o">.</span><span class="n">get_cl_kernels</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
                 <span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">crypto</span><span class="o">.</span><span class="n">sha1_str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kernels</span><span class="p">]</span>
@@ -498,18 +489,16 @@
             <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp_kernels_db</span>
 
         <span class="c1"># producer-consumer queue</span>
-        <span class="n">queue</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>
-        <span class="n">condition</span> <span class="o">=</span> <span class="n">Condition</span><span class="p">()</span>
+        <span class="n">queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;sampling&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 
-        <span class="n">sampler</span> <span class="o">=</span> <span class="n">SampleProducer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_text</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span>
+        <span class="n">sampler</span> <span class="o">=</span> <span class="n">SampleProducer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_text</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span>
                                  <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_opts</span><span class="p">)</span>
         <span class="n">sampler</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
         <span class="n">consumer</span> <span class="o">=</span> <span class="n">SampleConsumer</span><span class="p">(</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">],</span> <span class="n">sampler</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">cache</span><span class="p">,</span>
-                                  <span class="n">condition</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler_opts</span><span class="p">)</span>
+                                  <span class="n">queue</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler_opts</span><span class="p">)</span>
         <span class="n">consumer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
         <span class="n">sampler</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
@@ -616,7 +605,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>
