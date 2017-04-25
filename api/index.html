@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Python API &#8212; clgen 0.3.1 documentation</title>
+    <title>Python API &#8212; clgen 0.3.2 documentation</title>
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.3.1',
+        VERSION:     '0.3.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../installation.html" title="Building the Development Version"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.2 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -60,6 +60,18 @@
 <div class="section" id="module-clgen">
 <span id="clgen"></span><h2>clgen<a class="headerlink" href="#module-clgen" title="Permalink to this headline">¶</a></h2>
 <p>Deep learning program generator</p>
+<dl class="attribute">
+<dt id="clgen.__version__">
+<code class="descclassname">clgen.</code><code class="descname">__version__</code><a class="headerlink" href="#clgen.__version__" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; PEP 440 compliant version string.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.version_info">
+<code class="descclassname">clgen.</code><code class="descname">version_info</code><a class="headerlink" href="#clgen.version_info" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>namedtuple[&#8216;major&#8217;, &#8216;minor&#8217;, &#8216;micro&#8217;, &#8216;releaselevel&#8217;])</em> &#8211; Version tuple.</p>
+</dd></dl>
+
 <dl class="exception">
 <dt id="clgen.CLgenError">
 <em class="property">exception </em><code class="descclassname">clgen.</code><code class="descname">CLgenError</code><a class="reference internal" href="../_modules/clgen.html#CLgenError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.CLgenError" title="Permalink to this definition">¶</a></dt>
@@ -320,9 +332,6 @@ of the module into user code.</p>
 <dt id="clgen.version">
 <code class="descclassname">clgen.</code><code class="descname">version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen.html#version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.version" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the package version.</p>
-<p><em>DO NOT</em> try to parse this or derive any special major/minor version
-information from it. Treat it as an opaque char array. The only valid
-operators for comparing versions are == and !=.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -335,6 +344,35 @@ operators for comparing versions are == and !=.</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="class">
+<dt id="clgen.version_info_t">
+<em class="property">class </em><code class="descclassname">clgen.</code><code class="descname">version_info_t</code><span class="sig-paren">(</span><em>major</em>, <em>minor</em>, <em>micro</em>, <em>releaselevel</em><span class="sig-paren">)</span><a class="headerlink" href="#clgen.version_info_t" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="clgen.version_info_t.major">
+<code class="descname">major</code><a class="headerlink" href="#clgen.version_info_t.major" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.version_info_t.micro">
+<code class="descname">micro</code><a class="headerlink" href="#clgen.version_info_t.micro" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.version_info_t.minor">
+<code class="descname">minor</code><a class="headerlink" href="#clgen.version_info_t.minor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="clgen.version_info_t.releaselevel">
+<code class="descname">releaselevel</code><a class="headerlink" href="#clgen.version_info_t.releaselevel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -2029,7 +2067,7 @@ tarball with the same name, unpack it.</p>
 
 <dl class="function">
 <dt id="clgen.dbutil.set_version_meta">
-<code class="descclassname">clgen.dbutil.</code><code class="descname">set_version_meta</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.3.0.dev0'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#set_version_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.set_version_meta" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.dbutil.</code><code class="descname">set_version_meta</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.3.1.dev0'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#set_version_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.set_version_meta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the &#8220;version&#8221; key in an database.</p>
 <p>This is useful for marking version requirements of specific datasets, e.g.
 a databse schema which requires a particular CLgen version, or a scheme
@@ -2105,7 +2143,7 @@ which is likely to change in the future.</p>
 
 <dl class="function">
 <dt id="clgen.dbutil.version_meta_matches">
-<code class="descclassname">clgen.dbutil.</code><code class="descname">version_meta_matches</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.3.0.dev0'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#version_meta_matches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.version_meta_matches" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.dbutil.</code><code class="descname">version_meta_matches</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.3.1.dev0'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#version_meta_matches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.version_meta_matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check that the &#8220;version&#8221; key in a database matches the expected value.</p>
 <p>If the database does not have a &#8220;version&#8221; key in the Meta table, returns
 False.</p>
@@ -3503,7 +3541,7 @@ exits.</p>
         <li class="right" >
           <a href="../installation.html" title="Building the Development Version"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.2 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
