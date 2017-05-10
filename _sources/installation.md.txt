@@ -11,7 +11,7 @@ $ cd clgen-dev
 Install the build requirements using:
 
 ```
-$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.3.4/install-deps.sh | bash
+$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.3.5/install-deps.sh | bash
 ```
 
 Configure and compile CLgen using:
@@ -79,11 +79,11 @@ $ sudo -H make install
 (Optional) Run the test suite:
 
 ```sh
-$ sudo -H make test
+$ make test
 ```
 
 (Optional) Install Python development tools:
 
 ```sh
-$ pip3.5 install -r make/requirements/requirements.dev.txt
+$ pip install -r make/requirements/requirements.dev.txt
 ```

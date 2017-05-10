@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Python API &#8212; clgen 0.3.4 documentation</title>
+    <title>Python API &#8212; clgen 0.3.5 documentation</title>
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.3.4',
+        VERSION:     '0.3.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../installation.html" title="Building the Development Version"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.5 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -382,7 +382,7 @@ of the module into user code.</p>
 <dl class="class">
 <dt id="clgen._atomizer.Atomizer">
 <em class="property">class </em><code class="descclassname">clgen._atomizer.</code><code class="descname">Atomizer</code><span class="sig-paren">(</span><em>vocab</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_atomizer.html#Atomizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._atomizer.Atomizer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Atomizer.</p>
+<dd><p>Abstract base class for atomizers.</p>
 <dl class="method">
 <dt id="clgen._atomizer.Atomizer.atomize">
 <code class="descname">atomize</code><span class="sig-paren">(</span><em>text</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_atomizer.html#Atomizer.atomize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._atomizer.Atomizer.atomize" title="Permalink to this definition">¶</a></dt>
@@ -406,7 +406,8 @@ of the module into user code.</p>
 <dl class="attribute">
 <dt id="clgen._atomizer.Atomizer.atoms">
 <code class="descname">atoms</code><a class="headerlink" href="#clgen._atomizer.Atomizer.atoms" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><em>rtype</em> &#8211; <code class="xref py py-class docutils literal"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal"><span class="pre">str</span></code>]</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="clgen._atomizer.Atomizer.deatomize">
@@ -453,17 +454,26 @@ of the module into user code.</p>
 <span class="go">&#39;abcd&#39;</span>
 </pre></div>
 </div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#clgen._atomizer.Atomizer" title="clgen._atomizer.Atomizer"><code class="xref py py-class docutils literal"><span class="pre">Atomizer</span></code></a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="clgen._atomizer.Atomizer.indices">
 <code class="descname">indices</code><a class="headerlink" href="#clgen._atomizer.Atomizer.indices" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><em>rtype</em> &#8211; <code class="xref py py-class docutils literal"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal"><span class="pre">int</span></code>]</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="clgen._atomizer.Atomizer.tokenize">
 <code class="descname">tokenize</code><span class="sig-paren">(</span><em>text</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_atomizer.html#Atomizer.tokenize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._atomizer.Atomizer.tokenize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Atomize a text into an array of atomsself.</p>
+<dd><p>Split the text into atoms, but do not encode to indices.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -474,7 +484,7 @@ of the module into user code.</p>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list of str</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">list</span></code></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal"><span class="pre">str</span></code>]</td>
 </tr>
 </tbody>
 </table>
@@ -506,7 +516,7 @@ of the module into user code.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#clgen._atomizer.Atomizer" title="clgen._atomizer.Atomizer"><code class="xref py py-class docutils literal"><span class="pre">Atomizer</span></code></a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#clgen._atomizer.CharacterAtomizer" title="clgen._atomizer.CharacterAtomizer"><code class="xref py py-class docutils literal"><span class="pre">CharacterAtomizer</span></code></a></td>
 </tr>
 </tbody>
 </table>
@@ -517,7 +527,7 @@ of the module into user code.</p>
 <dl class="class">
 <dt id="clgen._atomizer.GreedyAtomizer">
 <em class="property">class </em><code class="descclassname">clgen._atomizer.</code><code class="descname">GreedyAtomizer</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_atomizer.html#GreedyAtomizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._atomizer.GreedyAtomizer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Greedy encoding for multi-characten modelling.</p>
+<dd><p>Greedy encoding for multi-character modelling.</p>
 <dl class="method">
 <dt id="clgen._atomizer.GreedyAtomizer.atomize">
 <code class="descname">atomize</code><span class="sig-paren">(</span><em>text</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_atomizer.html#GreedyAtomizer.atomize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._atomizer.GreedyAtomizer.atomize" title="Permalink to this definition">¶</a></dt>
@@ -533,17 +543,23 @@ of the module into user code.</p>
 
 <dl class="staticmethod">
 <dt id="clgen._atomizer.GreedyAtomizer.from_text">
-<em class="property">static </em><code class="descname">from_text</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_atomizer.html#GreedyAtomizer.from_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._atomizer.GreedyAtomizer.from_text" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">from_text</code><span class="sig-paren">(</span><em>atoms={'shuffle'</em>, <em>'__builtin_astype'</em>, <em>'alignof'</em>, <em>'quad'</em>, <em>'get_local_size'</em>, <em>'bool'</em>, <em>'__kernel'</em>, <em>'int'</em>, <em>'float'</em>, <em>'image3d_t'</em>, <em>'barrier'</em>, <em>'defined'</em>, <em>'__clc_fma'</em>, <em>'get_global_id'</em>, <em>'short'</em>, <em>'sqrt'</em>, <em>'alignas'</em>, <em>'error'</em>, <em>'half'</em>, <em>'event_t'</em>, <em>'__read_write'</em>, <em>'*/'</em>, <em>'sampler_t'</em>, <em>'break'</em>, <em>'image1d_t'</em>, <em>'__read_only'</em>, <em>'__attribute'</em>, <em>'wide'</em>, <em>'default'</em>, <em>'//'</em>, <em>'imaginary'</em>, <em>'goto'</em>, <em>'__constant'</em>, <em>'extern'</em>, <em>'global'</em>, <em>'static'</em>, <em>'__clc_fabs'</em>, <em>'get_num_groups'</em>, <em>'restrict'</em>, <em>'  '</em>, <em>'do'</em>, <em>'const'</em>, <em>'case'</em>, <em>'return'</em>, <em>'noreturn'</em>, <em>'u32'</em>, <em>'if'</em>, <em>'inline'</em>, <em>'into'</em>, <em>'get_global_size'</em>, <em>'read_only'</em>, <em>'char'</em>, <em>'endif'</em>, <em>'undef'</em>, <em>'kernel'</em>, <em>'continue'</em>, <em>'read_write'</em>, <em>'ulong'</em>, <em>'local'</em>, <em>'write_only'</em>, <em>'sizeof'</em>, <em>'true'</em>, <em>'image1d_buffer_t'</em>, <em>'image2d_t'</em>, <em>'union'</em>, <em>'ifndef'</em>, <em>'image1d_array_t'</em>, <em>'enum'</em>, <em>'get_local_id'</em>, <em>'private'</em>, <em>'__write_only'</em>, <em>'volatile'</em>, <em>'__inline'</em>, <em>'auto'</em>, <em>'elif'</em>, <em>'signed'</em>, <em>'switch'</em>, <em>'struct'</em>, <em>'constant'</em>, <em>'atomic_add'</em>, <em>'abs'</em>, <em>'void'</em>, <em>'complex'</em>, <em>'false'</em>, <em>'uint'</em>, <em>'unsigned'</em>, <em>'line'</em>, <em>'__global'</em>, <em>'__local'</em>, <em>'ifdef'</em>, <em>'/*'</em>, <em>'fabs'</em>, <em>'include'</em>, <em>'typedef'</em>, <em>'for'</em>, <em>'__assert'</em>, <em>'uchar'</em>, <em>'clamp'</em>, <em>'define'</em>, <em>'__private'</em>, <em>'pragma'</em>, <em>'double'</em>, <em>'else'</em>, <em>'while'</em>, <em>'size_t'</em>, <em>'long'</em>, <em>'image2d_array_t'</em>, <em>'register'}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_atomizer.html#GreedyAtomizer.from_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._atomizer.GreedyAtomizer.from_text" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#clgen._atomizer.Atomizer" title="clgen._atomizer.Atomizer"><code class="xref py py-class docutils literal"><span class="pre">Atomizer</span></code></a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#clgen._atomizer.GreedyAtomizer" title="clgen._atomizer.GreedyAtomizer"><code class="xref py py-class docutils literal"><span class="pre">GreedyAtomizer</span></code></a></td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="exception">
+<dt id="clgen._atomizer.InvalidVocab">
+<em class="property">exception </em><code class="descclassname">clgen._atomizer.</code><code class="descname">InvalidVocab</code><a class="reference internal" href="../_modules/clgen/_atomizer.html#InvalidVocab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._atomizer.InvalidVocab" title="Permalink to this definition">¶</a></dt>
+<dd><p>An invalid atomizer vocabulary</p>
 </dd></dl>
 
 <dl class="exception">
@@ -564,6 +580,8 @@ of the module into user code.</p>
 <dt>Differs from python argparse.ArgumentParser in the following areas:</dt>
 <dd><ul class="first last simple">
 <li>Adds an optional <cite>&#8211;verbose</cite> flag and initializes the logging engine.</li>
+<li>Adds a <cite>&#8211;debug</cite> flag for more verbose crashes.</li>
+<li>Adds a <cite>&#8211;profile</cite> flag for internal profiling.</li>
 <li>Adds an optional <cite>&#8211;version</cite> flag which prints version information and
 quits.</li>
 <li>Defaults to using raw formatting for help strings, which disables line
@@ -2067,7 +2085,7 @@ tarball with the same name, unpack it.</p>
 
 <dl class="function">
 <dt id="clgen.dbutil.set_version_meta">
-<code class="descclassname">clgen.dbutil.</code><code class="descname">set_version_meta</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.3.3.dev0'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#set_version_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.set_version_meta" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.dbutil.</code><code class="descname">set_version_meta</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.3.4.dev0'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#set_version_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.set_version_meta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the &#8220;version&#8221; key in an database.</p>
 <p>This is useful for marking version requirements of specific datasets, e.g.
 a databse schema which requires a particular CLgen version, or a scheme
@@ -2143,7 +2161,7 @@ which is likely to change in the future.</p>
 
 <dl class="function">
 <dt id="clgen.dbutil.version_meta_matches">
-<code class="descclassname">clgen.dbutil.</code><code class="descname">version_meta_matches</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.3.3.dev0'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#version_meta_matches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.version_meta_matches" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.dbutil.</code><code class="descname">version_meta_matches</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.3.4.dev0'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#version_meta_matches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.version_meta_matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check that the &#8220;version&#8221; key in a database matches the expected value.</p>
 <p>If the database does not have a &#8220;version&#8221; key in the Meta table, returns
 False.</p>
@@ -3169,7 +3187,7 @@ exits.</p>
 
 <dl class="function">
 <dt id="clgen._preprocess.preprocess_inplace">
-<code class="descclassname">clgen._preprocess.</code><code class="descname">preprocess_inplace</code><span class="sig-paren">(</span><em>paths</em>, <em>max_num_workers=16</em>, <em>attempt=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_preprocess.html#preprocess_inplace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._preprocess.preprocess_inplace" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen._preprocess.</code><code class="descname">preprocess_inplace</code><span class="sig-paren">(</span><em>paths</em>, <em>max_num_workers=16</em>, <em>max_attempts=100</em>, <em>attempt=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_preprocess.html#preprocess_inplace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._preprocess.preprocess_inplace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Preprocess a list of files in place.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -3178,6 +3196,8 @@ exits.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>paths</strong> (<em>str</em><em>[</em><em></em><em>]</em><em></em>) &#8211; List of paths.</li>
 <li><strong>max_num_workers</strong> (<em>int</em><em>, </em><em>optional</em>) &#8211; Number of processes to spawn.</li>
+<li><strong>max_attempts</strong> (<em>int</em><em>, </em><em>optional</em>) &#8211; In case of an OSError or TimeoutError,
+this number of attempts will be made.</li>
 </ul>
 </td>
 </tr>
@@ -3530,7 +3550,7 @@ exits.</p>
         <li class="right" >
           <a href="../installation.html" title="Building the Development Version"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.5 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

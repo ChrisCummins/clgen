@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>CLgen Version Numbering &#8212; clgen 0.3.5 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.3.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="License" href="license.html" />
+    <link rel="prev" title="Command Line Interface" href="bin/index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="license.html" title="License"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="bin/index.html" title="Command Line Interface"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">clgen 0.3.5 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="clgen-version-numbering">
+<span id="clgen-version-numbering"></span><h1>CLgen Version Numbering<a class="headerlink" href="#clgen-version-numbering" title="Permalink to this headline">¶</a></h1>
+<p>The installed version is available from the command line:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span></span>$ clgen --version
+</pre></div>
+</div>
+<p>or from the API:</p>
+<div class="highlight-py"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">clgen</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clgen</span><span class="o">.</span><span class="n">version</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>CLgen uses a <code class="docutils literal"><span class="pre">&lt;major&gt;.&lt;minor&gt;.&lt;micro&gt;[.&lt;dev&gt;]</span></code> version numbering scheme. E.g.</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">clgen</span> <span class="pre">0.3.1</span></code> means major release 0, minor release 3, micro release 1.</li>
+<li><code class="docutils literal"><span class="pre">clgen</span> <span class="pre">0.2.10.dev0</span></code> means development version 0 of major release 0, minor release 2, micro release 10.</li>
+</ul>
+<p>CLgen uses versioned caches, using the path <code class="docutils literal"><span class="pre">~/.cache/clgen/&lt;major&gt;.&lt;minor&gt;.x</span></code>. This means that caches between different micro and development releases are shared.</p>
+<div class="section" id="release-schedule">
+<span id="release-schedule"></span><h2>Release Schedule<a class="headerlink" href="#release-schedule" title="Permalink to this headline">¶</a></h2>
+<p>There is no formal release schedule, but released versions follow the rough guidelines:</p>
+<ul class="simple">
+<li><strong>Development releases</strong> (e.g. <code class="docutils literal"><span class="pre">0.1.1</span></code> to <code class="docutils literal"><span class="pre">0.1.1.dev0</span></code>) are not tagged, so there is no &#8220;curl one-liner&#8221; installation scripts. They may be installed only by cloning the development repository. There may be multiple development releases per micro release.</li>
+<li><strong>Micro releases</strong> (e.g. <code class="docutils literal"><span class="pre">0.1.1</span></code> -&gt; <code class="docutils literal"><span class="pre">0.1.2</span></code>) micro releases (and all other release types) are tagged, so that they may be installed using versioned <code class="docutils literal"><span class="pre">install-{deps,cpu,cuda}.sh</span></code> scripts. Changes between micro releases may include bug fixes, refactors, and changes to command line and API usage.</li>
+<li><strong>Minor releases</strong> (e.g. <code class="docutils literal"><span class="pre">0.1.3</span></code> -&gt; <code class="docutils literal"><span class="pre">0.2.0</span></code>) any change which breaks compatibility of filesystem caches (e.g. everything under <code class="docutils literal"><span class="pre">~/.cache/clgen/&lt;major.&lt;minor&gt;.x</span></code>) <em>must</em> require a minor release.</li>
+<li><strong>Major releases</strong> (e.g. <code class="docutils literal"><span class="pre">0.10.23</span></code> -&gt; <code class="docutils literal"><span class="pre">1.0.0</span></code>) Who knows? This is still alpha software. Maybe a major release will be the time I sell the company and retire to the Bahamas. Thank you for participating in <a class="reference external" href="https://ourincrediblejourney.tumblr.com/">our incredible journey</a>.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">CLgen Version Numbering</a><ul>
+<li><a class="reference internal" href="#release-schedule">Release Schedule</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="bin/index.html"
+                        title="previous chapter">Command Line Interface</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="license.html"
+                        title="next chapter">License</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/versions.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="license.html" title="License"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="bin/index.html" title="Command Line Interface"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">clgen 0.3.5 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Chris Cummins.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.5.
+    </div>
+  </body>
+</html>
