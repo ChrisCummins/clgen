@@ -1,74 +1,76 @@
-# cldrive - Run arbitrary OpenCL kernels
+<div align="center">
+  <a href="https://github.com/ChrisCummins/clgen">
+    <img src="https://raw.githubusercontent.com/ChrisCummins/clgen/master/docs/assets/logo.png" width="420">
+  </a>
+</div>
 
-<a href="https://badge.fury.io/py/cldrive">
-  <img src="https://img.shields.io/pypi/v/cldrive.svg?colorB=green&style=flat">
-</a>
-<a href="https://travis-ci.org/ChrisCummins/cldrive" target="_blank">
-  <img src="https://img.shields.io/travis/ChrisCummins/cldrive/master.svg?style=flat">
-</a>
-<a href="http://chriscummins.cc/cldrive" target="_blank">
-  <img src="https://img.shields.io/badge/docs-latest-green.svg?style=flat">
-</a>
-<a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">
-  <img src="https://img.shields.io/badge/license-GNU%20GPL%20v3-blue.svg?style=flat">
-</a>
+-------
 
-## Requirements
-* OpenCL
-* Python >= 3.6
+<div align="center">
+  <a href="http://chriscummins.cc/clgen/" target="_blank">
+    <img src="https://img.shields.io/badge/docs-0.3.5-brightgreen.svg?style=flat">
+  </a>
+  <a href="https://travis-ci.org/ChrisCummins/clgen" target="_blank">
+    <img src="https://img.shields.io/travis/ChrisCummins/clgen/master.svg?style=flat">
+  </a>
+  <a href="https://coveralls.io/github/ChrisCummins/clgen?branch=master">
+    <img src="https://img.shields.io/coveralls/ChrisCummins/clgen/master.svg?style=flat">
+  </a>
+   <a href="https://github.com/ChrisCummins/clgen/releases" target="_blank">
+    <img src="https://img.shields.io/badge/release-0.3.5-blue.svg?style=flat">
+  </a>
+  <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">
+    <img src="https://img.shields.io/badge/license-GNU%20GPL%20v3-blue.svg?style=flat">
+  </a>
+</div>
 
-## Installation
+**CLgen** is an open source application for generating runnable programs using
+deep learning. CLgen *learns* to program using neural networks which model the
+semantics and usage from large volumes of program fragments, generating
+many-core OpenCL programs that are representative of, but *distinct* from, the
+programs it learns from.
+
+<img src="https://raw.githubusercontent.com/ChrisCummins/clgen/master/docs/assets/pipeline.png" width="500">
+
+
+## Getting Started
+
+See the [online documentation](http://chriscummins.cc/clgen/) for instructions
+on how to download and install CLgen.
+
+Download a tiny example dataset to train and sample your first CLgen model:
 
 ```sh
-$ pip install cldrive
+$ wget https://github.com/ChrisCummins/clgen/raw/master/tests/data/tiny.tar.bz2
+$ tar xf tiny.tar.bz2
+$ clgen model.json sampler.json
 ```
 
+<img src="https://raw.githubusercontent.com/ChrisCummins/clgen/master/docs/assets/clgen.gif" width="500">
 
-## Usage
 
-From the command line:
-```sh
-$ cat kernel.cl
-kernel void my_kernel(global int* a, global int* b) {
-    int tid = get_global_id(0);
-    a[tid] += 1;
-    b[tid] = a[tid] * 2;
-}
-$ cldrive < kernel.cl --devtype=gpu --generator=arange --size 12 -g 12,1,1 -l 4,1,1
-a: [ 1  2  3  4  5  6  7  8  9 10 11 12]
-b: [ 2  4  6  8 10 12 14 16 18 20 22 24]
-```
+## Resources
 
-From Python:
+Presentation slides:
 
-```py
-import cldrive
+<a href="https://speakerdeck.com/chriscummins/synthesizing-benchmarks-for-predictive-modelling-cgo-17">
+  <img src="https://raw.githubusercontent.com/ChrisCummins/clgen/master/docs/assets/slides.png" width="500">
+</a>
 
-# our OpenCL kernel to run:
-src = """
-    kernel void double_inputs(global int* data) {
-        data[get_global_id(0)] *= 2;
-    }
-"""
+Publication
+["Synthesizing Benchmarks for Predictive Modeling"](https://github.com/ChrisCummins/paper-synthesizing-benchmarks)
+(CGO'17).
 
-# the data to run it on:
-inputs = [[0, 1, 2, 3]]
+[Jupyter notebook](https://github.com/ChrisCummins/paper-synthesizing-benchmarks/blob/master/code/Paper.ipynb) containing experimental evaluation of
+CLgen.
 
-# create an OpenCL environment for the first available GPU:
-env = cldrive.make_env(devtype="gpu")
-
-# run kernel on the input:
-outputs = cldrive.drive(env, src, inputs, gsize=(4, 1, 1), lsize=(1, 1, 1))
-
-print(outputs)  # prints `[[0 2 4 6]]`
-```
-
-See the [API Documentation](http://chriscummins.cc/cldrive) for more details.
+Documentation for the [Python API](http://chriscummins.cc/clgen/api/) and
+[command line interface](http://chriscummins.cc/clgen/bin/).
 
 
 ## License
 
-Copyright 2017 Chris Cummins <chrisc.101@gmail.com>.
+Copyright 2016, 2017 Chris Cummins <chrisc.101@gmail.com>.
 
 Released under the terms of the GPLv3 license. See [LICENSE.txt](/LICENSE.txt)
 for details.
