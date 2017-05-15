@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen._model &#8212; clgen 0.3.5 documentation</title>
+    <title>clgen._model &#8212; clgen 0.3.6 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.5',
+        VERSION:     '0.3.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.5 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.6 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -77,6 +77,7 @@
 <span class="kn">import</span> <span class="nn">tarfile</span>
 
 <span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">time</span>
 
 <span class="kn">import</span> <span class="nn">progressbar</span>
@@ -85,32 +86,20 @@
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">fs</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">jsonutil</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">lockfile</span>
-<span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">system</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">types</span>
 
 <span class="kn">import</span> <span class="nn">clgen</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
 
 
-<div class="viewcode-block" id="get_default_author"><a class="viewcode-back" href="../../api/index.html#clgen._model.get_default_author">[docs]</a><span class="k">def</span> <span class="nf">get_default_author</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Get the default author name for CLgen dist models.</span>
-
-<span class="sd">    If CLGEN_AUTHOR environment variable is set, use that. Else, author</span>
-<span class="sd">    is $USER@$HOSTNAME.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        str: Author name.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-        <span class="s2">&quot;CLGEN_AUTHOR&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;</span><span class="si">{user}</span><span class="s2">@</span><span class="si">{host}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">system</span><span class="o">.</span><span class="n">USERNAME</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">system</span><span class="o">.</span><span class="n">HOSTNAME</span><span class="p">))</span></div>
-
-
 <span class="c1"># Default options used for model. Any values provided by the user will override</span>
 <span class="c1"># these defaults.</span>
 <span class="n">DEFAULT_MODEL_OPTS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;author&quot;</span><span class="p">:</span> <span class="n">get_default_author</span><span class="p">(),</span>
+    <span class="s2">&quot;created&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;author&quot;</span><span class="p">:</span> <span class="n">clgen</span><span class="o">.</span><span class="n">get_default_author</span><span class="p">(),</span>
+        <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()),</span>
+        <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">clgen</span><span class="o">.</span><span class="n">version</span><span class="p">(),</span>
+    <span class="p">},</span>
     <span class="s2">&quot;architecture&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;lstm&quot;</span><span class="p">,</span>  <span class="c1"># {lstm,rnn.gru}</span>
         <span class="s2">&quot;rnn_size&quot;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>  <span class="c1"># num nodes in layer</span>
@@ -148,6 +137,7 @@
         <span class="k">def</span> <span class="nf">_hash</span><span class="p">(</span><span class="n">corpus</span><span class="p">:</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Corpus</span><span class="p">,</span> <span class="n">opts</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
             <span class="sd">&quot;&quot;&quot; compute model hash &quot;&quot;&quot;</span>
             <span class="n">hashopts</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">opts</span><span class="p">)</span>
+            <span class="k">del</span> <span class="n">hashopts</span><span class="p">[</span><span class="s2">&quot;created&quot;</span><span class="p">]</span>
             <span class="k">del</span> <span class="n">hashopts</span><span class="p">[</span><span class="s2">&quot;train_opts&quot;</span><span class="p">][</span><span class="s2">&quot;epochs&quot;</span><span class="p">]</span>
             <span class="k">return</span> <span class="n">crypto</span><span class="o">.</span><span class="n">sha1_list</span><span class="p">(</span><span class="n">corpus</span><span class="o">.</span><span class="n">hash</span><span class="p">,</span> <span class="o">*</span><span class="n">types</span><span class="o">.</span><span class="n">dict_values</span><span class="p">(</span><span class="n">hashopts</span><span class="p">))</span>
 
@@ -179,13 +169,24 @@
             <span class="n">cached_meta</span> <span class="o">=</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;META&quot;</span><span class="p">])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stats</span> <span class="o">=</span> <span class="n">cached_meta</span><span class="p">[</span><span class="s2">&quot;stats&quot;</span><span class="p">]</span>  <span class="c1"># restore stats</span>
 
-            <span class="k">del</span> <span class="n">cached_meta</span><span class="p">[</span><span class="s2">&quot;stats&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s2">&quot;created&quot;</span> <span class="ow">in</span> <span class="n">cached_meta</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">cached_meta</span><span class="p">[</span><span class="s2">&quot;created&quot;</span><span class="p">]</span>
+            <span class="k">del</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;created&quot;</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="s2">&quot;created&quot;</span> <span class="ow">in</span> <span class="n">cached_meta</span><span class="p">[</span><span class="s2">&quot;corpus&quot;</span><span class="p">]:</span>
+                <span class="k">del</span> <span class="n">cached_meta</span><span class="p">[</span><span class="s2">&quot;corpus&quot;</span><span class="p">][</span><span class="s2">&quot;created&quot;</span><span class="p">]</span>
+            <span class="k">del</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;corpus&quot;</span><span class="p">][</span><span class="s2">&quot;created&quot;</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="s2">&quot;stats&quot;</span> <span class="ow">in</span> <span class="n">cached_meta</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">cached_meta</span><span class="p">[</span><span class="s2">&quot;stats&quot;</span><span class="p">]</span>
             <span class="k">del</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;stats&quot;</span><span class="p">]</span>
 
-            <span class="k">del</span> <span class="n">cached_meta</span><span class="p">[</span><span class="s2">&quot;train_opts&quot;</span><span class="p">][</span><span class="s2">&quot;epochs&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s2">&quot;epochs&quot;</span> <span class="ow">in</span> <span class="n">cached_meta</span><span class="p">[</span><span class="s2">&quot;train_opts&quot;</span><span class="p">]:</span>
+                <span class="k">del</span> <span class="n">cached_meta</span><span class="p">[</span><span class="s2">&quot;train_opts&quot;</span><span class="p">][</span><span class="s2">&quot;epochs&quot;</span><span class="p">]</span>
             <span class="k">del</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;train_opts&quot;</span><span class="p">][</span><span class="s2">&quot;epochs&quot;</span><span class="p">]</span>
 
             <span class="k">if</span> <span class="n">meta</span> <span class="o">!=</span> <span class="n">cached_meta</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Computed META:&quot;</span><span class="p">,</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">format_json</span><span class="p">(</span><span class="n">meta</span><span class="p">))</span>
                 <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">InternalError</span><span class="p">(</span>
                     <span class="s2">&quot;metadata mismatch in model </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="s2">&quot;META&quot;</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
@@ -526,7 +527,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.5 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.6 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>
