@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Index &#8212; clgen 0.3.7 documentation</title>
+    <title>Index &#8212; clgen 0.3.8 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.3.7',
+        VERSION:     '0.3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">clgen 0.3.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">clgen 0.3.8 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -88,8 +88,6 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/index.html#clgen.clutil.KernelPrototype.args">args (clgen.clutil.KernelPrototype attribute)</a>
-</li>
-      <li><a href="api/index.html#clgen.cli.ArgumentParser">ArgumentParser (class in clgen.cli)</a>
 </li>
       <li><a href="api/index.html#clgen._atomizer.Atomizer.atomize">atomize() (clgen._atomizer.Atomizer method)</a>
 
@@ -311,13 +309,15 @@
 </li>
       <li><a href="api/index.html#clgen.get_default_author">get_default_author() (in module clgen)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/index.html#clgen.dbutil.get_kernel">get_kernel() (in module clgen.dbutil)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/index.html#clgen._corpus.get_kernel_features">get_kernel_features() (in module clgen._corpus)</a>
 </li>
       <li><a href="api/index.html#clgen.dbutil.get_meta">get_meta() (in module clgen.dbutil)</a>
+</li>
+      <li><a href="api/index.html#clgen.cli.getself">getself() (in module clgen.cli)</a>
 </li>
       <li><a href="api/index.html#clgen._preprocess.gpuverify">gpuverify() (in module clgen._preprocess)</a>
 </li>
@@ -417,12 +417,8 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/index.html#clgen.main">main() (in module clgen)</a>
-
-      <ul>
-        <li><a href="api/index.html#clgen.cli.main">(in module clgen.cli)</a>
+      <li><a href="api/index.html#clgen.cli.main">main() (in module clgen.cli)</a>
 </li>
-      </ul></li>
       <li><a href="api/index.html#clgen.version_info_t.major">major (clgen.version_info_t attribute)</a>
 </li>
       <li><a href="api/index.html#clgen.dbutil.md5sum_aggregator">md5sum_aggregator (class in clgen.dbutil)</a>
@@ -439,10 +435,10 @@
 </li>
       <li><a href="api/index.html#clgen._sampler.SampleConsumer.min_kernels_progress">min_kernels_progress() (clgen._sampler.SampleConsumer method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/index.html#clgen._sampler.Sampler.min_samples">min_samples (clgen._sampler.Sampler attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/index.html#clgen._sampler.SampleConsumer.min_samples_cond">min_samples_cond() (clgen._sampler.SampleConsumer method)</a>
 </li>
       <li><a href="api/index.html#clgen._sampler.SampleConsumer.min_samples_progress">min_samples_progress() (clgen._sampler.SampleConsumer method)</a>
@@ -456,6 +452,10 @@
       <li><a href="api/index.html#clgen._model.Model.model_type">model_type (clgen._model.Model attribute)</a>
 </li>
       <li><a href="api/index.html#clgen._model.ModelError">ModelError</a>
+</li>
+      <li><a href="api/index.html#clgen._model.models">models() (in module clgen._model)</a>
+</li>
+      <li><a href="api/index.html#clgen._model.models_to_tab">models_to_tab() (in module clgen._model)</a>
 </li>
       <li><a href="api/index.html#clgen._corpus.Corpus.most_common_prototypes">most_common_prototypes() (clgen._corpus.Corpus method)</a>
 </li>
@@ -521,8 +521,6 @@
 </li>
       <li><a href="api/index.html#clgen.package_str">package_str() (in module clgen)</a>
 </li>
-      <li><a href="api/index.html#clgen.cli.ArgumentParser.parse_args">parse_args() (clgen.cli.ArgumentParser method)</a>
-</li>
       <li><a href="api/index.html#clgen._preprocess.parse_instcounts">parse_instcounts() (in module clgen._preprocess)</a>
 </li>
       <li><a href="api/index.html#clgen.platform_info">platform_info() (in module clgen)</a>
@@ -542,8 +540,6 @@
       <li><a href="api/index.html#clgen._corpus.Corpus.preprocessed">preprocessed() (clgen._corpus.Corpus method)</a>
 </li>
       <li><a href="api/index.html#clgen._preprocess.PreprocessWorker">PreprocessWorker (class in clgen._preprocess)</a>
-</li>
-      <li><a href="api/index.html#clgen.cli.print_version_and_exit">print_version_and_exit() (in module clgen.cli)</a>
 </li>
       <li><a href="api/index.html#clgen._fetch.process_cl_file">process_cl_file() (in module clgen._fetch)</a>
 </li>
@@ -573,10 +569,10 @@
 </li>
       <li><a href="api/index.html#clgen._preprocess.rewrite_cl">rewrite_cl() (in module clgen._preprocess)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/index.html#clgen._preprocess.RewriterException">RewriterException</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/index.html#clgen._model.Model.rnn_size">rnn_size (clgen._model.Model attribute)</a>
 </li>
       <li><a href="api/index.html#clgen._preprocess.PreprocessWorker.run">run() (clgen._preprocess.PreprocessWorker method)</a>
@@ -585,6 +581,8 @@
         <li><a href="api/index.html#clgen._sampler.SampleConsumer.run">(clgen._sampler.SampleConsumer method)</a>
 </li>
         <li><a href="api/index.html#clgen._sampler.SampleProducer.run">(clgen._sampler.SampleProducer method)</a>
+</li>
+        <li><a href="api/index.html#clgen.cli.run">(in module clgen.cli)</a>
 </li>
       </ul></li>
       <li><a href="api/index.html#clgen.dbutil.run_script">run_script() (in module clgen.dbutil)</a>
@@ -617,6 +615,14 @@
 </li>
       <li><a href="api/index.html#clgen.dbutil.set_version_meta">set_version_meta() (in module clgen.dbutil)</a>
 </li>
+      <li><a href="api/index.html#clgen._corpus.Corpus.shorthash">shorthash (clgen._corpus.Corpus attribute)</a>
+
+      <ul>
+        <li><a href="api/index.html#clgen._model.Model.shorthash">(clgen._model.Model attribute)</a>
+</li>
+        <li><a href="api/index.html#clgen._sampler.Sampler.shorthash">(clgen._sampler.Sampler attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/index.html#clgen._corpus.Corpus.size">size (clgen._corpus.Corpus attribute)</a>
@@ -757,7 +763,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">clgen 0.3.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">clgen 0.3.8 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

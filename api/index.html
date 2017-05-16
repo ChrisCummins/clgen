@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Python API &#8212; clgen 0.3.7 documentation</title>
+    <title>Python API &#8212; clgen 0.3.8 documentation</title>
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.3.7',
+        VERSION:     '0.3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../installation.html" title="Building the Development Version"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.8 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -164,30 +164,6 @@ is <a class="reference external" href="mailto:$USER&#37;&#52;&#48;$HOSTNAME">$US
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">str</span></code></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="clgen.main">
-<code class="descclassname">clgen.</code><code class="descname">main</code><span class="sig-paren">(</span><em>model</em>, <em>sampler</em>, <em>print_file_list=False</em>, <em>print_corpus_dir=False</em>, <em>print_model_dir=False</em>, <em>print_sampler_dir=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.main" title="Permalink to this definition">¶</a></dt>
-<dd><p>Main entry point for clgen.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>model</strong> (<em>str</em>) &#8211; Path to model.</li>
-<li><strong>sample</strong> (<em>str</em>) &#8211; Path to sampler.</li>
-<li><strong>print_corpus_dir</strong> (<em>bool</em><em>, </em><em>optional</em>) &#8211; If True, print cache path and exit.</li>
-<li><strong>print_model_dir</strong> (<em>bool</em><em>, </em><em>optional</em>) &#8211; If True, print cache path and exit.</li>
-<li><strong>print_sampler_dir</strong> (<em>bool</em><em>, </em><em>optional</em>) &#8211; If True, print cache path and exit.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="docutils literal"><span class="pre">None</span></code></p>
-</td>
 </tr>
 </tbody>
 </table>
@@ -563,7 +539,7 @@ is <a class="reference external" href="mailto:$USER&#37;&#52;&#48;$HOSTNAME">$US
 
 <dl class="staticmethod">
 <dt id="clgen._atomizer.GreedyAtomizer.from_text">
-<em class="property">static </em><code class="descname">from_text</code><span class="sig-paren">(</span><em>atoms={'auto'</em>, <em>'abs'</em>, <em>'switch'</em>, <em>'union'</em>, <em>'image1d_t'</em>, <em>'break'</em>, <em>'global'</em>, <em>'clamp'</em>, <em>'__inline'</em>, <em>'int'</em>, <em>'complex'</em>, <em>'float'</em>, <em>'read_write'</em>, <em>'ulong'</em>, <em>'uchar'</em>, <em>'include'</em>, <em>'default'</em>, <em>'__attribute'</em>, <em>'elif'</em>, <em>'image2d_array_t'</em>, <em>'image1d_buffer_t'</em>, <em>'enum'</em>, <em>'inline'</em>, <em>'case'</em>, <em>'constant'</em>, <em>'ifdef'</em>, <em>'image1d_array_t'</em>, <em>'while'</em>, <em>'get_num_groups'</em>, <em>'short'</em>, <em>'read_only'</em>, <em>'void'</em>, <em>'typedef'</em>, <em>'barrier'</em>, <em>'bool'</em>, <em>'__clc_fma'</em>, <em>'continue'</em>, <em>'volatile'</em>, <em>'event_t'</em>, <em>'__builtin_astype'</em>, <em>'char'</em>, <em>'error'</em>, <em>'half'</em>, <em>'__read_only'</em>, <em>'  '</em>, <em>'image2d_t'</em>, <em>'register'</em>, <em>'get_global_id'</em>, <em>'/*'</em>, <em>'if'</em>, <em>'signed'</em>, <em>'__global'</em>, <em>'size_t'</em>, <em>'noreturn'</em>, <em>'undef'</em>, <em>'__read_write'</em>, <em>'__write_only'</em>, <em>'*/'</em>, <em>'false'</em>, <em>'local'</em>, <em>'__local'</em>, <em>'true'</em>, <em>'line'</em>, <em>'restrict'</em>, <em>'private'</em>, <em>'sampler_t'</em>, <em>'__constant'</em>, <em>'long'</em>, <em>'imaginary'</em>, <em>'do'</em>, <em>'shuffle'</em>, <em>'alignof'</em>, <em>'get_local_id'</em>, <em>'struct'</em>, <em>'__kernel'</em>, <em>'//'</em>, <em>'else'</em>, <em>'__private'</em>, <em>'define'</em>, <em>'endif'</em>, <em>'uint'</em>, <em>'into'</em>, <em>'image3d_t'</em>, <em>'ifndef'</em>, <em>'kernel'</em>, <em>'const'</em>, <em>'get_global_size'</em>, <em>'__clc_fabs'</em>, <em>'return'</em>, <em>'wide'</em>, <em>'__assert'</em>, <em>'defined'</em>, <em>'atomic_add'</em>, <em>'write_only'</em>, <em>'sqrt'</em>, <em>'goto'</em>, <em>'sizeof'</em>, <em>'pragma'</em>, <em>'alignas'</em>, <em>'u32'</em>, <em>'static'</em>, <em>'quad'</em>, <em>'extern'</em>, <em>'double'</em>, <em>'for'</em>, <em>'unsigned'</em>, <em>'fabs'</em>, <em>'get_local_size'}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_atomizer.html#GreedyAtomizer.from_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._atomizer.GreedyAtomizer.from_text" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">from_text</code><span class="sig-paren">(</span><em>atoms={'__clc_fma'</em>, <em>'long'</em>, <em>'ifndef'</em>, <em>'private'</em>, <em>'write_only'</em>, <em>'get_local_size'</em>, <em>'atomic_add'</em>, <em>'*/'</em>, <em>'while'</em>, <em>'restrict'</em>, <em>'__kernel'</em>, <em>'into'</em>, <em>'undef'</em>, <em>'/*'</em>, <em>'__assert'</em>, <em>'image3d_t'</em>, <em>'get_global_size'</em>, <em>'do'</em>, <em>'sizeof'</em>, <em>'image1d_t'</em>, <em>'volatile'</em>, <em>'__global'</em>, <em>'read_write'</em>, <em>'break'</em>, <em>'__local'</em>, <em>'u32'</em>, <em>'union'</em>, <em>'defined'</em>, <em>'return'</em>, <em>'sampler_t'</em>, <em>'__inline'</em>, <em>'get_num_groups'</em>, <em>'clamp'</em>, <em>'for'</em>, <em>'__builtin_astype'</em>, <em>'include'</em>, <em>'endif'</em>, <em>'fabs'</em>, <em>'bool'</em>, <em>'size_t'</em>, <em>'register'</em>, <em>'if'</em>, <em>'  '</em>, <em>'ifdef'</em>, <em>'imaginary'</em>, <em>'ulong'</em>, <em>'__private'</em>, <em>'read_only'</em>, <em>'alignof'</em>, <em>'uint'</em>, <em>'switch'</em>, <em>'elif'</em>, <em>'sqrt'</em>, <em>'image2d_array_t'</em>, <em>'line'</em>, <em>'char'</em>, <em>'quad'</em>, <em>'int'</em>, <em>'case'</em>, <em>'get_global_id'</em>, <em>'event_t'</em>, <em>'barrier'</em>, <em>'continue'</em>, <em>'float'</em>, <em>'local'</em>, <em>'complex'</em>, <em>'else'</em>, <em>'noreturn'</em>, <em>'unsigned'</em>, <em>'default'</em>, <em>'pragma'</em>, <em>'typedef'</em>, <em>'struct'</em>, <em>'enum'</em>, <em>'half'</em>, <em>'void'</em>, <em>'uchar'</em>, <em>'true'</em>, <em>'define'</em>, <em>'alignas'</em>, <em>'false'</em>, <em>'__constant'</em>, <em>'const'</em>, <em>'__clc_fabs'</em>, <em>'signed'</em>, <em>'kernel'</em>, <em>'shuffle'</em>, <em>'image1d_buffer_t'</em>, <em>'abs'</em>, <em>'//'</em>, <em>'constant'</em>, <em>'goto'</em>, <em>'auto'</em>, <em>'__write_only'</em>, <em>'__read_write'</em>, <em>'wide'</em>, <em>'__read_only'</em>, <em>'__attribute'</em>, <em>'error'</em>, <em>'short'</em>, <em>'static'</em>, <em>'image1d_array_t'</em>, <em>'inline'</em>, <em>'image2d_t'</em>, <em>'get_local_id'</em>, <em>'double'</em>, <em>'extern'</em>, <em>'global'}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_atomizer.html#GreedyAtomizer.from_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._atomizer.GreedyAtomizer.from_text" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -592,35 +568,20 @@ is <a class="reference external" href="mailto:$USER&#37;&#52;&#48;$HOSTNAME">$US
 <div class="section" id="module-clgen.cli">
 <span id="clgen-cli"></span><h2>clgen.cli<a class="headerlink" href="#module-clgen.cli" title="Permalink to this headline">¶</a></h2>
 <p>Command line interface to clgen.</p>
-<dl class="class">
-<dt id="clgen.cli.ArgumentParser">
-<em class="property">class </em><code class="descclassname">clgen.cli.</code><code class="descname">ArgumentParser</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cli.html#ArgumentParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cli.ArgumentParser" title="Permalink to this definition">¶</a></dt>
-<dd><p>CLgen specialized argument parser.</p>
-<dl class="docutils">
-<dt>Differs from python argparse.ArgumentParser in the following areas:</dt>
-<dd><ul class="first last simple">
-<li>Adds an optional <cite>&#8211;verbose</cite> flag and initializes the logging engine.</li>
-<li>Adds a <cite>&#8211;debug</cite> flag for more verbose crashes.</li>
-<li>Adds a <cite>&#8211;profile</cite> flag for internal profiling.</li>
-<li>Adds an optional <cite>&#8211;version</cite> flag which prints version information and
-quits.</li>
-<li>Defaults to using raw formatting for help strings, which disables line
-wrapping and whitespace squeezing.</li>
-<li>Appends author information to description.</li>
-</ul>
-</dd>
-</dl>
-<dl class="method">
-<dt id="clgen.cli.ArgumentParser.parse_args">
-<code class="descname">parse_args</code><span class="sig-paren">(</span><em>args=['-b', 'html', '-d', '_build/doctrees', '.', '_build/html'], namespace=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cli.html#ArgumentParser.parse_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cli.ArgumentParser.parse_args" title="Permalink to this definition">¶</a></dt>
-<dd><p>See python argparse.ArgumentParser.parse_args().</p>
-</dd></dl>
-
+<dl class="function">
+<dt id="clgen.cli.getself">
+<code class="descclassname">clgen.cli.</code><code class="descname">getself</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cli.html#getself"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cli.getself" title="Permalink to this definition">¶</a></dt>
+<dd><p>decorator to pass function as first argument to function</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="clgen.cli.main">
-<code class="descclassname">clgen.cli.</code><code class="descname">main</code><span class="sig-paren">(</span><em>method</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cli.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cli.main" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.cli.</code><code class="descname">main</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cli.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cli.main" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="clgen.cli.run">
+<code class="descclassname">clgen.cli.</code><code class="descname">run</code><span class="sig-paren">(</span><em>method</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cli.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cli.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs the given method as the main entrypoint to a program.</p>
 <p>If an exception is thrown, print error message and exit.</p>
 <p>If environmental variable DEBUG=1, then exception is not caught.</p>
@@ -640,12 +601,6 @@ wrapping and whitespace squeezing.</li>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="function">
-<dt id="clgen.cli.print_version_and_exit">
-<code class="descclassname">clgen.cli.</code><code class="descname">print_version_and_exit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/cli.html#print_version_and_exit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.cli.print_version_and_exit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the clgen version. This function does not return.</p>
 </dd></dl>
 
 </div>
@@ -1427,6 +1382,11 @@ kernel.</p>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="clgen._corpus.Corpus.shorthash">
+<code class="descname">shorthash</code><a class="headerlink" href="#clgen._corpus.Corpus.shorthash" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
 <dt id="clgen._corpus.Corpus.size">
 <code class="descname">size</code><a class="headerlink" href="#clgen._corpus.Corpus.size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the atomized size of the corpus.</p>
@@ -2105,7 +2065,7 @@ tarball with the same name, unpack it.</p>
 
 <dl class="function">
 <dt id="clgen.dbutil.set_version_meta">
-<code class="descclassname">clgen.dbutil.</code><code class="descname">set_version_meta</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.3.5.dev0'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#set_version_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.set_version_meta" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.dbutil.</code><code class="descname">set_version_meta</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.3.7.dev0'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#set_version_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.set_version_meta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the &#8220;version&#8221; key in an database.</p>
 <p>This is useful for marking version requirements of specific datasets, e.g.
 a databse schema which requires a particular CLgen version, or a scheme
@@ -2181,7 +2141,7 @@ which is likely to change in the future.</p>
 
 <dl class="function">
 <dt id="clgen.dbutil.version_meta_matches">
-<code class="descclassname">clgen.dbutil.</code><code class="descname">version_meta_matches</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.3.5.dev0'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#version_meta_matches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.version_meta_matches" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.dbutil.</code><code class="descname">version_meta_matches</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.3.7.dev0'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#version_meta_matches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.version_meta_matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check that the &#8220;version&#8221; key in a database matches the expected value.</p>
 <p>If the database does not have a &#8220;version&#8221; key in the Meta table, returns
 False.</p>
@@ -2689,7 +2649,8 @@ This function does not return.</p>
 <dl class="attribute">
 <dt id="clgen._model.Model.lock">
 <code class="descname">lock</code><a class="headerlink" href="#clgen._model.Model.lock" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><em>rtype</em> &#8211; <code class="xref py py-class docutils literal"><span class="pre">LockFile</span></code></p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="clgen._model.Model.model_type">
@@ -2708,6 +2669,11 @@ This function does not return.</p>
 <code class="descname">rnn_size</code><a class="headerlink" href="#clgen._model.Model.rnn_size" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>rtype</em> &#8211; <code class="xref py py-class docutils literal"><span class="pre">int</span></code></p>
 </dd></dl>
+
+<dl class="attribute">
+<dt id="clgen._model.Model.shorthash">
+<code class="descname">shorthash</code><a class="headerlink" href="#clgen._model.Model.shorthash" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="clgen._model.Model.to_json">
@@ -2734,6 +2700,8 @@ This function does not return.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#clgen._model.Model" title="clgen._model.Model">Model</a></td>
 </tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#clgen._model.Model" title="clgen._model.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a></td>
+</tr>
 </tbody>
 </table>
 </dd></dl>
@@ -2750,6 +2718,44 @@ This function does not return.</p>
 <dt id="clgen._model.ModelError">
 <em class="property">exception </em><code class="descclassname">clgen._model.</code><code class="descname">ModelError</code><a class="reference internal" href="../_modules/clgen/_model.html#ModelError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._model.ModelError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Module level error</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen._model.models">
+<code class="descclassname">clgen._model.</code><code class="descname">models</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_model.html#models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._model.models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate over all cached models.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An iterable over all cached models.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">Iterator[<a class="reference internal" href="#clgen._model.Model" title="clgen._model.Model">Model</a>]</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">Iterator</span></code>[<a class="reference internal" href="#clgen._model.Model" title="clgen._model.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="clgen._model.models_to_tab">
+<code class="descclassname">clgen._model.</code><code class="descname">models_to_tab</code><span class="sig-paren">(</span><em>*models</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_model.html#models_to_tab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._model.models_to_tab" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pretty print a table of model stats.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>models</strong> (<em>List</em><em>[</em><a class="reference internal" href="#clgen._model.Model" title="clgen._model.Model"><em>Model</em></a><em>]</em><em></em>) &#8211; Models to tablify.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Formatted table for printing.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">PrettyTable</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">PrettyTable</span></code></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -3441,6 +3447,11 @@ this number of attempts will be made.</li>
 </table>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="clgen._sampler.Sampler.shorthash">
+<code class="descname">shorthash</code><a class="headerlink" href="#clgen._sampler.Sampler.shorthash" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="clgen._sampler.Sampler.to_json">
 <code class="descname">to_json</code><span class="sig-paren">(</span><em>cache=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_sampler.html#Sampler.to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._sampler.Sampler.to_json" title="Permalink to this definition">¶</a></dt>
@@ -3550,7 +3561,7 @@ this number of attempts will be made.</li>
         <li class="right" >
           <a href="../installation.html" title="Building the Development Version"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.8 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

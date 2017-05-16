@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen &#8212; clgen 0.3.7 documentation</title>
+    <title>clgen &#8212; clgen 0.3.8 documentation</title>
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.3.7',
+        VERSION:     '0.3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.8 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -264,6 +264,29 @@
     <span class="k">return</span> <span class="n">must_exist</span><span class="p">(</span><span class="n">abspath</span><span class="p">)</span></div>
 
 
+<span class="k">def</span> <span class="nf">_shorthash</span><span class="p">(</span><span class="nb">hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cachedir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">min_len</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Truncate the hash to a shorter length, while maintaining uniqueness.</span>
+
+<span class="sd">    This returns the shortest hash required to uniquely identify all elements</span>
+<span class="sd">    in the cache.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        hash (str): Hash to truncate.</span>
+<span class="sd">        cachedir (str): Path to cache.</span>
+<span class="sd">        min_len (int, optional): Minimum length of hash to try.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Truncated hash.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">shorthash_len</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">min_len</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">hash</span><span class="p">)):</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[:</span><span class="n">shorthash_len</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fs</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="n">cachedir</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">entries</span><span class="p">)):</span>
+            <span class="k">break</span>
+
+    <span class="k">return</span> <span class="nb">hash</span><span class="p">[:</span><span class="n">shorthash_len</span><span class="p">]</span>
+
+
 <div class="viewcode-block" id="data_path"><a class="viewcode-back" href="../api/index.html#clgen.data_path">[docs]</a><span class="k">def</span> <span class="nf">data_path</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Path to package file.</span>
@@ -364,49 +387,6 @@
             <span class="nb">round</span><span class="p">(</span><span class="n">psutil</span><span class="o">.</span><span class="n">virtual_memory</span><span class="p">()</span><span class="o">.</span><span class="n">total</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)),</span> <span class="s2">&quot;MB&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../api/index.html#clgen.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sampler</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">print_file_list</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-         <span class="n">print_corpus_dir</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">print_model_dir</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-         <span class="n">print_sampler_dir</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Main entry point for clgen.</span>
-
-<span class="sd">    Arguments:</span>
-<span class="sd">        model (str): Path to model.</span>
-<span class="sd">        sample (str): Path to sampler.</span>
-<span class="sd">        print_corpus_dir (bool, optional): If True, print cache path and exit.</span>
-<span class="sd">        print_model_dir (bool, optional): If True, print cache path and exit.</span>
-<span class="sd">        print_sampler_dir (bool, optional): If True, print cache path and exit.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
-
-    <span class="n">model_json</span> <span class="o">=</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Model</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">model_json</span><span class="p">)</span>
-
-    <span class="n">sampler_json</span> <span class="o">=</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">sampler</span><span class="p">)</span>
-    <span class="n">sampler</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Sampler</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">sampler_json</span><span class="p">)</span>
-
-    <span class="c1"># print cache paths</span>
-    <span class="k">if</span> <span class="n">print_file_list</span><span class="p">:</span>
-        <span class="n">files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
-            <span class="n">fs</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">abspaths</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">+</span>
-            <span class="n">fs</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">abspaths</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">+</span>
-            <span class="n">fs</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">cache</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">abspaths</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">files</span><span class="p">))</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">print_corpus_dir</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">print_model_dir</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">print_sampler_dir</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">cache</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
-    <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">model</span><span class="p">)</span></div>
-
-
 <span class="c1"># package level imports</span>
 <span class="kn">from</span> <span class="nn">clgen._fetch</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">clgen._explore</span> <span class="k">import</span> <span class="o">*</span>
@@ -445,7 +425,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.8 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

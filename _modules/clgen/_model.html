@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen._model &#8212; clgen 0.3.7 documentation</title>
+    <title>clgen._model &#8212; clgen 0.3.8 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.7',
+        VERSION:     '0.3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.8 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -72,21 +72,21 @@
 <span class="sd">CLgen model.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">progressbar</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">tarfile</span>
 
 <span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
-<span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">time</span>
-
-<span class="kn">import</span> <span class="nn">progressbar</span>
-
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">crypto</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">fs</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">jsonutil</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">lockfile</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">types</span>
+<span class="kn">from</span> <span class="nn">prettytable</span> <span class="k">import</span> <span class="n">PrettyTable</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">time</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span>
 
 <span class="kn">import</span> <span class="nn">clgen</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
@@ -192,8 +192,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_flush_meta</span><span class="p">()</span>
 
-
-    <span class="k">def</span> <span class="nf">_init_tensorflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infer</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_init_tensorflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infer</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;tf&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Deferred importing of tensorflow and initializing model for training</span>
 <span class="sd">        or sampling.</span>
@@ -282,7 +281,6 @@
 
         <span class="k">return</span> <span class="n">tf</span>
 
-
     <span class="k">def</span> <span class="nf">_get_params_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ckpt</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; return path to checkpoint closest to target num of epochs &quot;&quot;&quot;</span>
         <span class="n">paths</span> <span class="o">=</span> <span class="n">ckpt</span><span class="o">.</span><span class="n">all_model_checkpoint_paths</span>
@@ -301,8 +299,7 @@
 
         <span class="k">return</span> <span class="n">closest_path</span><span class="p">,</span> <span class="n">paths</span>
 
-
-    <span class="k">def</span> <span class="nf">_locked_train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_locked_train</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Model&#39;</span><span class="p">:</span>
         <span class="n">tf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_tensorflow</span><span class="p">(</span><span class="n">infer</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="c1"># training options</span>
@@ -389,12 +386,10 @@
 
         <span class="k">return</span> <span class="bp">self</span>
 
-
-    <span class="k">def</span> <span class="nf">_flush_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_flush_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">jsonutil</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">keypath</span><span class="p">(</span><span class="s2">&quot;META&quot;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_json</span><span class="p">())</span>
 
-
-<div class="viewcode-block" id="Model.train"><a class="viewcode-back" href="../../api/index.html#clgen._model.Model.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.train"><a class="viewcode-back" href="../../api/index.html#clgen._model.Model.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Model&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Train model.</span>
 
@@ -405,7 +400,11 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_locked_train</span><span class="p">()</span></div>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">lock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shorthash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">clgen</span><span class="o">.</span><span class="n">_shorthash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">,</span> <span class="n">clgen</span><span class="o">.</span><span class="n">cachepath</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lock</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">lockfile</span><span class="o">.</span><span class="n">LockFile</span><span class="p">:</span>
         <span class="n">lockpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">keypath</span><span class="p">(</span><span class="s2">&quot;LOCK&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">lockfile</span><span class="o">.</span><span class="n">LockFile</span><span class="p">(</span><span class="n">lockpath</span><span class="p">)</span>
 
@@ -437,13 +436,9 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        String representation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash</span>
-        <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rnn_size</span>
-        <span class="n">nlayers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_type</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
-        <span class="n">nepochs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">epochs</span>
-
-        <span class="k">return</span> <span class="s2">&quot;model[</span><span class="si">{hash}</span><span class="s2">]: </span><span class="si">{size}</span><span class="s2">x</span><span class="si">{nlayers}</span><span class="s2">x</span><span class="si">{nepochs}</span><span class="s2"> </span><span class="si">{model}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">())</span>
+        <span class="n">celltype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_type</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">f</span><span class="s2">&quot;model[</span><span class="si">{self.shorthash}</span><span class="s2">]: &quot;</span> <span class="o">+</span>
+                <span class="n">f</span><span class="s2">&quot;</span><span class="si">{self.rnn_size}</span><span class="s2">x</span><span class="si">{self.num_layers}</span><span class="s2">x</span><span class="si">{self.epochs}</span><span class="s2"> </span><span class="si">{celltype}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Model.to_json"><a class="viewcode-back" href="../../api/index.html#clgen._model.Model.to_json">[docs]</a>    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">)</span>
@@ -473,7 +468,6 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-
     <span class="nd">@staticmethod</span>
 <div class="viewcode-block" id="Model.from_json"><a class="viewcode-back" href="../../api/index.html#clgen._model.Model.from_json">[docs]</a>    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="n">model_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Model&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -497,6 +491,80 @@
             <span class="k">del</span> <span class="n">model_json</span><span class="p">[</span><span class="s2">&quot;stats&quot;</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="n">Model</span><span class="p">(</span><span class="n">corpus</span><span class="p">,</span> <span class="o">**</span><span class="n">model_json</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="models"><a class="viewcode-back" href="../../api/index.html#clgen._model.models">[docs]</a><span class="k">def</span> <span class="nf">models</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Model</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Iterate over all cached models.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Iterator[Model]: An iterable over all cached models.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">fs</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">cachepath</span><span class="p">(),</span> <span class="s2">&quot;model&quot;</span><span class="p">):</span>
+        <span class="n">modeldirs</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">cachepath</span><span class="p">(),</span> <span class="s2">&quot;model&quot;</span><span class="p">),</span> <span class="n">abspaths</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">modeldir</span> <span class="ow">in</span> <span class="n">modeldirs</span><span class="p">:</span>
+            <span class="n">meta</span> <span class="o">=</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">modeldir</span><span class="p">,</span> <span class="s2">&quot;META&quot;</span><span class="p">))</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">model</span></div>
+
+
+<div class="viewcode-block" id="models_to_tab"><a class="viewcode-back" href="../../api/index.html#clgen._model.models_to_tab">[docs]</a><span class="k">def</span> <span class="nf">models_to_tab</span><span class="p">(</span><span class="o">*</span><span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Model</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">PrettyTable</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pretty print a table of model stats.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        models (List[Model]): Models to tablify.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        PrettyTable: Formatted table for printing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tab</span> <span class="o">=</span> <span class="n">PrettyTable</span><span class="p">([</span>
+        <span class="s2">&quot;model&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;corpus&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;trained&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;nodes&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;epochs&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;lr&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dr&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;gc&quot;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="n">tab</span><span class="o">.</span><span class="n">align</span><span class="p">[</span><span class="s1">&#39;nodes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;r&#39;</span>
+    <span class="n">tab</span><span class="o">.</span><span class="n">sortby</span> <span class="o">=</span> <span class="s2">&quot;nodes&quot;</span>
+
+    <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
+
+        <span class="n">network</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{meta[&quot;architecture&quot;][&quot;rnn_size&quot;]}</span><span class="s1"> x </span><span class="si">{meta[&quot;architecture&quot;][&quot;num_layers&quot;]}</span><span class="s1">&#39;</span>
+
+        <span class="k">if</span> <span class="s2">&quot;stats&quot;</span> <span class="ow">in</span> <span class="n">meta</span><span class="p">:</span>
+            <span class="n">num_epochs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s2">&quot;stats&quot;</span><span class="p">][</span><span class="s2">&quot;epoch_costs&quot;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">num_epochs</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">num_epochs</span> <span class="o">&gt;=</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;train_opts&quot;</span><span class="p">][</span><span class="s2">&quot;epochs&quot;</span><span class="p">]:</span>
+            <span class="n">trained</span> <span class="o">=</span> <span class="s2">&quot;Y&quot;</span>
+        <span class="k">elif</span> <span class="n">fs</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;LOCK&quot;</span><span class="p">)):</span>
+            <span class="n">trained</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;WIP (</span><span class="si">{num_epochs}</span><span class="s2">/</span><span class="si">{meta[&#39;train_opts&#39;][&#39;epochs&#39;]}</span><span class="s2">)&quot;</span>
+        <span class="k">elif</span> <span class="n">num_epochs</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">trained</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{num_epochs}</span><span class="s2">/</span><span class="si">{meta[&#39;train_opts&#39;][&#39;epochs&#39;]}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">trained</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="n">tab</span><span class="o">.</span><span class="n">add_row</span><span class="p">([</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">shorthash</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">shorthash</span><span class="p">,</span>
+            <span class="n">trained</span><span class="p">,</span>
+            <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;architecture&quot;</span><span class="p">][</span><span class="s2">&quot;model_type&quot;</span><span class="p">],</span>
+            <span class="n">network</span><span class="p">,</span>
+            <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;train_opts&quot;</span><span class="p">][</span><span class="s2">&quot;epochs&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;</span><span class="si">{:.0e}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s2">&quot;train_opts&quot;</span><span class="p">][</span><span class="s2">&quot;learning_rate&quot;</span><span class="p">]),</span>
+            <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;train_opts&quot;</span><span class="p">][</span><span class="s2">&quot;lr_decay_rate&quot;</span><span class="p">],</span>
+            <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;train_opts&quot;</span><span class="p">][</span><span class="s2">&quot;grad_clip&quot;</span><span class="p">],</span>
+        <span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">tab</span></div>
 </pre></div>
 
           </div>
@@ -527,7 +595,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.8 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

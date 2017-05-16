@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen._corpus &#8212; clgen 0.3.7 documentation</title>
+    <title>clgen._corpus &#8212; clgen 0.3.8 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.7',
+        VERSION:     '0.3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.8 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -499,6 +499,10 @@
                                    <span class="bp">self</span><span class="o">.</span><span class="n">num_batches</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">shorthash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">clgen</span><span class="o">.</span><span class="n">_shorthash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">,</span> <span class="n">clgen</span><span class="o">.</span><span class="n">cachepath</span><span class="p">(</span><span class="s2">&quot;corpus&quot;</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">lock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">lockpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">keypath</span><span class="p">(</span><span class="s2">&quot;LOCK&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">lockfile</span><span class="o">.</span><span class="n">LockFile</span><span class="p">(</span><span class="n">lockpath</span><span class="p">)</span>
@@ -622,13 +626,10 @@
         <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">prototypes</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="nb">hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash</span>
         <span class="n">nf</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">num_good_kernels</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s1">&#39;kernels.db&#39;</span><span class="p">])</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;vocabulary&quot;</span><span class="p">]</span>
-        <span class="n">nt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomizer</span><span class="o">.</span><span class="n">vocab_size</span>
-        <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
-        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;corpus[</span><span class="si">{hash}</span><span class="s2">]: </span><span class="si">{nf}</span><span class="s2"> files, </span><span class="si">{size}</span><span class="s2"> tokens using </span><span class="si">{v}</span><span class="s2"> vocabulary of size </span><span class="si">{nt}</span><span class="s2">&quot;</span>
-                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">f</span><span class="s2">&quot;corpus[</span><span class="si">{self.shorthash}</span><span class="s2">]: </span><span class="si">{nf}</span><span class="s2"> files, </span><span class="si">{self.size}</span><span class="s2"> tokens &quot;</span> <span class="o">+</span>
+                <span class="n">f</span><span class="s2">&quot;using </span><span class="si">{self.opts[&#39;vocabulary&#39;]}</span><span class="s2"> vocabulary of size &quot;</span> <span class="o">+</span>
+                <span class="n">f</span><span class="s2">&quot;</span><span class="si">{self.atomizer.vocab_size}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Corpus.to_json"><a class="viewcode-back" href="../../api/index.html#clgen._corpus.Corpus.to_json">[docs]</a>    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">)</span>
@@ -710,7 +711,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.8 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.cli &#8212; clgen 0.3.7 documentation</title>
+    <title>clgen.cli &#8212; clgen 0.3.8 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.7',
+        VERSION:     '0.3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.8 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -71,103 +71,35 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Command line interface to clgen.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">cProfile</span>
 <span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">cProfile</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">traceback</span>
 
 <span class="kn">from</span> <span class="nn">argparse</span> <span class="k">import</span> <span class="n">RawTextHelpFormatter</span>
-<span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">fs</span><span class="p">,</span> <span class="n">prof</span>
+<span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">jsonutil</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">prof</span><span class="p">,</span> <span class="n">types</span>
 <span class="kn">from</span> <span class="nn">sys</span> <span class="k">import</span> <span class="n">exit</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>
 
 <span class="kn">import</span> <span class="nn">clgen</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">dbutil</span>
 
-
-<div class="viewcode-block" id="print_version_and_exit"><a class="viewcode-back" href="../../api/index.html#clgen.cli.print_version_and_exit">[docs]</a><span class="k">def</span> <span class="nf">print_version_and_exit</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Print the clgen version. This function does not return.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">version</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">version</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;clgen </span><span class="si">{version}</span><span class="s2"> made with </span><span class="se">\033</span><span class="s2">[1;31m♥</span><span class="se">\033</span><span class="s2">[0;0m by &quot;</span>
-           <span class="s2">&quot;Chris Cummins &lt;chrisc.101@gmail.com&gt;.&quot;</span><span class="p">)</span>
-    <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="ArgumentParser"><a class="viewcode-back" href="../../api/index.html#clgen.cli.ArgumentParser">[docs]</a><span class="k">class</span> <span class="nc">ArgumentParser</span><span class="p">(</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    CLgen specialized argument parser.</span>
-
-<span class="sd">    Differs from python argparse.ArgumentParser in the following areas:</span>
-<span class="sd">      * Adds an optional `--verbose` flag and initializes the logging engine.</span>
-<span class="sd">      * Adds a `--debug` flag for more verbose crashes.</span>
-<span class="sd">      * Adds a `--profile` flag for internal profiling.</span>
-<span class="sd">      * Adds an optional `--version` flag which prints version information and</span>
-<span class="sd">        quits.</span>
-<span class="sd">      * Defaults to using raw formatting for help strings, which disables line</span>
-<span class="sd">        wrapping and whitespace squeezing.</span>
-<span class="sd">      * Appends author information to description.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        See python argparse.ArgumentParser.__init__().</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># append author information to description</span>
-        <span class="n">description</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">description</span><span class="p">)</span> <span class="ow">and</span> <span class="n">description</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">:</span>
-            <span class="n">description</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">description</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="n">__help_epilog__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">Copyright (C) 2016, 2017 Chris Cummins &lt;chrisc.101@gmail.com&gt;.</span>
-<span class="s2">&lt;http://chriscummins.cc/clgen&gt;&quot;&quot;&quot;</span>
+<span class="s2">&lt;http://chriscummins.cc/clgen&gt;</span>
+<span class="s2">&quot;&quot;&quot;</span>
 
-        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">description</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
-
-        <span class="c1"># unless specified otherwise, use raw text formatter. This means</span>
-        <span class="c1"># that whitespace isn&#39;t squeed and lines aren&#39;t wrapped</span>
-        <span class="k">if</span> <span class="s2">&quot;formatter_class&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;formatter_class&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">RawTextHelpFormatter</span>
-
-        <span class="c1"># call built in ArgumentParser constructor.</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">ArgumentParser</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-        <span class="c1"># Add defualt arguments</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--version&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-                          <span class="n">help</span><span class="o">=</span><span class="s2">&quot;show version information and exit&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-                          <span class="n">help</span><span class="o">=</span><span class="s2">&quot;increase output verbosity&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--debug&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-                          <span class="n">help</span><span class="o">=</span><span class="s2">&quot;in case of error, print debugging information&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--profile&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-                          <span class="n">help</span><span class="o">=</span><span class="s2">&quot;enable internal API profiling&quot;</span><span class="p">)</span>
-
-<div class="viewcode-block" id="ArgumentParser.parse_args"><a class="viewcode-back" href="../../api/index.html#clgen.cli.ArgumentParser.parse_args">[docs]</a>    <span class="k">def</span> <span class="nf">parse_args</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">namespace</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        See python argparse.ArgumentParser.parse_args().</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># --version option overrides the normal argument parsing process.</span>
-        <span class="k">if</span> <span class="s2">&quot;--version&quot;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-            <span class="n">print_version_and_exit</span><span class="p">()</span>
-
-        <span class="c1"># parse args normally</span>
-        <span class="n">args_ns</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ArgumentParser</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">namespace</span><span class="p">)</span>
-
-        <span class="c1"># set log level</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">args_ns</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
-
-        <span class="c1"># set debug option</span>
-        <span class="k">if</span> <span class="n">args_ns</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span>
-
-        <span class="c1"># set profile option</span>
-        <span class="k">if</span> <span class="n">args_ns</span><span class="o">.</span><span class="n">profile</span><span class="p">:</span>
-            <span class="n">prof</span><span class="o">.</span><span class="n">enable</span><span class="p">()</span>
-
-        <span class="k">return</span> <span class="n">args_ns</span></div></div>
+<div class="viewcode-block" id="getself"><a class="viewcode-back" href="../../api/index.html#clgen.cli.getself">[docs]</a><span class="k">def</span> <span class="nf">getself</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; decorator to pass function as first argument to function &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">wrapper</span></div>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../api/index.html#clgen.cli.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="run"><a class="viewcode-back" href="../../api/index.html#clgen.cli.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Runs the given method as the main entrypoint to a program.</span>
 
@@ -226,15 +158,15 @@
         <span class="k">return</span> <span class="n">method</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">def</span> <span class="nf">run</span><span class="p">():</span>
+        <span class="k">def</span> <span class="nf">runctx</span><span class="p">():</span>
             <span class="n">method</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">prof</span><span class="o">.</span><span class="n">is_enabled</span><span class="p">():</span>
-            <span class="k">return</span> <span class="n">cProfile</span><span class="o">.</span><span class="n">runctx</span><span class="p">(</span><span class="s1">&#39;run()&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">locals</span><span class="p">(),</span> <span class="n">sort</span><span class="o">=</span><span class="s1">&#39;tottime&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">prof</span><span class="o">.</span><span class="n">is_enabled</span><span class="p">()</span> <span class="ow">and</span> <span class="n">log</span><span class="o">.</span><span class="n">is_verbose</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">cProfile</span><span class="o">.</span><span class="n">runctx</span><span class="p">(</span><span class="s1">&#39;runctx()&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">locals</span><span class="p">(),</span> <span class="n">sort</span><span class="o">=</span><span class="s1">&#39;tottime&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">run</span><span class="p">()</span>
-    <span class="k">except</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>  <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">runctx</span><span class="p">()</span>
+    <span class="k">except</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="nb">type</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>  <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
@@ -246,6 +178,600 @@
         <span class="n">_user_message</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">_user_message_with_stacktrace</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_version</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; print version and quit &quot;&quot;&quot;</span>
+    <span class="n">version</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">version</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;clgen </span><span class="si">{version}</span><span class="s2"> made with </span><span class="se">\033</span><span class="s2">[1;31m♥</span><span class="se">\033</span><span class="s2">[0;0m by &quot;</span>
+          <span class="s2">&quot;Chris Cummins &lt;chrisc.101@gmail.com&gt;.&quot;</span><span class="p">)</span>
+
+
+<span class="nd">@getself</span>
+<span class="k">def</span> <span class="nf">_test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run the CLgen self-test suite.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">clgen.test</span>  <span class="c1"># Must scope this import, as it breaks cache behaviour</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">coveragerc_path</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">coveragerc_path</span><span class="p">())</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">coverage_path</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">coverage_report_path</span><span class="p">())</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">testsuite</span><span class="p">())</span>
+
+
+<span class="nd">@getself</span>
+<span class="k">def</span> <span class="nf">_train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Train a CLgen model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_json</span> <span class="o">=</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Model</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">model_json</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;done.&quot;</span><span class="p">)</span>
+
+
+<span class="nd">@getself</span>
+<span class="k">def</span> <span class="nf">_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sample a model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_json</span> <span class="o">=</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Model</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">model_json</span><span class="p">)</span>
+
+    <span class="n">sampler_json</span> <span class="o">=</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Sampler</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">sampler_json</span><span class="p">)</span>
+
+    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+
+<span class="nd">@getself</span>
+<span class="k">def</span> <span class="nf">_fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Import OpenCL files into kernel datbase.</span>
+
+<span class="sd">    The kernel database is used as a staging ground for input files, which are</span>
+<span class="sd">    then preprocessed and assembled into corpuses. This program acts as the front</span>
+<span class="sd">    end, assembling files from the file system into a database for preprocessing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">db_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">)</span>
+
+    <span class="n">clgen</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">paths</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;done.&quot;</span><span class="p">)</span>
+
+
+<span class="nd">@getself</span>
+<span class="k">def</span> <span class="nf">_fetch_github</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Mines OpenCL kernels from Github. Requires the following environment</span>
+<span class="sd">    variables to be set:</span>
+
+<span class="sd">         GITHUB_USERNAME   github username</span>
+<span class="sd">         GITHUB_PW         github password</span>
+<span class="sd">         GITHUB_TOKEN      github api token</span>
+
+<span class="sd">    For instructions to generate an API token, see:</span>
+
+<span class="sd">      &lt;https://help.github.com/articles/creating-an-access-token-for-command-line-use/&gt;</span>
+
+<span class="sd">    This process issues thousands of GitHub API requests per minute. Please</span>
+<span class="sd">    exercise restrained in minimizing your use of this program -- we don&#39;t</span>
+<span class="sd">    want to upset the nice folks at GH :-)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">environ</span>
+    <span class="kn">from</span> <span class="nn">github</span> <span class="k">import</span> <span class="n">BadCredentialsException</span>
+
+    <span class="n">db_path</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">input</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">github_username</span> <span class="o">=</span> <span class="n">environ</span><span class="p">[</span><span class="s1">&#39;GITHUB_USERNAME&#39;</span><span class="p">]</span>
+        <span class="n">github_pw</span> <span class="o">=</span> <span class="n">environ</span><span class="p">[</span><span class="s1">&#39;GITHUB_PW&#39;</span><span class="p">]</span>
+        <span class="n">github_token</span> <span class="o">=</span> <span class="n">environ</span><span class="p">[</span><span class="s1">&#39;GITHUB_TOKEN&#39;</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s1">&#39;environment variable </span><span class="si">{}</span><span class="s1"> not set&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">fetch_github</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">github_username</span><span class="p">,</span> <span class="n">github_pw</span><span class="p">,</span> <span class="n">github_token</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">BadCredentialsException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s2">&quot;bad GitHub credentials&quot;</span><span class="p">)</span>
+
+
+<span class="nd">@getself</span>
+<span class="k">def</span> <span class="nf">_ls_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Import OpenCL files into kernel datbase.</span>
+
+<span class="sd">    The kernel database is used as a staging ground for input files, which are</span>
+<span class="sd">    then preprocessed and assembled into corpuses. This program acts as the front</span>
+<span class="sd">    end, assembling files from the file system into a database for preprocessing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_json</span> <span class="o">=</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Model</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">model_json</span><span class="p">)</span>
+
+    <span class="n">caches</span> <span class="o">=</span> <span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">cache</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">sampler</span><span class="p">:</span>
+        <span class="n">sampler_json</span> <span class="o">=</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="n">sampler</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Sampler</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">sampler_json</span><span class="p">)</span>
+        <span class="n">caches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">cache</span><span class="p">(</span><span class="n">model</span><span class="p">))</span>
+
+    <span class="n">files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+        <span class="n">types</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="n">abspaths</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">caches</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">files</span><span class="p">))</span>
+
+
+<span class="nd">@getself</span>
+<span class="k">def</span> <span class="nf">_ls_models</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    List all locally cached models.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">models_to_tab</span><span class="p">(</span><span class="o">*</span><span class="n">clgen</span><span class="o">.</span><span class="n">models</span><span class="p">()))</span>
+
+
+<span class="nd">@getself</span>
+<span class="k">def</span> <span class="nf">_ls_samplers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    List all locally cached samplers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;not implemented&quot;</span><span class="p">)</span>
+
+
+<span class="nd">@getself</span>
+<span class="k">def</span> <span class="nf">_db_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create an empty OpenCL kernel database.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dbutil</span><span class="o">.</span><span class="n">create_db</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">github</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">))</span>
+
+
+<span class="nd">@getself</span>
+<span class="k">def</span> <span class="nf">_db_explore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Exploratory analysis of preprocessed dataset.</span>
+
+<span class="sd">    Provides an overview of the contents of an OpenCL kernel database.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">clgen</span><span class="o">.</span><span class="n">explore</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">)</span>
+
+
+<span class="nd">@getself</span>
+<span class="k">def</span> <span class="nf">_db_merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Merge kernel datasets.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dbutil</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span>
+
+
+<span class="nd">@getself</span>
+<span class="k">def</span> <span class="nf">_preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process OpenCL files for machine learning.</span>
+
+<span class="sd">    This is a three step process. First, the OpenCL kernels are compiled to</span>
+<span class="sd">    bytecode, then the source files are preprocessed, before being rewritten.</span>
+
+<span class="sd">    Preprocessing is computationally demanding and highly paralellised.</span>
+<span class="sd">    Expect high resource contention during preprocessing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">file</span> <span class="ow">and</span> <span class="n">args</span><span class="o">.</span><span class="n">inplace</span><span class="p">:</span>
+        <span class="n">clgen</span><span class="o">.</span><span class="n">preprocess_inplace</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">inputs</span><span class="p">,</span> <span class="n">use_gpuverify</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">gpuverify</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">inputs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">:</span>
+                <span class="n">clgen</span><span class="o">.</span><span class="n">preprocess_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                      <span class="n">use_gpuverify</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">gpuverify</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">remove_bad_preprocessed</span><span class="p">:</span>
+                <span class="n">dbutil</span><span class="o">.</span><span class="n">remove_bad_preprocessed</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">remove_preprocessed</span><span class="p">:</span>
+                <span class="n">dbutil</span><span class="o">.</span><span class="n">remove_preprocessed</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;done.&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">clgen</span><span class="o">.</span><span class="n">preprocess_db</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">use_gpuverify</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">gpuverify</span><span class="p">):</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;done.&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;nothing to be done.&quot;</span><span class="p">)</span>
+
+
+<span class="nd">@getself</span>
+<span class="k">def</span> <span class="nf">_db_dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dump kernel dataset to file(s).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">opts</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;dir&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">d</span><span class="p">,</span>
+        <span class="s2">&quot;eof&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">eof</span><span class="p">,</span>
+        <span class="s2">&quot;fileid&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">i</span><span class="p">,</span>
+        <span class="s2">&quot;input_samples&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">input_samples</span><span class="p">,</span>
+        <span class="s2">&quot;reverse&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">r</span><span class="p">,</span>
+        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">status</span>
+    <span class="p">}</span>
+
+    <span class="n">dbutil</span><span class="o">.</span><span class="n">dump_db</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out_path</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span>
+
+
+<span class="nd">@getself</span>
+<span class="k">def</span> <span class="nf">_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract static OpenCL kernel features.</span>
+
+<span class="sd">    This extracts the static compile-time features of the paper:</span>
+
+<span class="sd">        Grewe, D., Wang, Z., &amp; O&#39;Boyle, M. F. P. M. (2013). Portable Mapping of</span>
+<span class="sd">        Data Parallel Programs to OpenCL for Heterogeneous Systems. In CGO. IEEE.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">features</span>
+
+    <span class="k">def</span> <span class="nf">features_dir</span><span class="p">(</span><span class="n">csv_path</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">fs</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">csv_path</span><span class="p">))</span>
+
+    <span class="n">inputs</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">inputs</span>
+    <span class="n">dir_mode</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">dir_mode</span>
+    <span class="n">summarise</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">stats</span>
+
+    <span class="k">if</span> <span class="n">summarise</span><span class="p">:</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="p">[</span><span class="n">features</span><span class="o">.</span><span class="n">summarize</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">]</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;dataset&#39;</span><span class="p">,</span> <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">stat</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">features_dir</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="n">stat</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">if</span> <span class="n">dir_mode</span><span class="p">:</span>
+        <span class="n">trees</span> <span class="o">=</span> <span class="p">[</span><span class="n">fs</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">abspaths</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">]</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">trees</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">]</span>
+
+    <span class="n">features</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">fatal_errors</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">fatal_errors</span><span class="p">,</span>
+                   <span class="n">use_shim</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">shim</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">quiet</span><span class="p">,</span>
+                   <span class="n">header</span><span class="o">=</span><span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">no_header</span><span class="p">)</span>
+
+
+<span class="nd">@getself</span>
+<span class="k">def</span> <span class="nf">_atomize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract and print corpus vocabulary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">must_exist</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">))</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">atoms</span> <span class="o">=</span> <span class="n">corpus</span><span class="o">.</span><span class="n">atomize</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">vocab</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;size:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">atoms</span><span class="p">))</span>
+
+
+<span class="nd">@getself</span>
+<span class="k">def</span> <span class="nf">_cache_migrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Refresh the cached model, corpus, and sampler IDs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cache</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">cachepath</span><span class="p">()</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Not Implemented: refresh corpuses&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">fs</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">cached_modeldir</span> <span class="ow">in</span> <span class="n">fs</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">),</span> <span class="n">abspaths</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">cached_model_id</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">cached_modeldir</span><span class="p">)</span>
+            <span class="n">cached_meta</span> <span class="o">=</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">cached_modeldir</span><span class="p">,</span> <span class="s2">&quot;META&quot;</span><span class="p">))</span>
+
+            <span class="n">model</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Model</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">cached_meta</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">cached_model_id</span> <span class="o">!=</span> <span class="n">model</span><span class="o">.</span><span class="n">hash</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">cached_model_id</span><span class="p">,</span> <span class="s1">&#39;-&gt;&#39;</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">fs</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">):</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;cache conflict&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="n">fs</span><span class="o">.</span><span class="n">mv</span><span class="p">(</span><span class="n">cached_modeldir</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Not Implemented: refresh samplers&quot;</span><span class="p">)</span>
+
+
+<span class="nd">@getself</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../api/index.html#clgen.cli.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A deep learning program generator for the OpenCL programming language.</span>
+
+<span class="sd">    The core operations of CLgen are:</span>
+
+<span class="sd">       1. OpenCL files are collected from a model specification file.</span>
+<span class="sd">       2. These files are preprocessed into an OpenCL kernel database.</span>
+<span class="sd">       3. A training corpus is generated from the input files.</span>
+<span class="sd">       4. A machine learning model is trained on the corpus of files.</span>
+<span class="sd">       5. The trained model is sampled for new kernels.</span>
+<span class="sd">       6. The samples are tested for compilability.</span>
+
+<span class="sd">    This program automates the execution of all six stages of the pipeline.</span>
+<span class="sd">    The pipeline can be interrupted and resumed at any time. Results are cached</span>
+<span class="sd">    across runs. If installed with CUDA support, NVIDIA GPUs will be used to</span>
+<span class="sd">    improve performance where possible.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;clgen&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
+        <span class="n">epilog</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">For information about a specific command, run `clgen &lt;command&gt; --help`.</span>
+
+<span class="s2">&quot;&quot;&quot;</span> <span class="o">+</span> <span class="n">__help_epilog__</span><span class="p">,</span>
+        <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawDescriptionHelpFormatter</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;increase output verbosity&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--version&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;show version information and exit&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--debug&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;in case of error, print debugging information&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--profile&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;enable internal API profiling. When combined with --verbose, &quot;</span>
+              <span class="s2">&quot;prints a complete profiling trace&quot;</span><span class="p">))</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--corpus-dir&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;corpus&gt;&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">FileType</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">),</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;print path to corpus cache&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--model-dir&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;model&gt;&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">FileType</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">),</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;print path to model cache&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--sampler-dir&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;&lt;model&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;sampler&gt;&quot;</span><span class="p">),</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">FileType</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">),</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;print path to sampler cache&quot;</span><span class="p">)</span>
+
+    <span class="n">subparser</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;available commands&quot;</span><span class="p">)</span>
+
+    <span class="c1"># test</span>
+    <span class="n">test</span> <span class="o">=</span> <span class="n">subparser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;run the testsuite&quot;</span><span class="p">,</span>
+                                <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="n">_test</span><span class="p">),</span>
+                                <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
+    <span class="n">test</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_test</span><span class="p">)</span>
+    <span class="n">group</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">add_mutually_exclusive_group</span><span class="p">()</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--coveragerc-path&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+                       <span class="n">help</span><span class="o">=</span><span class="s2">&quot;print path to coveragerc file&quot;</span><span class="p">)</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--coverage-path&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+                       <span class="n">help</span><span class="o">=</span><span class="s2">&quot;print path to coverage file&quot;</span><span class="p">)</span>
+
+    <span class="c1"># train</span>
+    <span class="n">train</span> <span class="o">=</span> <span class="n">subparser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="s2">&quot;tr&quot;</span><span class="p">],</span>
+                                 <span class="n">help</span><span class="o">=</span><span class="s2">&quot;train models&quot;</span><span class="p">,</span>
+                                 <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="n">_train</span><span class="p">),</span>
+                                 <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
+    <span class="n">train</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_train</span><span class="p">)</span>
+    <span class="n">train</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;model&gt;&quot;</span><span class="p">,</span>
+                       <span class="nb">type</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">FileType</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">),</span>
+                       <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to model specification file&quot;</span><span class="p">)</span>
+
+    <span class="c1"># sample</span>
+    <span class="n">sample</span> <span class="o">=</span> <span class="n">subparser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;sa&quot;</span><span class="p">],</span>
+                                  <span class="n">help</span><span class="o">=</span><span class="s2">&quot;train and sample models&quot;</span><span class="p">,</span>
+                                  <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="n">_sample</span><span class="p">),</span>
+                                  <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
+    <span class="n">sample</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_sample</span><span class="p">)</span>
+    <span class="n">sample</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;model&gt;&quot;</span><span class="p">,</span>
+                        <span class="nb">type</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">FileType</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">),</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to model specification file&quot;</span><span class="p">)</span>
+    <span class="n">sample</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;sampler&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;sampler&gt;&quot;</span><span class="p">,</span>
+                        <span class="nb">type</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">FileType</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">),</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to sampler specification file&quot;</span><span class="p">)</span>
+
+    <span class="c1"># fetch</span>
+    <span class="n">fetch</span> <span class="o">=</span> <span class="n">subparser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;fetch&quot;</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;f&quot;</span><span class="p">,</span> <span class="s2">&quot;fe&quot;</span><span class="p">],</span>
+                                 <span class="n">help</span><span class="o">=</span><span class="s2">&quot;gather training data&quot;</span><span class="p">,</span>
+                                 <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Fetch OpenCL kernels&quot;</span><span class="p">,</span>
+                                 <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
+    <span class="n">fetch_parser</span> <span class="o">=</span> <span class="n">fetch</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;available commands&quot;</span><span class="p">)</span>
+
+    <span class="n">fetch_fs</span> <span class="o">=</span> <span class="n">fetch_parser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;fs&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;fetch from filesystem&quot;</span><span class="p">,</span>
+                                       <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="n">_fetch</span><span class="p">),</span>
+                                       <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
+    <span class="n">fetch_fs</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_fetch</span><span class="p">)</span>
+    <span class="n">fetch_fs</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;db&gt;&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+                          <span class="n">help</span><span class="o">=</span><span class="s1">&#39;path to SQL dataset&#39;</span><span class="p">)</span>
+    <span class="n">fetch_fs</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;paths&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;path&gt;&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+                          <span class="n">help</span><span class="o">=</span><span class="s1">&#39;path to OpenCL files or directories&#39;</span><span class="p">)</span>
+
+    <span class="n">fetch_gh</span> <span class="o">=</span> <span class="n">fetch_parser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;github&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;mine OpenCL from GitHub&quot;</span><span class="p">,</span>
+                                       <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="n">_fetch_github</span><span class="p">),</span>
+                                       <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
+    <span class="n">fetch_gh</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_fetch_github</span><span class="p">)</span>
+    <span class="n">fetch_gh</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;db&gt;&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+                         <span class="n">help</span><span class="o">=</span><span class="s1">&#39;path to SQL dataset&#39;</span><span class="p">)</span>
+
+    <span class="c1"># ls</span>
+    <span class="n">ls</span> <span class="o">=</span> <span class="n">subparser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;ls&quot;</span><span class="p">,</span>
+                              <span class="n">help</span><span class="o">=</span><span class="s2">&quot;list files&quot;</span><span class="p">,</span>
+                              <span class="n">description</span><span class="o">=</span><span class="s2">&quot;list files&quot;</span><span class="p">,</span>
+                              <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
+    <span class="n">ls_parser</span> <span class="o">=</span> <span class="n">ls</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;available commands&quot;</span><span class="p">)</span>
+
+    <span class="n">ls_files</span> <span class="o">=</span> <span class="n">ls_parser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;files&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;list cached files&quot;</span><span class="p">,</span>
+                                    <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="n">_ls_files</span><span class="p">),</span>
+                                    <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
+    <span class="n">ls_files</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_ls_files</span><span class="p">)</span>
+    <span class="n">ls_files</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;model&gt;&quot;</span><span class="p">,</span>
+                          <span class="nb">type</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">FileType</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">),</span>
+                          <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to model specification file&quot;</span><span class="p">)</span>
+    <span class="n">ls_files</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;sampler&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;sampler&gt;&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;?&quot;</span><span class="p">,</span>
+                          <span class="nb">type</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">FileType</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">),</span>
+                          <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to sampler specification file&quot;</span><span class="p">)</span>
+
+    <span class="n">ls_models</span> <span class="o">=</span> <span class="n">ls_parser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;models&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;list cached models&quot;</span><span class="p">,</span>
+                                     <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="n">_ls_models</span><span class="p">),</span>
+                                     <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
+    <span class="n">ls_models</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_ls_models</span><span class="p">)</span>
+
+    <span class="n">ls_samplers</span> <span class="o">=</span> <span class="n">ls_parser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;samplers&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;list cached samplers&quot;</span><span class="p">,</span>
+                                       <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="n">_ls_samplers</span><span class="p">),</span>
+                                       <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
+    <span class="n">ls_samplers</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_ls_samplers</span><span class="p">)</span>
+
+    <span class="c1"># db</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">subparser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;db&quot;</span><span class="p">,</span>
+                              <span class="n">help</span><span class="o">=</span><span class="s2">&quot;manage databases&quot;</span><span class="p">,</span>
+                              <span class="n">description</span><span class="o">=</span><span class="s2">&quot;manage databases&quot;</span><span class="p">,</span>
+                              <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
+    <span class="n">db_parser</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;available commands&quot;</span><span class="p">)</span>
+
+    <span class="n">db_init</span> <span class="o">=</span> <span class="n">db_parser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;init&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;create a database&quot;</span><span class="p">,</span>
+                                   <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="n">_db_init</span><span class="p">),</span>
+                                   <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
+    <span class="n">db_init</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_db_init</span><span class="p">)</span>
+    <span class="n">db_init</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;db&gt;&quot;</span><span class="p">,</span>
+                         <span class="n">help</span><span class="o">=</span><span class="s1">&#39;path to SQL dataset&#39;</span><span class="p">)</span>
+    <span class="n">db_init</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-g&#39;</span><span class="p">,</span> <span class="s1">&#39;--github&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                         <span class="n">help</span><span class="o">=</span><span class="s1">&#39;generate dataset with GitHub metadata&#39;</span><span class="p">)</span>
+
+    <span class="n">db_explore</span> <span class="o">=</span> <span class="n">db_parser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;explore&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;show database stats&quot;</span><span class="p">,</span>
+                                      <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="n">_db_explore</span><span class="p">),</span>
+                                      <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
+    <span class="n">db_explore</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_db_explore</span><span class="p">)</span>
+    <span class="n">db_explore</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;db&gt;&quot;</span><span class="p">,</span>
+                            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;path to SQL dataset&#39;</span><span class="p">)</span>
+
+    <span class="n">db_merge</span> <span class="o">=</span> <span class="n">db_parser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;explore&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;show database stats&quot;</span><span class="p">,</span>
+                                    <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="n">_db_merge</span><span class="p">),</span>
+                                    <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
+    <span class="n">db_merge</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_db_merge</span><span class="p">)</span>
+    <span class="n">db_merge</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;db&gt;&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to output dataset&quot;</span><span class="p">)</span>
+    <span class="n">db_merge</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;db&gt;&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span>
+                          <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to input datasets&quot;</span><span class="p">)</span>
+
+
+    <span class="n">db_dump</span> <span class="o">=</span> <span class="n">db_parser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;dbump&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;export database contents&quot;</span><span class="p">,</span>
+                                   <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="n">_db_dump</span><span class="p">),</span>
+                                   <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
+    <span class="n">db_dump</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_db_merge</span><span class="p">)</span>
+    <span class="n">db_dump</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;db&gt;&quot;</span><span class="p">,</span>
+                         <span class="n">help</span><span class="o">=</span><span class="s1">&#39;path to kernels database&#39;</span><span class="p">)</span>
+    <span class="n">db_dump</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;output&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;path&gt;&quot;</span><span class="p">,</span>
+                         <span class="n">help</span><span class="o">=</span><span class="s1">&#39;path to output file or directory&#39;</span><span class="p">)</span>
+    <span class="n">db_dump</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-d&quot;</span><span class="p">,</span> <span class="s2">&quot;--dir&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                         <span class="n">help</span><span class="o">=</span><span class="s1">&#39;output to directory (overrides -i, --eof, -r)&#39;</span><span class="p">)</span>
+    <span class="n">db_dump</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-i&quot;</span><span class="p">,</span> <span class="s2">&quot;--file-sep&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                         <span class="n">help</span><span class="o">=</span><span class="s1">&#39;include file separators&#39;</span><span class="p">)</span>
+    <span class="n">db_dump</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--input-samples&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                         <span class="n">help</span><span class="o">=</span><span class="s1">&#39;use input contents, not preprocessed&#39;</span><span class="p">)</span>
+    <span class="n">db_dump</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--eof&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                         <span class="n">help</span><span class="o">=</span><span class="s1">&#39;print end of file&#39;</span><span class="p">)</span>
+    <span class="n">db_dump</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-r&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                         <span class="n">help</span><span class="o">=</span><span class="s1">&#39;use reverse order&#39;</span><span class="p">)</span>
+    <span class="n">db_dump</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-s&#39;</span><span class="p">,</span> <span class="s1">&#39;--status&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                         <span class="n">help</span><span class="o">=</span><span class="s1">&#39;status code to use&#39;</span><span class="p">)</span>
+
+
+    <span class="c1"># preprocess</span>
+    <span class="n">preprocess</span> <span class="o">=</span> <span class="n">subparser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="s2">&quot;preprocess&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;preprocess files for training&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="n">_preprocess</span><span class="p">),</span>
+        <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
+    <span class="n">preprocess</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_preprocess</span><span class="p">)</span>
+    <span class="n">preprocess</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;inputs&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;path&gt;&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span>
+                            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;path to input&#39;</span><span class="p">)</span>
+    <span class="n">preprocess</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-f&#39;</span><span class="p">,</span> <span class="s1">&#39;--file&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;treat input as file&#39;</span><span class="p">)</span>
+    <span class="n">preprocess</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;--inplace&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;inplace file rewrite&#39;</span><span class="p">)</span>
+    <span class="n">preprocess</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-G&#39;</span><span class="p">,</span> <span class="s1">&#39;--gpuverify&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;run GPUVerify on kernels&#39;</span><span class="p">)</span>
+    <span class="n">group</span> <span class="o">=</span> <span class="n">preprocess</span><span class="o">.</span><span class="n">add_mutually_exclusive_group</span><span class="p">()</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--remove-bad-preprocessed&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                       <span class="n">help</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">delete the contents of all bad or ugly preprocessed files,</span>
+<span class="s2">but keep the entries in the table&quot;&quot;&quot;</span><span class="p">)</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--remove-preprocessed&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+                       <span class="n">help</span><span class="o">=</span><span class="s2">&quot;remove all preprocessed files from database&quot;</span><span class="p">)</span>
+
+    <span class="c1"># features</span>
+    <span class="n">features</span> <span class="o">=</span> <span class="n">subparser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="s2">&quot;features&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;get kernel features&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="n">_features</span><span class="p">),</span>
+        <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
+    <span class="n">features</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_features</span><span class="p">)</span>
+    <span class="n">features</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;path&gt;&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+                         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;input path(s)&quot;</span><span class="p">)</span>
+    <span class="n">features</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-d&quot;</span><span class="p">,</span> <span class="s2">&quot;--dir&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+                         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;treat inputs as directories&quot;</span><span class="p">)</span>
+    <span class="n">features</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-s&quot;</span><span class="p">,</span> <span class="s2">&quot;--stats&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+                         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;summarize a features files&quot;</span><span class="p">)</span>
+    <span class="n">features</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-e&quot;</span><span class="p">,</span> <span class="s2">&quot;--fatal-errors&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+                         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;quit on compiler error&quot;</span><span class="p">)</span>
+    <span class="n">features</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--shim&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+                         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;include shim header&quot;</span><span class="p">)</span>
+    <span class="n">features</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-q&quot;</span><span class="p">,</span> <span class="s2">&quot;--quiet&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+                         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;minimal error output&quot;</span><span class="p">)</span>
+    <span class="n">features</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-H&quot;</span><span class="p">,</span> <span class="s2">&quot;--no-header&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+                         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;no features header&quot;</span><span class="p">)</span>
+
+    <span class="c1"># atomize</span>
+    <span class="n">atomize</span> <span class="o">=</span> <span class="n">subparser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;atomize&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;atomize files&quot;</span><span class="p">,</span>
+                                   <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="n">_atomize</span><span class="p">),</span>
+                                   <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
+    <span class="n">atomize</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_atomize</span><span class="p">)</span>
+    <span class="n">atomize</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;path to input text file&#39;</span><span class="p">)</span>
+    <span class="n">atomize</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-t&#39;</span><span class="p">,</span> <span class="s1">&#39;--type&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;char&#39;</span><span class="p">,</span>
+                         <span class="n">help</span><span class="o">=</span><span class="s1">&#39;vocabulary type&#39;</span><span class="p">)</span>
+    <span class="n">atomize</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-s&#39;</span><span class="p">,</span> <span class="s1">&#39;--size&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+                         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;print vocabulary size&quot;</span><span class="p">)</span>
+
+    <span class="c1"># cache</span>
+    <span class="n">cache</span> <span class="o">=</span> <span class="n">subparser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;cache&quot;</span><span class="p">,</span>
+                                 <span class="n">help</span><span class="o">=</span><span class="s2">&quot;manage filesystem cache&quot;</span><span class="p">,</span>
+                                 <span class="n">description</span><span class="o">=</span><span class="s2">&quot;manage filesystem cache&quot;</span><span class="p">,</span>
+                                 <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
+    <span class="n">cache_parser</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;available commands&quot;</span><span class="p">)</span>
+
+    <span class="n">cache_migrate</span> <span class="o">=</span> <span class="n">cache_parser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="s2">&quot;migrate&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;migrate the cache&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="n">_cache_migrate</span><span class="p">),</span>
+        <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
+    <span class="n">cache_migrate</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_cache_migrate</span><span class="p">)</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="c1"># set log level</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+
+    <span class="c1"># set debug option</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span>
+
+    <span class="c1"># set profile option</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">profile</span><span class="p">:</span>
+        <span class="n">prof</span><span class="o">.</span><span class="n">enable</span><span class="p">()</span>
+
+    <span class="c1"># options whch override the normal argument parsing process.</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">version</span><span class="p">:</span>
+        <span class="n">_version</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">corpus_dir</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Model</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">jsonutil</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">corpus_dir</span><span class="o">.</span><span class="n">read</span><span class="p">()))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">model_dir</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Model</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">jsonutil</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">model_dir</span><span class="o">.</span><span class="n">read</span><span class="p">()))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">sampler_dir</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Model</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">jsonutil</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">sampler_dir</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()))</span>
+        <span class="n">sampler</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Sampler</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">jsonutil</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">sampler_dir</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">cache</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">run</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">dispatch_func</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -276,7 +802,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.8 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>
