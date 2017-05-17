@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.cli &#8212; clgen 0.3.8 documentation</title>
+    <title>clgen.cli &#8212; clgen 0.3.9 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.8',
+        VERSION:     '0.3.9',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.8 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -188,47 +188,86 @@
 
 
 <span class="nd">@getself</span>
-<span class="k">def</span> <span class="nf">_test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_register_test_parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clgen_parser</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Run the CLgen self-test suite.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">clgen.test</span>  <span class="c1"># Must scope this import, as it breaks cache behaviour</span>
 
-    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">coveragerc_path</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">coveragerc_path</span><span class="p">())</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_main</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">clgen.test</span>  <span class="c1"># Must scope this import, as it changes cache loc</span>
 
-    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">coverage_path</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">coverage_report_path</span><span class="p">())</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">coveragerc_path</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">coveragerc_path</span><span class="p">())</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
-    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">testsuite</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">coverage_path</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">coverage_report_path</span><span class="p">())</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">testsuite</span><span class="p">())</span>
+
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">clgen_parser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;run the testsuite&quot;</span><span class="p">,</span>
+                                  <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
+                                  <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_main</span><span class="p">)</span>
+    <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_mutually_exclusive_group</span><span class="p">()</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--coveragerc-path&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+                       <span class="n">help</span><span class="o">=</span><span class="s2">&quot;print path to coveragerc file&quot;</span><span class="p">)</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--coverage-path&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+                       <span class="n">help</span><span class="o">=</span><span class="s2">&quot;print path to coverage file&quot;</span><span class="p">)</span>
 
 
 <span class="nd">@getself</span>
-<span class="k">def</span> <span class="nf">_train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_register_train_parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clgen_parser</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Train a CLgen model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">model_json</span> <span class="o">=</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Model</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">model_json</span><span class="p">)</span>
-    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
-    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;done.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_main</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+        <span class="n">model_json</span> <span class="o">=</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Model</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">model_json</span><span class="p">)</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;done.&quot;</span><span class="p">)</span>
+
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">clgen_parser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="s2">&quot;tr&quot;</span><span class="p">],</span>
+                                     <span class="n">help</span><span class="o">=</span><span class="s2">&quot;train models&quot;</span><span class="p">,</span>
+                                     <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
+                                     <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_main</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;model&gt;&quot;</span><span class="p">,</span>
+                       <span class="nb">type</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">FileType</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">),</span>
+                       <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to model specification file&quot;</span><span class="p">)</span>
 
 
 <span class="nd">@getself</span>
-<span class="k">def</span> <span class="nf">_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_register_sample_parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clgen_parser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sample a model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">model_json</span> <span class="o">=</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Model</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">model_json</span><span class="p">)</span>
 
-    <span class="n">sampler_json</span> <span class="o">=</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-    <span class="n">sampler</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Sampler</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">sampler_json</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_main</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+        <span class="n">model_json</span> <span class="o">=</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Model</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">model_json</span><span class="p">)</span>
 
-    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
-    <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="n">sampler_json</span> <span class="o">=</span> <span class="n">jsonutil</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="n">sampler</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Sampler</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">sampler_json</span><span class="p">)</span>
+
+        <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">clgen_parser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;sa&quot;</span><span class="p">],</span>
+                                     <span class="n">help</span><span class="o">=</span><span class="s2">&quot;train and sample models&quot;</span><span class="p">,</span>
+                                     <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
+                                     <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_main</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;model&gt;&quot;</span><span class="p">,</span>
+                        <span class="nb">type</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">FileType</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">),</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to model specification file&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;sampler&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;sampler&gt;&quot;</span><span class="p">,</span>
+                        <span class="nb">type</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">FileType</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">),</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to sampler specification file&quot;</span><span class="p">)</span>
+
+
 
 
 <span class="nd">@getself</span>
@@ -385,15 +424,15 @@
 <span class="sd">    Dump kernel dataset to file(s).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">opts</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;dir&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">d</span><span class="p">,</span>
+        <span class="s2">&quot;dir&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span>
         <span class="s2">&quot;eof&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">eof</span><span class="p">,</span>
-        <span class="s2">&quot;fileid&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">i</span><span class="p">,</span>
+        <span class="s2">&quot;fileid&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">file_sep</span><span class="p">,</span>
         <span class="s2">&quot;input_samples&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">input_samples</span><span class="p">,</span>
-        <span class="s2">&quot;reverse&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">r</span><span class="p">,</span>
+        <span class="s2">&quot;reverse&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">reverse</span><span class="p">,</span>
         <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">status</span>
     <span class="p">}</span>
 
-    <span class="n">dbutil</span><span class="o">.</span><span class="n">dump_db</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out_path</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span>
+    <span class="n">dbutil</span><span class="o">.</span><span class="n">dump_db</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span>
 
 
 <span class="nd">@getself</span>
@@ -469,8 +508,7 @@
                 <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">cached_model_id</span><span class="p">,</span> <span class="s1">&#39;-&gt;&#39;</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">fs</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">):</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;cache conflict&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
-                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s2">&quot;cache conflict&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
 
                 <span class="n">fs</span><span class="o">.</span><span class="n">mv</span><span class="p">(</span><span class="n">cached_modeldir</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
 
@@ -534,39 +572,9 @@
 
     <span class="n">subparser</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;available commands&quot;</span><span class="p">)</span>
 
-    <span class="c1"># test</span>
-    <span class="n">test</span> <span class="o">=</span> <span class="n">subparser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;run the testsuite&quot;</span><span class="p">,</span>
-                                <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="n">_test</span><span class="p">),</span>
-                                <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
-    <span class="n">test</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_test</span><span class="p">)</span>
-    <span class="n">group</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">add_mutually_exclusive_group</span><span class="p">()</span>
-    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--coveragerc-path&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-                       <span class="n">help</span><span class="o">=</span><span class="s2">&quot;print path to coveragerc file&quot;</span><span class="p">)</span>
-    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--coverage-path&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-                       <span class="n">help</span><span class="o">=</span><span class="s2">&quot;print path to coverage file&quot;</span><span class="p">)</span>
-
-    <span class="c1"># train</span>
-    <span class="n">train</span> <span class="o">=</span> <span class="n">subparser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="s2">&quot;tr&quot;</span><span class="p">],</span>
-                                 <span class="n">help</span><span class="o">=</span><span class="s2">&quot;train models&quot;</span><span class="p">,</span>
-                                 <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="n">_train</span><span class="p">),</span>
-                                 <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
-    <span class="n">train</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_train</span><span class="p">)</span>
-    <span class="n">train</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;model&gt;&quot;</span><span class="p">,</span>
-                       <span class="nb">type</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">FileType</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">),</span>
-                       <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to model specification file&quot;</span><span class="p">)</span>
-
-    <span class="c1"># sample</span>
-    <span class="n">sample</span> <span class="o">=</span> <span class="n">subparser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;sa&quot;</span><span class="p">],</span>
-                                  <span class="n">help</span><span class="o">=</span><span class="s2">&quot;train and sample models&quot;</span><span class="p">,</span>
-                                  <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="n">_sample</span><span class="p">),</span>
-                                  <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
-    <span class="n">sample</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_sample</span><span class="p">)</span>
-    <span class="n">sample</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;model&gt;&quot;</span><span class="p">,</span>
-                        <span class="nb">type</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">FileType</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">),</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to model specification file&quot;</span><span class="p">)</span>
-    <span class="n">sample</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;sampler&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;sampler&gt;&quot;</span><span class="p">,</span>
-                        <span class="nb">type</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">FileType</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">),</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to sampler specification file&quot;</span><span class="p">)</span>
+    <span class="n">_register_test_parser</span><span class="p">(</span><span class="n">subparser</span><span class="p">)</span>
+    <span class="n">_register_train_parser</span><span class="p">(</span><span class="n">subparser</span><span class="p">)</span>
+    <span class="n">_register_sample_parser</span><span class="p">(</span><span class="n">subparser</span><span class="p">)</span>
 
     <span class="c1"># fetch</span>
     <span class="n">fetch</span> <span class="o">=</span> <span class="n">subparser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;fetch&quot;</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;f&quot;</span><span class="p">,</span> <span class="s2">&quot;fe&quot;</span><span class="p">],</span>
@@ -642,7 +650,7 @@
     <span class="n">db_explore</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;db&gt;&quot;</span><span class="p">,</span>
                             <span class="n">help</span><span class="o">=</span><span class="s1">&#39;path to SQL dataset&#39;</span><span class="p">)</span>
 
-    <span class="n">db_merge</span> <span class="o">=</span> <span class="n">db_parser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;explore&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;show database stats&quot;</span><span class="p">,</span>
+    <span class="n">db_merge</span> <span class="o">=</span> <span class="n">db_parser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;merge&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;merge databases&quot;</span><span class="p">,</span>
                                     <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="n">_db_merge</span><span class="p">),</span>
                                     <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
     <span class="n">db_merge</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_db_merge</span><span class="p">)</span>
@@ -650,11 +658,10 @@
     <span class="n">db_merge</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;db&gt;&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span>
                           <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to input datasets&quot;</span><span class="p">)</span>
 
-
-    <span class="n">db_dump</span> <span class="o">=</span> <span class="n">db_parser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;dbump&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;export database contents&quot;</span><span class="p">,</span>
+    <span class="n">db_dump</span> <span class="o">=</span> <span class="n">db_parser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;dump&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;export database contents&quot;</span><span class="p">,</span>
                                    <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="n">_db_dump</span><span class="p">),</span>
                                    <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
-    <span class="n">db_dump</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_db_merge</span><span class="p">)</span>
+    <span class="n">db_dump</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_db_dump</span><span class="p">)</span>
     <span class="n">db_dump</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;db&gt;&quot;</span><span class="p">,</span>
                          <span class="n">help</span><span class="o">=</span><span class="s1">&#39;path to kernels database&#39;</span><span class="p">)</span>
     <span class="n">db_dump</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;output&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;path&gt;&quot;</span><span class="p">,</span>
@@ -665,17 +672,16 @@
                          <span class="n">help</span><span class="o">=</span><span class="s1">&#39;include file separators&#39;</span><span class="p">)</span>
     <span class="n">db_dump</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--input-samples&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
                          <span class="n">help</span><span class="o">=</span><span class="s1">&#39;use input contents, not preprocessed&#39;</span><span class="p">)</span>
-    <span class="n">db_dump</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--eof&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">db_dump</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--eof&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
                          <span class="n">help</span><span class="o">=</span><span class="s1">&#39;print end of file&#39;</span><span class="p">)</span>
-    <span class="n">db_dump</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-r&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">db_dump</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-r&#39;</span><span class="p">,</span> <span class="s1">&#39;--reverse&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
                          <span class="n">help</span><span class="o">=</span><span class="s1">&#39;use reverse order&#39;</span><span class="p">)</span>
     <span class="n">db_dump</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-s&#39;</span><span class="p">,</span> <span class="s1">&#39;--status&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                          <span class="n">help</span><span class="o">=</span><span class="s1">&#39;status code to use&#39;</span><span class="p">)</span>
 
-
     <span class="c1"># preprocess</span>
     <span class="n">preprocess</span> <span class="o">=</span> <span class="n">subparser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
-        <span class="s2">&quot;preprocess&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;preprocess&quot;</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;pp&quot;</span><span class="p">],</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;preprocess files for training&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="n">_preprocess</span><span class="p">),</span>
         <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
@@ -802,7 +808,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.8 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>
