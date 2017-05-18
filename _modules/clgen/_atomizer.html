@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen._atomizer &#8212; clgen 0.3.10 documentation</title>
+    <title>clgen._atomizer &#8212; clgen 0.3.11 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.10',
+        VERSION:     '0.3.11',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.10 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.11 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -210,14 +210,18 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocab</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Arguments:</span>
-<span class="sd">            vocab (Dict[str, int]): A dictionary of mappings from character</span>
-<span class="sd">                sequences (atoms) into indices.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        vocab : Dict[str, int]</span>
+<span class="sd">            A dictionary of mappings from character sequences (atoms) into</span>
+<span class="sd">            indices.</span>
 
-<span class="sd">        Raises:</span>
-<span class="sd">            TypeError: If vocab is not a dictionary.</span>
-<span class="sd">            InvalidVocab: If the dictionary of mappings includes any duplicate</span>
-<span class="sd">                values.</span>
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If vocab is not a dictionary.</span>
+<span class="sd">        InvalidVocab</span>
+<span class="sd">            If the dictionary of mappings includes any duplicate values.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span> <span class="o">=</span> <span class="n">vocab</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_vocab_update</span><span class="p">()</span>
@@ -248,11 +252,15 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Atomize a text into an array of vocabulary indices.</span>
 
-<span class="sd">        Arguments:</span>
-<span class="sd">            text (str): Input text.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        text : str</span>
+<span class="sd">            Input text.</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            np.array: Indices into vocabulary for all atoms in text.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.array</span>
+<span class="sd">            Indices into vocabulary for all atoms in text.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;abstract class&quot;</span><span class="p">)</span></div>
 
@@ -260,11 +268,15 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Split the text into atoms, but do not encode to indices.</span>
 
-<span class="sd">        Arguments:</span>
-<span class="sd">            text (str): Input text.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        text : str</span>
+<span class="sd">            Input text.</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            list of str: Atom strings.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        List[str]</span>
+<span class="sd">            Atom strings.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomize</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">indices</span><span class="p">))</span></div>
@@ -273,11 +285,15 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Translate atomized code back into a string.</span>
 
-<span class="sd">        Arguments:</span>
-<span class="sd">            encoded (np.array): Encoded vocabulary indices.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        encoded : np.array</span>
+<span class="sd">            Encoded vocabulary indices.</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            str: Decoded text.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            Decoded text.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">encoded</span><span class="p">)))</span>
@@ -289,19 +305,24 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Instantiate and specialize an atomizer from a corpus text.</span>
 
-<span class="sd">        Arguments:</span>
-<span class="sd">            text (str): Text corpus</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        text : str</span>
+<span class="sd">            Text corpus</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            Atomizer: Specialized atomizer.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Atomizer</span>
+<span class="sd">            Specialized atomizer.</span>
 
-<span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; a = CharacterAtomizer.from_text(&#39;abcdefg&#39;)</span>
-<span class="sd">            &gt;&gt;&gt; b = a.atomize(&#39;abcd&#39;)</span>
-<span class="sd">            &gt;&gt;&gt; len(b)</span>
-<span class="sd">            4</span>
-<span class="sd">            &gt;&gt;&gt; a.deatomize(b)</span>
-<span class="sd">            &#39;abcd&#39;</span>
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; a = CharacterAtomizer.from_text(&#39;abcdefg&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; b = a.atomize(&#39;abcd&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; len(b)</span>
+<span class="sd">        4</span>
+<span class="sd">        &gt;&gt;&gt; a.deatomize(b)</span>
+<span class="sd">        &#39;abcd&#39;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;abstract class&quot;</span><span class="p">)</span></div></div>
 
@@ -433,7 +454,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.10 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.11 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

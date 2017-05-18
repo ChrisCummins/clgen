@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen &#8212; clgen 0.3.10 documentation</title>
+    <title>clgen &#8212; clgen 0.3.11 documentation</title>
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.3.10',
+        VERSION:     '0.3.11',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.10 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.11 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -72,10 +72,8 @@
 
 <span class="sd">Attributes</span>
 <span class="sd">----------</span>
-
 <span class="sd">__version__ : str</span>
 <span class="sd">    PEP 440 compliant version string.</span>
-
 <span class="sd">version_info : namedtuple[&#39;major&#39;, &#39;minor&#39;, &#39;micro&#39;, &#39;releaselevel&#39;])</span>
 <span class="sd">    Version tuple.</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -169,8 +167,10 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the package version.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        str: Version string.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Version string.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">__version__</span></div>
 
@@ -179,16 +179,22 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return path to file system cache.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        *relative_path_components (list of str): Relative path of cache.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    *relative_path_components</span>
+<span class="sd">        Relative path of cache.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        str: Absolute path of file system cache.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Absolute path of file system cache.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">cache_root</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;~&quot;</span><span class="p">,</span> <span class="s2">&quot;.cache&quot;</span><span class="p">,</span> <span class="s2">&quot;clgen&quot;</span><span class="p">,</span>
-                  <span class="n">f</span><span class="s2">&quot;</span><span class="si">{version_info.major}</span><span class="s2">.</span><span class="si">{version_info.minor}</span><span class="s2">.x&quot;</span> <span class="p">]</span>
-    <span class="n">fs</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="o">*</span><span class="n">cache_root</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="o">*</span><span class="n">cache_root</span><span class="p">,</span> <span class="o">*</span><span class="n">relative_path_components</span><span class="p">)</span></div>
+    <span class="n">cache_root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="s2">&quot;CLGEN_CACHE&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;~/.cache/clgen/</span><span class="si">{version_info.major}</span><span class="s2">.</span><span class="si">{version_info.minor}</span><span class="s2">.x&quot;</span><span class="p">)</span>
+
+    <span class="n">fs</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">cache_root</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">cache_root</span><span class="p">,</span> <span class="o">*</span><span class="n">relative_path_components</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="get_default_author"><a class="viewcode-back" href="../api/index.html#clgen.get_default_author">[docs]</a><span class="k">def</span> <span class="nf">get_default_author</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -198,8 +204,10 @@
 <span class="sd">    If CLGEN_AUTHOR environment variable is set, use that. Else, author</span>
 <span class="sd">    is $USER@$HOSTNAME.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        str: Author name.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Author name.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
         <span class="s2">&quot;CLGEN_AUTHOR&quot;</span><span class="p">,</span>
@@ -212,27 +220,35 @@
 
 <span class="sd">    If the cache does not exist, one is created.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        *relative_path_components (list of str): Relative path of cache.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    *relative_path_components</span>
+<span class="sd">        Relative path of cache.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        labm8.FSCache: Filesystem cache.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    labm8.FSCache</span>
+<span class="sd">        Filesystem cache.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">return</span> <span class="n">cache</span><span class="o">.</span><span class="n">FSCache</span><span class="p">(</span><span class="n">cachepath</span><span class="p">(</span><span class="o">*</span><span class="n">relative_path_components</span><span class="p">),</span>
                          <span class="n">escape_key</span><span class="o">=</span><span class="n">cache</span><span class="o">.</span><span class="n">escape_path</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="must_exist"><a class="viewcode-back" href="../api/index.html#clgen.must_exist">[docs]</a><span class="k">def</span> <span class="nf">must_exist</span><span class="p">(</span><span class="o">*</span><span class="n">path_components</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="must_exist"><a class="viewcode-back" href="../api/index.html#clgen.must_exist">[docs]</a><span class="k">def</span> <span class="nf">must_exist</span><span class="p">(</span><span class="o">*</span><span class="n">path_components</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Require that a file exists.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        *path_components (str): Components of the path.</span>
-<span class="sd">        **kwargs (optional): Key &quot;Error&quot; specifies the exception type to throw.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    *path_components : str</span>
+<span class="sd">        Components of the path.</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Key &quot;Error&quot; specifies the exception type to throw.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        str: Path.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Path.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">path_components</span><span class="p">))</span>
 
@@ -251,13 +267,15 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Path to package file.</span>
 
-<span class="sd">    Arguments:</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    *path : str</span>
+<span class="sd">        Path components.</span>
 
-<span class="sd">        *path (str[]): Path components.</span>
-
-<span class="sd">    Returns:</span>
-
-<span class="sd">        str: Path.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Path.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">))</span>
     <span class="n">abspath</span> <span class="o">=</span> <span class="n">resource_filename</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
@@ -271,13 +289,19 @@
 <span class="sd">    This returns the shortest hash required to uniquely identify all elements</span>
 <span class="sd">    in the cache.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        hash (str): Hash to truncate.</span>
-<span class="sd">        cachedir (str): Path to cache.</span>
-<span class="sd">        min_len (int, optional): Minimum length of hash to try.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    hash : str</span>
+<span class="sd">        Hash to truncate.</span>
+<span class="sd">    cachedir : str</span>
+<span class="sd">        Path to cache.</span>
+<span class="sd">    min_len : int, optional</span>
+<span class="sd">        Minimum length of hash to try.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        str: Truncated hash.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Truncated hash.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">shorthash_len</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">min_len</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">hash</span><span class="p">)):</span>
         <span class="n">entries</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[:</span><span class="n">shorthash_len</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fs</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="n">cachedir</span><span class="p">)]</span>
@@ -291,13 +315,15 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Path to package file.</span>
 
-<span class="sd">    Arguments:</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    *path : str</span>
+<span class="sd">        Path components.</span>
 
-<span class="sd">        *path (str[]): Path components.</span>
-
-<span class="sd">    Returns:</span>
-
-<span class="sd">        str: Path.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Path.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">package_path</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">path</span><span class="p">)</span></div>
 
@@ -306,14 +332,20 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read package data file.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        path (str): The relative path to the data file, e.g. &#39;share/foo.txt&#39;.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        The relative path to the data file, e.g. &#39;share/foo.txt&#39;.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        bytes: File contents.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bytes</span>
+<span class="sd">        File contents.</span>
 
-<span class="sd">    Raises:</span>
-<span class="sd">        InternalError: In case of IO error.</span>
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    InternalError</span>
+<span class="sd">        In case of IO error.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># throw exception if file doesn&#39;t exist</span>
     <span class="n">package_path</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">)</span>
@@ -328,14 +360,20 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read package data file as a string.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        path (str): The relative path to the text file, e.g. &#39;share/foo.txt&#39;.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        The relative path to the text file, e.g. &#39;share/foo.txt&#39;.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        str: File contents.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        File contents.</span>
 
-<span class="sd">    Raises:</span>
-<span class="sd">        InternalError: In case of IO error.</span>
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    InternalError</span>
+<span class="sd">        In case of IO error.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">package_data</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
@@ -347,11 +385,15 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read SQL script to string.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        name (str): The name of the SQL script (without file extension).</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        The name of the SQL script (without file extension).</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        str: SQL script.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        SQL script.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;sql&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.sql&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">package_str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
@@ -372,9 +414,10 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Log platform information.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        printfn (fn, optional): Function to call to print output to. Default</span>
-<span class="sd">            `print()`.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    printfn : fn, optional</span>
+<span class="sd">        Function to call to print output to. Default `print()`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">USE_CUDA</span><span class="p">:</span>
         <span class="n">features_str</span> <span class="o">=</span> <span class="s2">&quot;(with CUDA)&quot;</span>
@@ -425,7 +468,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.10 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.11 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

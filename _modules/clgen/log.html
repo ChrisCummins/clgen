@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.log &#8212; clgen 0.3.10 documentation</title>
+    <title>clgen.log &#8212; clgen 0.3.11 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.10',
+        VERSION:     '0.3.11',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.10 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.11 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -89,14 +89,17 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Initialiaze the logging engine.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        verbose (bool, optional keyword): If True, print debug() messages.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    verbose : bool, optional</span>
+<span class="sd">        If True, print debug() messages.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">level</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="is_verbose"><a class="viewcode-back" href="../../api/index.html#clgen.log.is_verbose">[docs]</a><span class="k">def</span> <span class="nf">is_verbose</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Return whether logging is verbose. &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span><span class="o">.</span><span class="n">getEffectiveLevel</span><span class="p">()</span> <span class="o">==</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span></div>
 
 
@@ -107,9 +110,12 @@
 <span class="sd">    If executing verbosely, prints the given message to stderr. To execute</span>
 <span class="sd">    verbosely, intialize logging engine using log.init(verbose=True).</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        *msg (sequence): Message to print.</span>
-<span class="sd">        sep (str, optional keyword): Message component separator.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    *msg</span>
+<span class="sd">        Message to print.</span>
+<span class="sd">    **opts</span>
+<span class="sd">        Format options.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">_fmt</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">opts</span><span class="p">))</span></div>
 
@@ -127,9 +133,12 @@
 
 <span class="sd">    Prints the given message to stderr.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        *msg (sequence): Message to print.</span>
-<span class="sd">        sep (str, optional keyword): Message component separator.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    *msg</span>
+<span class="sd">        Message to print.</span>
+<span class="sd">    **opts</span>
+<span class="sd">        Format options.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">_fmt</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">opts</span><span class="p">))</span></div>
 
@@ -140,9 +149,12 @@
 
 <span class="sd">    Prints the given message to stderr prefixed with &quot;warning: &quot;.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        *msg (sequence): Message to print.</span>
-<span class="sd">        sep (str, optional keyword): Message component separator.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    *msg</span>
+<span class="sd">        Message to print.</span>
+<span class="sd">    **opts</span>
+<span class="sd">        Format options.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;warning: &quot;</span> <span class="o">+</span> <span class="n">_fmt</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">opts</span><span class="p">))</span></div>
 
@@ -153,9 +165,12 @@
 
 <span class="sd">    Prints the given message to stderr prefixed with &quot;error: &quot;.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        *msg (sequence): Message to print.</span>
-<span class="sd">        sep (str, optional keyword): Message component separator.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    *msg</span>
+<span class="sd">        Message to print.</span>
+<span class="sd">    **opts</span>
+<span class="sd">        Format options.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;error: &quot;</span> <span class="o">+</span> <span class="n">_fmt</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">opts</span><span class="p">))</span></div>
 
@@ -167,10 +182,17 @@
 <span class="sd">    Prints the given message to stderr prefixed with &quot;fatal: &quot;, then exists.</span>
 <span class="sd">    This function does not return.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        *msg (sequence): Message to print.</span>
-<span class="sd">        sep (str, optional keyword): Message component separator.</span>
-<span class="sd">        ret (int, optional keyword): Value to exit with.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    *msg</span>
+<span class="sd">        Message to print.</span>
+<span class="sd">    **opts</span>
+<span class="sd">        Format options.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    SystemExit</span>
+<span class="sd">        This function terminates the process.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;fatal: &quot;</span> <span class="o">+</span> <span class="n">_fmt</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">opts</span><span class="p">))</span>
     <span class="n">ret</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ret&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
@@ -205,7 +227,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.10 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.11 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

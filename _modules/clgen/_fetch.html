@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen._fetch &#8212; clgen 0.3.10 documentation</title>
+    <title>clgen._fetch &#8212; clgen 0.3.11 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.10',
+        VERSION:     '0.3.11',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.10 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.11 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -87,6 +87,7 @@
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">fs</span>
 <span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">Popen</span>
 <span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">sleep</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>
 
 <span class="kn">import</span> <span class="nn">clgen</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">clutil</span>
@@ -128,8 +129,10 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Block on GitHub rate limit.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        g: GitHub connection.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    g</span>
+<span class="sd">        GitHub connection.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">status_string</span>
     <span class="n">remaining</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">get_rate_limit</span><span class="p">()</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">remaining</span>
@@ -149,13 +152,19 @@
 <span class="sd">        * The repository has not already been visited.</span>
 <span class="sd">        * The repository has been modified since it was last visited.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        g: GitHub connection.</span>
-<span class="sd">        db (sqlite3.Connection): Dataset.</span>
-<span class="sd">        repo: Repository.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    g</span>
+<span class="sd">        GitHub connection.</span>
+<span class="sd">    db : sqlite3.Connection</span>
+<span class="sd">        Dataset.</span>
+<span class="sd">    repo</span>
+<span class="sd">        Repository.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        bool: True if repository should be scraped, else False.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if repository should be scraped, else False.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">repos_new_counter</span>
     <span class="k">global</span> <span class="n">repos_modified_counter</span>
@@ -205,20 +214,27 @@
 <span class="n">_include_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;\w*#include [&quot;&lt;](.*)[&quot;&gt;]&#39;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_download_file</span><span class="p">(</span><span class="n">github_token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">stack</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_download_file</span><span class="p">(</span><span class="n">github_token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">stack</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fetch file from GitHub.</span>
 
 <span class="sd">    Recursively downloads and inlines headers.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        github_token (str): Authorization.</span>
-<span class="sd">        repo: Repository.</span>
-<span class="sd">        url (str): Path.</span>
-<span class="sd">        stack (str[]): URL stack.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    github_token : str</span>
+<span class="sd">        Authorization.</span>
+<span class="sd">    repo</span>
+<span class="sd">        Repository.</span>
+<span class="sd">    url : str</span>
+<span class="sd">        Path.</span>
+<span class="sd">    stack : List[str]</span>
+<span class="sd">        URL stack.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        str: File contents.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        File contents.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Recursion stack</span>
     <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
@@ -266,15 +282,23 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    GitHub file handler.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        g: GitHub connection.</span>
-<span class="sd">        github_token (str): Authorization.</span>
-<span class="sd">        db (sqlite3.Connection): Dataset.</span>
-<span class="sd">        repo: Repository.</span>
-<span class="sd">        file: File.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    g</span>
+<span class="sd">        GitHub connection.</span>
+<span class="sd">    github_token : str</span>
+<span class="sd">        Authorization.</span>
+<span class="sd">    db : sqlite3.Connection</span>
+<span class="sd">        Dataset.</span>
+<span class="sd">    repo</span>
+<span class="sd">        Repository.</span>
+<span class="sd">    file</span>
+<span class="sd">        File.</span>
 
-<span class="sd">    Return:</span>
-<span class="sd">        bool: True on success, else False.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True on success, else False.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">files_new_counter</span>
     <span class="k">global</span> <span class="n">files_modified_counter</span>
@@ -329,11 +353,16 @@
 <span class="sd">        * Only includes exclusively OpenCL files, no inline strings.</span>
 <span class="sd">        * Occasionally (&lt; 1%) can&#39;t find headers to include.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        db_path (str): Dataset path.</span>
-<span class="sd">        github_username (str): Authorization.</span>
-<span class="sd">        github_pw (str): Authorization.</span>
-<span class="sd">        github_token (str): Authorization.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    db_path : str</span>
+<span class="sd">        Dataset path.</span>
+<span class="sd">    github_username : str</span>
+<span class="sd">        Authorization.</span>
+<span class="sd">    github_pw : str</span>
+<span class="sd">        Authorization.</span>
+<span class="sd">    github_token : str</span>
+<span class="sd">        Authorization.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">errors_counter</span>
 
@@ -395,16 +424,21 @@
     <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="inline_fs_headers"><a class="viewcode-back" href="../../api/index.html#clgen._fetch.inline_fs_headers">[docs]</a><span class="k">def</span> <span class="nf">inline_fs_headers</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">stack</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="inline_fs_headers"><a class="viewcode-back" href="../../api/index.html#clgen._fetch.inline_fs_headers">[docs]</a><span class="k">def</span> <span class="nf">inline_fs_headers</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">stack</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Recursively inline headers in file.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        path (str): File.</span>
-<span class="sd">        stack (str[]): File stack.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        File.</span>
+<span class="sd">    stack : List[str]</span>
+<span class="sd">        File stack.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        str: Inlined file.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Inlined file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
@@ -444,12 +478,17 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Process OpenCL file.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        db_path (str): Path to output database.</span>
-<span class="sd">        path (str): Path to input file.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    db_path : str</span>
+<span class="sd">        Path to output database.</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Path to input file.</span>
 
-<span class="sd">    Raises:</span>
-<span class="sd">        FetchError: In case of IO error.</span>
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    FetchError</span>
+<span class="sd">        In case of IO error.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
@@ -467,13 +506,16 @@
     <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="fetch"><a class="viewcode-back" href="../../api/index.html#clgen._fetch.fetch">[docs]</a><span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">paths</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="fetch"><a class="viewcode-back" href="../../api/index.html#clgen._fetch.fetch">[docs]</a><span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">paths</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="p">[])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fetch from a list of files.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        db_path (str): Output dataset.</span>
-<span class="sd">        paths (str[]): List of file paths.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    db_path : str</span>
+<span class="sd">        Output dataset.</span>
+<span class="sd">    paths : List[str]</span>
+<span class="sd">        List of file paths.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">paths</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">files_from_list</span><span class="p">(</span><span class="o">*</span><span class="n">paths</span><span class="p">)</span>  <span class="c1"># expand directories</span>
 
@@ -522,7 +564,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.10 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.11 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

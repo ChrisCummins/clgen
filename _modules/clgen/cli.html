@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.cli &#8212; clgen 0.3.10 documentation</title>
+    <title>clgen.cli &#8212; clgen 0.3.11 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.10',
+        VERSION:     '0.3.11',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.10 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.11 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -125,13 +125,18 @@
 
 <span class="sd">    If environmental variable DEBUG=1, then exception is not caught.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        method (function): Function to execute.</span>
-<span class="sd">        *args (str): Arguments for method.</span>
-<span class="sd">        **kwargs (dict): Keyword arguments for method.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    method : function</span>
+<span class="sd">        Function to execute.</span>
+<span class="sd">    *args</span>
+<span class="sd">        Arguments for method.</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Keyword arguments for method.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        method(*args, **kwargs)</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    method(*args, **kwargs)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">_user_message</span><span class="p">(</span><span class="n">exception</span><span class="p">):</span>
         <span class="n">log</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
@@ -204,14 +209,17 @@
 <span class="sd">    Run the CLgen self-test suite.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_main</span><span class="p">(</span><span class="n">coveragerc_path</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">coverage_path</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_main</span><span class="p">(</span><span class="n">cache_path</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">coveragerc_path</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+              <span class="n">coverage_path</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="kn">import</span> <span class="nn">clgen.test</span>
 
-        <span class="k">if</span> <span class="n">coveragerc_path</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">cache_path</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">test_cache_path</span><span class="p">())</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">coveragerc_path</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">coveragerc_path</span><span class="p">())</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">coverage_path</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">coverage_path</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">coverage_report_path</span><span class="p">())</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
@@ -222,6 +230,8 @@
                                <span class="n">epilog</span><span class="o">=</span><span class="n">__help_epilog__</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">dispatch_func</span><span class="o">=</span><span class="n">_main</span><span class="p">)</span>
     <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_mutually_exclusive_group</span><span class="p">()</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--cache-path&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+                       <span class="n">help</span><span class="o">=</span><span class="s2">&quot;print path to test cache&quot;</span><span class="p">)</span>
     <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--coveragerc-path&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;print path to coveragerc file&quot;</span><span class="p">)</span>
     <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--coverage-path&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
@@ -863,7 +873,6 @@
         <span class="n">model</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Model</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">jsonutil</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">sampler_dir</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()))</span>
         <span class="n">sampler</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Sampler</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">jsonutil</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">sampler_dir</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()))</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">cache</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># strip the arguments from the top-level parser</span>
         <span class="n">dispatch_func</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">dispatch_func</span>
@@ -876,7 +885,6 @@
         <span class="k">del</span> <span class="n">opts</span><span class="p">[</span><span class="s2">&quot;model_dir&quot;</span><span class="p">]</span>
         <span class="k">del</span> <span class="n">opts</span><span class="p">[</span><span class="s2">&quot;sampler_dir&quot;</span><span class="p">]</span>
         <span class="k">del</span> <span class="n">opts</span><span class="p">[</span><span class="s2">&quot;dispatch_func&quot;</span><span class="p">]</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">opts</span><span class="p">)</span>
 
         <span class="n">run</span><span class="p">(</span><span class="n">dispatch_func</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span></div>
 </pre></div>
@@ -909,7 +917,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.10 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.11 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

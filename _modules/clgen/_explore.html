@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen._explore &#8212; clgen 0.3.10 documentation</title>
+    <title>clgen._explore &#8212; clgen 0.3.11 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.10',
+        VERSION:     '0.3.11',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.10 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.11 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -84,12 +84,17 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Zero-safe _safe_division.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        x (Number): Numerator</span>
-<span class="sd">        y (Number): Denominator</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : Number</span>
+<span class="sd">        Numerator.</span>
+<span class="sd">    y : Number</span>
+<span class="sd">        Denominator.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        Number: x / y</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Number</span>
+<span class="sd">        x / y</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span>
@@ -101,11 +106,15 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return comma seperated big numbers.</span>
 
-<span class="sd">    Arugments:</span>
-<span class="sd">        n (Number): Value.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n : Number</span>
+<span class="sd">        Value.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        str: Comma separated value.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Comma separated value.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">locale</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">grouping</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -114,11 +123,15 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return stats on a sequence.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        sorted_arr (Number[]): Sequence.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sorted_arr : List[Number]</span>
+<span class="sd">        Sequence.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        str: Sequnece stats.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Sequnece stats.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">sorted_arr</span> <span class="o">=</span> <span class="n">sorted_arr</span> <span class="ow">or</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">avg</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">sorted_arr</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_arr</span><span class="p">)</span>
@@ -137,8 +150,10 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Run exploratory analysis on dataset.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        db_path (str): Path to dataset.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    db_path : str</span>
+<span class="sd">        Path to dataset.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">LC_ALL</span><span class="p">,</span> <span class="s1">&#39;en_GB.utf-8&#39;</span><span class="p">)</span>
 
@@ -214,8 +229,10 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Run exploratory analysis on GitHub dataset.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        db_path (str): Path to dataset.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    db_path : str</span>
+<span class="sd">        Path to dataset.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">LC_ALL</span><span class="p">,</span> <span class="s1">&#39;en_GB.utf-8&#39;</span><span class="p">)</span>
 
@@ -334,7 +351,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.10 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.11 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

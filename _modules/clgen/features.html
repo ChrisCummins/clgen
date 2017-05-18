@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.features &#8212; clgen 0.3.10 documentation</title>
+    <title>clgen.features &#8212; clgen 0.3.11 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.10',
+        VERSION:     '0.3.11',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.10 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.11 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -82,6 +82,7 @@
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">fs</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">math</span> <span class="k">as</span> <span class="n">labmath</span>
 <span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span><span class="p">,</span> <span class="n">STDOUT</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">TextIO</span>
 
 <span class="kn">import</span> <span class="nn">clgen</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
@@ -114,16 +115,21 @@
     <span class="k">return</span> <span class="kc">False</span>
 
 
-<div class="viewcode-block" id="to_np_arrays"><a class="viewcode-back" href="../../api/index.html#clgen.features.to_np_arrays">[docs]</a><span class="k">def</span> <span class="nf">to_np_arrays</span><span class="p">(</span><span class="n">paths</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="to_np_arrays"><a class="viewcode-back" href="../../api/index.html#clgen.features.to_np_arrays">[docs]</a><span class="k">def</span> <span class="nf">to_np_arrays</span><span class="p">(</span><span class="n">paths</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns a list of numpy arrays for features in kernels in files.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        path (str[]): List of file paths.</span>
-<span class="sd">        **kwargs (dict, optional): Arguments to features()</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : List[str]</span>
+<span class="sd">        List of file paths.</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Arguments to features()</span>
 
-<span class="sd">    Raises:</span>
-<span class="sd">        FeatureExtractionError: In case feature extraction fails.</span>
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    FeatureExtractionError</span>
+<span class="sd">        In case feature extraction fails.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">_process_file</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">buf</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
@@ -148,12 +154,18 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print CSV format features of file.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        path (str): Path.</span>
-<span class="sd">        file (pipe, optional): Target to print to.</span>
-<span class="sd">        fatal_errors (bool, optional): Exit on error.</span>
-<span class="sd">        use_shim (bool, optional): Inject shim header.</span>
-<span class="sd">        quiet (bool, optional): Don&#39;t print compiler output on errors.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Path.</span>
+<span class="sd">    file : pipe, optional</span>
+<span class="sd">        Target to print to.</span>
+<span class="sd">    fatal_errors : bool, optional</span>
+<span class="sd">        Exit on error.</span>
+<span class="sd">    use_shim : bool, optional</span>
+<span class="sd">        Inject shim header.</span>
+<span class="sd">    quiet : bool, optional</span>
+<span class="sd">        Don&#39;t print compiler output on errors.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">must_exist</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
@@ -186,12 +198,14 @@
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="p">),</span> <span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="feature_headers"><a class="viewcode-back" href="../../api/index.html#clgen.features.feature_headers">[docs]</a><span class="k">def</span> <span class="nf">feature_headers</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="feature_headers"><a class="viewcode-back" href="../../api/index.html#clgen.features.feature_headers">[docs]</a><span class="k">def</span> <span class="nf">feature_headers</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">TextIO</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print CSV format feature header.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        file (pipe, optional): Target to print to.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    file : TextIO, optional</span>
+<span class="sd">        Target to print to.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="n">native</span><span class="o">.</span><span class="n">CLGEN_FEATURES</span><span class="p">,</span> <span class="s1">&#39;-header-only&#39;</span><span class="p">]</span>
     <span class="n">process</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">PIPE</span><span class="p">)</span>
@@ -201,15 +215,21 @@
     <span class="nb">print</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="files"><a class="viewcode-back" href="../../api/index.html#clgen.features.files">[docs]</a><span class="k">def</span> <span class="nf">files</span><span class="p">(</span><span class="n">paths</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="files"><a class="viewcode-back" href="../../api/index.html#clgen.features.files">[docs]</a><span class="k">def</span> <span class="nf">files</span><span class="p">(</span><span class="n">paths</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">TextIO</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span>
+          <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print feature values of files in CSV format.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        paths (str[]): Files.</span>
-<span class="sd">        header (bool, optional): Include CSV format header.</span>
-<span class="sd">        file (pipe, optional): Target to print to.</span>
-<span class="sd">        **kwargs (optional): Additional arguments to features().</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    paths : List[str]</span>
+<span class="sd">        Files.</span>
+<span class="sd">    header : bool, optional</span>
+<span class="sd">        Include CSV format header.</span>
+<span class="sd">    file : TextIO, optional</span>
+<span class="sd">        Target to print to.</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Additional arguments to features().</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">npaths</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span>
 
@@ -224,11 +244,15 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Summarize a CSV file of feature values.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        csv_path (str): Path to csv.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    csv_path : str</span>
+<span class="sd">        Path to csv.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        dict: Summary values.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    OrderedDict</span>
+<span class="sd">        Summary values.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">csv_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
         <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
@@ -272,7 +296,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.10 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.11 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

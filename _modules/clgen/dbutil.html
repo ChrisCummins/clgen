@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.dbutil &#8212; clgen 0.3.10 documentation</title>
+    <title>clgen.dbutil &#8212; clgen 0.3.11 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.10',
+        VERSION:     '0.3.11',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.10 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.11 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -78,6 +78,7 @@
 
 <span class="kn">from</span> <span class="nn">hashlib</span> <span class="k">import</span> <span class="n">md5</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">fs</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>
 
 <span class="kn">import</span> <span class="nn">clgen</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
@@ -87,9 +88,12 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create an empty OpenCL kernel database.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        path (str): Path to database to create.</span>
-<span class="sd">        github (bool, optional): Add tables for GitHub metadata.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Path to database to create.</span>
+<span class="sd">    github : bool, optional</span>
+<span class="sd">        Add tables for GitHub metadata.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
@@ -109,9 +113,7 @@
 
 
 <div class="viewcode-block" id="md5sum_aggregator"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.md5sum_aggregator">[docs]</a><span class="k">class</span> <span class="nc">md5sum_aggregator</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    sqlite3 aggregator for computing checksum of column values.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; sqlite3 aggregator for computing checksum of column values. &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">md5</span> <span class="o">=</span> <span class="n">md5</span><span class="p">()</span>
 
@@ -123,9 +125,7 @@
 
 
 <div class="viewcode-block" id="linecount_aggregator"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.linecount_aggregator">[docs]</a><span class="k">class</span> <span class="nc">linecount_aggregator</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    sqlite3 aggregator for computing line count of column values.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; sqlite3 aggregator for computing line count of column values. &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -139,10 +139,16 @@
 <div class="viewcode-block" id="linecount"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.linecount">[docs]</a><span class="k">def</span> <span class="nf">linecount</span><span class="p">(</span><span class="n">t</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Line count.</span>
-<span class="sd">    Arguments:</span>
-<span class="sd">        t (str): String.</span>
-<span class="sd">    Returns:</span>
-<span class="sd">        int: Line count.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t : str</span>
+<span class="sd">        String.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        Line count.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span></div>
 
@@ -172,13 +178,15 @@
 <span class="sd">     * CC() returns sum character count of text columns</span>
 <span class="sd">     * LC_col() returns line count of text value</span>
 
-<span class="sd">    Arguments:</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    db_path : str</span>
+<span class="sd">        Path to database.</span>
 
-<span class="sd">        db_path (str): Path to database</span>
-
-<span class="sd">    Returns:</span>
-
-<span class="sd">        sqlite3 connection</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sqlite3.Connection</span>
+<span class="sd">        Database connection.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
     <span class="n">db</span><span class="o">.</span><span class="n">create_aggregate</span><span class="p">(</span><span class="s2">&quot;MD5SUM&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">md5sum_aggregator</span><span class="p">)</span>
@@ -194,10 +202,14 @@
 
 <span class="sd">    If the a row with this key already exists in the table, it is replaced.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        path (str): Path to database.</span>
-<span class="sd">        key (str): Key name.</span>
-<span class="sd">        value (str): Value to insert.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Path to database.</span>
+<span class="sd">    key : str</span>
+<span class="sd">        Key name.</span>
+<span class="sd">    value : str</span>
+<span class="sd">        Value to insert.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
@@ -212,12 +224,17 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Retrieve a value from a database&#39;s Meta table.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        path (str): Path to database.</span>
-<span class="sd">        key (str): Key name.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Path to database.</span>
+<span class="sd">    key : str</span>
+<span class="sd">        Key name.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        str: Value. If no row matching key is found, returns empty string.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Value. If no row matching key is found, returns empty string.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
@@ -233,13 +250,19 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Retrieve a kernel from a database.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        path (str): Path to database.</span>
-<span class="sd">        kid (str): Kernel ID.</span>
-<span class="sd">        table (str): Name of table.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Path to database.</span>
+<span class="sd">    kid : str</span>
+<span class="sd">        Kernel ID.</span>
+<span class="sd">    table : str</span>
+<span class="sd">        Name of table.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        str: Source code.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Source code.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
@@ -260,9 +283,12 @@
 <span class="sd">    a databse schema which requires a particular CLgen version, or a scheme</span>
 <span class="sd">    which is likely to change in the future.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        path (str): Path to database.</span>
-<span class="sd">        version (str, optional): Version value (defaults to CLgen version).</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Path to database.</span>
+<span class="sd">    version : str, optional</span>
+<span class="sd">        Version value (defaults to CLgen version).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">set_meta</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span></div>
 
@@ -274,12 +300,17 @@
 <span class="sd">    If the database does not have a &quot;version&quot; key in the Meta table, returns</span>
 <span class="sd">    False.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        path (str): Path to database.</span>
-<span class="sd">        version (str, optional): Version value (defaults to CLgen version).</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Path to database.</span>
+<span class="sd">    version : str, optional</span>
+<span class="sd">        Version value (defaults to CLgen version).</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        bool: True if version in database matches expected version, else False.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if version in database matches expected version, else False.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">get_meta</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">version</span></div>
 
@@ -288,9 +319,12 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Run an SQL script on a databse.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        path (str): Path to database.</span>
-<span class="sd">        script (str): Name of SQL data script.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Path to database.</span>
+<span class="sd">    script : str</span>
+<span class="sd">        Name of SQL data script.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
@@ -304,11 +338,15 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns whether database is preprocessed.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        db (sqlite3.Connection): Database.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    db : sqlite3.Connection</span>
+<span class="sd">        Database.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        bool: True if database is modified, else False.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if database is modified, else False.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
 
@@ -327,9 +365,12 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Set database preprocessed checksum.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        db (sqlite3.Connection): Database.</span>
-<span class="sd">        checksum (str): New preprocessed checksum.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    db : sqlite3.Connection</span>
+<span class="sd">        Database.</span>
+<span class="sd">    checksum : str</span>
+<span class="sd">        New preprocessed checksum.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
     <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;INSERT OR REPLACE INTO Meta VALUES (?,?)&quot;</span><span class="p">,</span>
@@ -338,16 +379,21 @@
     <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="kernel_ids"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.kernel_ids">[docs]</a><span class="k">def</span> <span class="nf">kernel_ids</span><span class="p">(</span><span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;PreprocessedFiles&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<div class="viewcode-block" id="kernel_ids"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.kernel_ids">[docs]</a><span class="k">def</span> <span class="nf">kernel_ids</span><span class="p">(</span><span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;PreprocessedFiles&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get a list of kernel IDs.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        path (str): Database path.</span>
-<span class="sd">        table (str, optional): Name of table.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Database path.</span>
+<span class="sd">    table : str, optional</span>
+<span class="sd">        Name of table.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        list of str: Kernel IDs.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    List[str]</span>
+<span class="sd">        Kernel IDs.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">db</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
@@ -365,12 +411,17 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    SQL table exists.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        db (sqlite3.Connection): Database.</span>
-<span class="sd">        table_name (str): Name of table.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    db : sqlite3.Connection</span>
+<span class="sd">        Database.</span>
+<span class="sd">    table_name : str</span>
+<span class="sd">        Name of table.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        bool: True if table with name exists.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if table with name exists.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
     <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT name FROM sqlite_master WHERE type=&#39;table&#39; AND name=&#39;&quot;</span> <span class="o">+</span>
@@ -384,11 +435,15 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    SQL table has GitHub metadata tables.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        db (sqlite3.Connection): Database.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    db : sqlite3.Connection</span>
+<span class="sd">        Database.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        bool: True if GitHub tables in database.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if GitHub tables in database.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">table_exists</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="s1">&#39;Repositories&#39;</span><span class="p">)</span></div>
 
@@ -397,13 +452,15 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fetch the number of good preprocessed kernels from dataset.</span>
 
-<span class="sd">    Arguments:</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Path to database.</span>
 
-<span class="sd">        path (str): Path to database.</span>
-
-<span class="sd">    Returns:</span>
-
-<span class="sd">        int: Num preprocessed kernels where status is 0.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        Num preprocessed kernels where status is 0.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">num_rows_in</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;PreprocessedFiles&quot;</span><span class="p">,</span> <span class="s2">&quot;WHERE status=0&quot;</span><span class="p">)</span></div>
 
@@ -412,15 +469,19 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fetch number of rows in table.</span>
 
-<span class="sd">    Arguments:</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Path to database.</span>
+<span class="sd">    table : str</span>
+<span class="sd">        Table ID.</span>
+<span class="sd">    condition : str, optional</span>
+<span class="sd">        Conditional.</span>
 
-<span class="sd">        path (str): Path to database.</span>
-<span class="sd">        table (str): Table ID.</span>
-<span class="sd">        condition (str, optional): Conditional.</span>
-
-<span class="sd">    Returns:</span>
-
-<span class="sd">        int: Num rows.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        Num rows.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">db</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
@@ -433,15 +494,19 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fetch character count of contents in table.</span>
 
-<span class="sd">    Arguments:</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Path to database.</span>
+<span class="sd">    table : str</span>
+<span class="sd">        Table ID.</span>
+<span class="sd">    condition : str, optional</span>
+<span class="sd">        Conditional.</span>
 
-<span class="sd">        path (str): Path to database.</span>
-<span class="sd">        table (str): Table ID.</span>
-<span class="sd">        condition (str, optional): Conditional.</span>
-
-<span class="sd">    Returns:</span>
-
-<span class="sd">        int: Num lines.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        Num chars.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">db</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
@@ -454,15 +519,19 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fetch line count of contents in table.</span>
 
-<span class="sd">    Arguments:</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Path to database.</span>
+<span class="sd">    table : str</span>
+<span class="sd">        Table ID.</span>
+<span class="sd">    condition : str, optional</span>
+<span class="sd">        Conditional.</span>
 
-<span class="sd">        path (str): Path to database.</span>
-<span class="sd">        table (str): Table ID.</span>
-<span class="sd">        condition (str, optional): Conditional.</span>
-
-<span class="sd">    Returns:</span>
-
-<span class="sd">        int: Num lines.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        Num lines.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">db</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
@@ -477,9 +546,10 @@
 
 <span class="sd">    ContentFiles remain unchanged.</span>
 
-<span class="sd">    Arguments:</span>
-
-<span class="sd">        path (str): Path to database.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Path to database.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">db</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
@@ -493,8 +563,10 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Remove all ugly and bad contents from PreprocessedFiles table.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        db_path (str): Dataset.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    db_path : str</span>
+<span class="sd">        Dataset.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">original_size</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">du</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">human_readable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">original_size_human_readable</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">du</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">human_readable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -528,12 +600,18 @@
 
 <span class="sd">    Uses the key names as column names, as the values as column values.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        c (sqlite3.Cursor): Database cursor.</span>
-<span class="sd">        table (str): Destination table.</span>
-<span class="sd">        data (dict): Key value pairs.</span>
-<span class="sd">        ignore_existing (bool, optional): Ignore existing entries.</span>
-<span class="sd">        replace_existing (bool, optional): Replace existing entries.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    c : sqlite3.Cursor</span>
+<span class="sd">        Database cursor.</span>
+<span class="sd">    table : str</span>
+<span class="sd">        Destination table.</span>
+<span class="sd">    data : dict</span>
+<span class="sd">        Key value pairs.</span>
+<span class="sd">    ignore_existing : bool, optional</span>
+<span class="sd">        Ignore existing entries.</span>
+<span class="sd">    replace_existing : bool, optional</span>
+<span class="sd">        Replace existing entries.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">or_ignore</span> <span class="o">=</span> <span class="s2">&quot;OR IGNORE&quot;</span> <span class="k">if</span> <span class="n">ignore_existing</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
     <span class="n">or_replace</span> <span class="o">=</span> <span class="s2">&quot;OR REPLACE&quot;</span> <span class="k">if</span> <span class="n">replace_existing</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
@@ -554,11 +632,15 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Escape SQL key.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        key (str): SQL key.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    key : str</span>
+<span class="sd">        SQL key.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        str: Escaped key.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Escaped key.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">_sql_sub_chars</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span>
                   <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">_sql_rm_chars</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">))))</span></div>
@@ -568,11 +650,15 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sanitize ID.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        id (str): ID.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    id : str</span>
+<span class="sd">        ID.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        str: ID.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Path.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;[/:\. ]+&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span></div>
 
@@ -583,16 +669,26 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Dump database contents.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        db (slite3.Connection): Dataset.</span>
-<span class="sd">        out_path (str): Path to output.</span>
-<span class="sd">        gh (bool, optional): Dataset is GitHub.</span>
-<span class="sd">        fileid (bool, optional): Include file IDs.</span>
-<span class="sd">        reverse (bool, optional): Reverse ordering of output.</span>
-<span class="sd">        input_samples (bool, optional): If True, use un-preprocessed files.</span>
-<span class="sd">        status (int, optional): Filter preprocess status.</span>
-<span class="sd">        eof (bool, optional): Include EOF separators.</span>
-<span class="sd">        dir (bool, optional): Write output to directory.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    db : slite3.Connection</span>
+<span class="sd">        Dataset.</span>
+<span class="sd">    out_path : str</span>
+<span class="sd">        Path to output.</span>
+<span class="sd">    gh : bool, optional</span>
+<span class="sd">        Dataset is GitHub.</span>
+<span class="sd">    fileid : bool, optional</span>
+<span class="sd">        Include file IDs.</span>
+<span class="sd">    reverse : bool, optional</span>
+<span class="sd">        Reverse ordering of output.</span>
+<span class="sd">    input_samples : bool, optional</span>
+<span class="sd">        If True, use un-preprocessed files.</span>
+<span class="sd">    status : int, optional</span>
+<span class="sd">        Filter preprocess status.</span>
+<span class="sd">    eof : bool, optional</span>
+<span class="sd">        Include EOF separators.</span>
+<span class="sd">    dir : bool, optional</span>
+<span class="sd">        Write output to directory.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;writing corpus&#39;</span><span class="p">,</span> <span class="n">out_path</span><span class="p">,</span> <span class="s1">&#39;...&#39;</span><span class="p">)</span>
 
@@ -655,10 +751,14 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Dump database contents.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        db_path (str): Dataset.</span>
-<span class="sd">        out_path (str): Corpus path.</span>
-<span class="sd">        **kwargs (dict): Additional arguments to _dump_db().</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    db_path : str</span>
+<span class="sd">        Dataset.</span>
+<span class="sd">    out_path : str</span>
+<span class="sd">        Corpus path.</span>
+<span class="sd">    **kwargs : dict</span>
+<span class="sd">        Additional arguments to _dump_db().</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">db</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
 
@@ -744,7 +844,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.10 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.11 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>
