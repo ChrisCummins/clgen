@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Python API &#8212; clgen 0.3.11 documentation</title>
+    <title>Python API &#8212; clgen 0.3.12 documentation</title>
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.3.11',
+        VERSION:     '0.3.12',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../installation.html" title="Building the Development Version"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.11 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.12 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -562,7 +562,7 @@ is <a class="reference external" href="mailto:$USER&#37;&#52;&#48;$HOSTNAME">$US
 
 <dl class="staticmethod">
 <dt id="clgen._atomizer.GreedyAtomizer.from_text">
-<em class="property">static </em><code class="descname">from_text</code><span class="sig-paren">(</span><em>atoms={'image2d_array_t'</em>, <em>'get_global_id'</em>, <em>'get_local_size'</em>, <em>'for'</em>, <em>'auto'</em>, <em>'uchar'</em>, <em>'__inline'</em>, <em>'__local'</em>, <em>'elif'</em>, <em>'private'</em>, <em>'restrict'</em>, <em>'complex'</em>, <em>'signed'</em>, <em>'static'</em>, <em>'ifndef'</em>, <em>'float'</em>, <em>'__write_only'</em>, <em>'__constant'</em>, <em>'kernel'</em>, <em>'alignof'</em>, <em>'switch'</em>, <em>'__clc_fabs'</em>, <em>'read_write'</em>, <em>'__read_write'</em>, <em>'break'</em>, <em>'const'</em>, <em>'int'</em>, <em>'double'</em>, <em>'extern'</em>, <em>'__read_only'</em>, <em>'define'</em>, <em>'__global'</em>, <em>'__attribute'</em>, <em>'default'</em>, <em>'include'</em>, <em>'volatile'</em>, <em>'barrier'</em>, <em>'while'</em>, <em>'noreturn'</em>, <em>'image1d_array_t'</em>, <em>'get_num_groups'</em>, <em>'unsigned'</em>, <em>'struct'</em>, <em>'*/'</em>, <em>'pragma'</em>, <em>'//'</em>, <em>'wide'</em>, <em>'typedef'</em>, <em>'fabs'</em>, <em>'constant'</em>, <em>'__clc_fma'</em>, <em>'shuffle'</em>, <em>'enum'</em>, <em>'__kernel'</em>, <em>'if'</em>, <em>'uint'</em>, <em>'image3d_t'</em>, <em>'size_t'</em>, <em>'register'</em>, <em>'sampler_t'</em>, <em>'error'</em>, <em>'long'</em>, <em>'get_local_id'</em>, <em>'quad'</em>, <em>'line'</em>, <em>'do'</em>, <em>'goto'</em>, <em>'continue'</em>, <em>'atomic_add'</em>, <em>'clamp'</em>, <em>'image2d_t'</em>, <em>'image1d_buffer_t'</em>, <em>'image1d_t'</em>, <em>'global'</em>, <em>'half'</em>, <em>'get_global_size'</em>, <em>'sizeof'</em>, <em>'union'</em>, <em>'bool'</em>, <em>'undef'</em>, <em>'  '</em>, <em>'case'</em>, <em>'inline'</em>, <em>'short'</em>, <em>'__assert'</em>, <em>'event_t'</em>, <em>'local'</em>, <em>'/*'</em>, <em>'write_only'</em>, <em>'alignas'</em>, <em>'ulong'</em>, <em>'imaginary'</em>, <em>'void'</em>, <em>'into'</em>, <em>'char'</em>, <em>'true'</em>, <em>'__private'</em>, <em>'sqrt'</em>, <em>'defined'</em>, <em>'else'</em>, <em>'return'</em>, <em>'abs'</em>, <em>'false'</em>, <em>'read_only'</em>, <em>'__builtin_astype'</em>, <em>'endif'</em>, <em>'u32'</em>, <em>'ifdef'}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_atomizer.html#GreedyAtomizer.from_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._atomizer.GreedyAtomizer.from_text" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">from_text</code><span class="sig-paren">(</span><em>atoms={'continue'</em>, <em>'image2d_array_t'</em>, <em>'true'</em>, <em>'atomic_add'</em>, <em>'__kernel'</em>, <em>'short'</em>, <em>'__clc_fabs'</em>, <em>'alignof'</em>, <em>'uint'</em>, <em>'static'</em>, <em>'get_num_groups'</em>, <em>'image1d_buffer_t'</em>, <em>'__global'</em>, <em>'unsigned'</em>, <em>'half'</em>, <em>'case'</em>, <em>'wide'</em>, <em>'u32'</em>, <em>'shuffle'</em>, <em>'complex'</em>, <em>'switch'</em>, <em>'alignas'</em>, <em>'constant'</em>, <em>'__inline'</em>, <em>'ulong'</em>, <em>'endif'</em>, <em>'private'</em>, <em>'__attribute'</em>, <em>'double'</em>, <em>'__builtin_astype'</em>, <em>'elif'</em>, <em>'event_t'</em>, <em>'typedef'</em>, <em>'__write_only'</em>, <em>'int'</em>, <em>'image3d_t'</em>, <em>'const'</em>, <em>'inline'</em>, <em>'  '</em>, <em>'clamp'</em>, <em>'void'</em>, <em>'size_t'</em>, <em>'error'</em>, <em>'/*'</em>, <em>'abs'</em>, <em>'volatile'</em>, <em>'get_local_size'</em>, <em>'imaginary'</em>, <em>'goto'</em>, <em>'*/'</em>, <em>'image1d_t'</em>, <em>'char'</em>, <em>'__private'</em>, <em>'else'</em>, <em>'extern'</em>, <em>'read_write'</em>, <em>'restrict'</em>, <em>'get_global_id'</em>, <em>'__read_only'</em>, <em>'for'</em>, <em>'write_only'</em>, <em>'global'</em>, <em>'return'</em>, <em>'undef'</em>, <em>'__clc_fma'</em>, <em>'false'</em>, <em>'//'</em>, <em>'struct'</em>, <em>'default'</em>, <em>'if'</em>, <em>'define'</em>, <em>'do'</em>, <em>'uchar'</em>, <em>'line'</em>, <em>'ifndef'</em>, <em>'defined'</em>, <em>'enum'</em>, <em>'__local'</em>, <em>'image2d_t'</em>, <em>'quad'</em>, <em>'__assert'</em>, <em>'get_global_size'</em>, <em>'sampler_t'</em>, <em>'sizeof'</em>, <em>'ifdef'</em>, <em>'__constant'</em>, <em>'register'</em>, <em>'signed'</em>, <em>'float'</em>, <em>'noreturn'</em>, <em>'auto'</em>, <em>'image1d_array_t'</em>, <em>'sqrt'</em>, <em>'bool'</em>, <em>'fabs'</em>, <em>'while'</em>, <em>'get_local_id'</em>, <em>'break'</em>, <em>'union'</em>, <em>'into'</em>, <em>'read_only'</em>, <em>'__read_write'</em>, <em>'kernel'</em>, <em>'barrier'</em>, <em>'long'</em>, <em>'local'</em>, <em>'pragma'</em>, <em>'include'}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/_atomizer.html#GreedyAtomizer.from_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen._atomizer.GreedyAtomizer.from_text" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -3292,7 +3292,7 @@ kernel.</p>
 
 <dl class="function">
 <dt id="clgen.dbutil.set_version_meta">
-<code class="descclassname">clgen.dbutil.</code><code class="descname">set_version_meta</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.3.10.dev0'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#set_version_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.set_version_meta" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.dbutil.</code><code class="descname">set_version_meta</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.3.11.dev0'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#set_version_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.set_version_meta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the &#8220;version&#8221; key in an database.</p>
 <p>This is useful for marking version requirements of specific datasets, e.g.
 a databse schema which requires a particular CLgen version, or a scheme
@@ -3364,7 +3364,7 @@ which is likely to change in the future.</p>
 
 <dl class="function">
 <dt id="clgen.dbutil.version_meta_matches">
-<code class="descclassname">clgen.dbutil.</code><code class="descname">version_meta_matches</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.3.10.dev0'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#version_meta_matches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.version_meta_matches" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">clgen.dbutil.</code><code class="descname">version_meta_matches</code><span class="sig-paren">(</span><em>path</em>, <em>version='0.3.11.dev0'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/clgen/dbutil.html#version_meta_matches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#clgen.dbutil.version_meta_matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check that the &#8220;version&#8221; key in a database matches the expected value.</p>
 <p>If the database does not have a &#8220;version&#8221; key in the Meta table, returns
 False.</p>
@@ -3788,7 +3788,7 @@ This function does not return.</p>
         <li class="right" >
           <a href="../installation.html" title="Building the Development Version"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.11 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">clgen 0.3.12 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
