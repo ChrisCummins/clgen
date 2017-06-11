@@ -1,83 +1,57 @@
-# build environment
-#
-# We need the extra RAM that a non-container build gives us.
-#
-# See: https://docs.travis-ci.com/user/ci-environment/
+# bazel boiler plate mostly taken from rules_go/.travis.yml. See:
+#   https://github.com/bazelbuild/rules_go/blob/master/.travis.yml
+
+# trusty beta image has jdk8, gcc4.8.4
+# FIXME(linux): dist: trusty
 sudo: required
-dist: trusty
+# xcode8 has jdk8
+osx_image: xcode8
+# Not technically required but suppresses 'Ruby' in Job status message.
+language: java
 
-language: python
+# workaround submodule public key access.
+# See: http://stackoverflow.com/a/24600210
+git:
+  submodules: false
 
-python:
-  - "3.6"
+os:
+  # FIXME(linux): - linux
+  - osx
 
-cache:
-  directories:
-    - .cache
-    - native/cmake
-    - native/gpuverify
-    - native/libclc
-    - native/llvm
-    - native/ninja
-    - native/oclgrind
-
-# here we do the work that install-deps.sh script does
-addons:
-  apt:
-    sources:
-      - llvm-toolchain-precise-3.7
-      - ubuntu-toolchain-r-test
-    packages:
-      - libtcmalloc-minimal4  # fix for TensorFlow malloc. See: https://github.com/tensorflow/tensorflow/issues/6968#issuecomment-279060156
-      - gcc-5
-      - g++-5
-      - clang-3.6
-      - libhdf5-serial-dev
-      - python-dev
-      - mono-complete
-
-env:
-  global:
-    - CC=clang
-    - CXX=clang++
-    - LD_PRELOAD="/usr/lib/libtcmalloc_minimal.so.4"  # fix for TensorFlow malloc. See: https://github.com/tensorflow/tensorflow/issues/6968#issuecomment-279060156
+# FIXME(linux):
+# addons:
+#   apt:
+#     sources:
+#       - ubuntu-toolchain-r-test
+#     packages:
+#       - clang-3.6
 
 before_install:
-  - pip install --upgrade pip
-  - pip install coveralls
-  - sudo apt-get update -qq
-  - ldd --version   # glibc version
-  - $CC --version   # c compiler
-  - $CXX --version  # c++ compiler
-
-# A clean Travis CI build will timeout after 50 minutes and fail. Irritatingly,
-# this means that the caches are not updated, so we can't incrementally build
-# the project by restarting the job. The workaround is to kill the build after
-# a time limit and then restart the job by hand:
-#
-# install:  # cache cold (runs build in 30min chunks, restart job until complete)
-#   - ./configure -b
-#   - timeout 1800 make all || true
-#   - touch NORUN
-#
-install:  # cache hot
-  - ./configure -b
-  - make all
-  - make install
-  - pip freeze  # python package versions
+  - ./tools/http-git-submodules.sh
+  - git submodule update --init --recursive
+  - |
+    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      brew update >/dev/null
+      brew install bazel
+    else
+      echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+      curl https://bazel.build/bazel-release.pub.gpg | sudo apt-key add -
+      sudo apt-get update >/dev/null
+      dpkg -s 'bazel' &>/dev/null || sudo apt-get install -y bazel
+    fi
 
 script:
-  - which clgen
-  - test -f NORUN || clgen -v test
-
-after_success:
-  - mv -v ~/virtualenv/*/lib/*/site-packages/CLgen-*/clgen/.coverage .
-  - mv -v ~/virtualenv/*/lib/*/site-packages/CLgen-*/clgen/test/data/coveragerc .coveragerc
-  # strip absolute paths from coverage file
-  - sed -r 's,/home/travis/virtualenv/python[0-9\.]+/lib/python[0-9\.]+/site-packages/CLgen-[0-9\.]+(\.dev[0-9]+)?-py[0-9\.]+\.egg,'$(pwd)',g' -i .coverage
-  - test -f NORUN || coveralls
-
-notifications:
-  email:
-    on_success: always # [always|never|change]
-    on_failure: always # [always|never|change]
+  - source .env
+  - echo $CC && $CC --version   # c compiler
+  - echo $CXX && $CXX --version  # c++ compiler
+  - |
+    bazel \
+      test \
+        --verbose_failures \
+        --sandbox_debug \
+        --test_output=errors \
+        --test_strategy=standalone \
+        --spawn_strategy=standalone \
+        --genrule_strategy=standalone \
+        --local_resources=400,1,1.0 \
+        $(bazel query //... | grep '^//learn/ctci')
