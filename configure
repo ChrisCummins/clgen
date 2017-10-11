@@ -2,20 +2,19 @@
 #
 # Copyright 2016, 2017 Chris Cummins <chrisc.101@gmail.com>.
 #
-# This file is part of CLgen.
+# This file is part of DeepSmith.
 #
-# CLgen is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# DeepSmith is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
 #
-# CLgen is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# DeepSmith is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with CLgen.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License along with
+# DeepSmith.  If not, see <http://www.gnu.org/licenses/>.
 #
 import json
 import os
@@ -74,13 +73,12 @@ def to_text(val):
 
 
 def main():
-    parser = ArgumentParser(description="Configure CLgen build.")
+    parser = ArgumentParser(description="Configure DeepSmith build.")
     parser.add_argument("-r", "--reconfigure", action="store_true",
                         help="re-run configuraiton using previous settings")
     parser.add_argument("-b", "--batch", action="store_true",
                         help="defaults all options to 'no'. Override with:")
     parser.add_argument("--with-cuda", action="store_true")
-    parser.add_argument("--with-dev-tools", action="store_true")
     args = parser.parse_args()
 
     if args.reconfigure:
@@ -94,7 +92,7 @@ def main():
     else:
         cfg = {
             "cuda": args.with_cuda,
-            "version": "0.3.13.dev0",
+            "version": "0.4.0.dev0",
         }
 
     # get input from user
@@ -109,10 +107,10 @@ def main():
     # generate make config file
     with open(".config.make", "w") as outfile:
         print("USE_CUDA := " + to_make(cfg["cuda"]), file=outfile)
-        print("CLGEN_VERSION := " + cfg["version"], file=outfile)
+        print("DSMITH_VERSION := " + cfg["version"], file=outfile)
 
     # generate python config file
-    with open(os.path.join("clgen", "_config.py"), "w") as outfile:
+    with open(os.path.join("dsmith", "_config.py"), "w") as outfile:
         print("USE_CUDA = " + to_python(cfg["cuda"]), file=outfile)
         print("VERSION = '{}'".format(cfg["version"]), file=outfile)
 
@@ -127,14 +125,14 @@ def main():
 
     with open("requirements.txt", "w") as outfile:
         for name in requirements_files:
-            with open(os.path.join("make", "requirements", name)) as infile:
+            with open(os.path.join("build", "requirements", name)) as infile:
                 outfile.write(infile.read())
 
-    print("CLgen {version} configured:".format(version=cfg["version"]))
+    print("DSmith {version} configured:".format(version=cfg["version"]))
     print()
     print("    CUDA support:    " + to_text(cfg["cuda"]))
     print()
-    print("You may now build CLgen by running 'make'.")
+    print("You may now build DSmith by running 'make'.")
 
 
 if __name__ == "__main__":
