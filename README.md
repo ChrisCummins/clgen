@@ -1,99 +1,76 @@
-# DeepSmith: Compiler Fuzzing through Deep Learning
+<div align="center">
+  <a href="https://github.com/ChrisCummins/clgen">
+    <img src="https://raw.githubusercontent.com/ChrisCummins/clgen/master/docs/assets/logo.png" width="420">
+  </a>
+</div>
 
-DeepSmith is a novel approach to automate and accelerate compiler validation which takes advantage of state-of-the-art deep learning techniques. It constructs a learned model of the structure of real world code based on a large corpus of example programs. Then, it uses the model to automatically generate tens of thousands of realistic programs. Finally, it applies established differential testing methodologies on them to expose bugs in compilers.
+-------
 
-## Requirements
+<div align="center">
+  <a href="http://chriscummins.cc/clgen/" target="_blank">
+    <img src="https://img.shields.io/badge/docs-0.4.0-brightgreen.svg?style=flat">
+  </a>
+  <a href="https://travis-ci.org/ChrisCummins/clgen" target="_blank">
+    <img src="https://img.shields.io/travis/ChrisCummins/clgen/master.svg?style=flat">
+  </a>
+  <a href="https://coveralls.io/github/ChrisCummins/clgen?branch=master">
+    <img src="https://img.shields.io/coveralls/ChrisCummins/clgen/master.svg?style=flat">
+  </a>
+   <a href="https://github.com/ChrisCummins/clgen/releases" target="_blank">
+    <img src="https://img.shields.io/badge/release-0.4.0-blue.svg?style=flat">
+  </a>
+  <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">
+    <img src="https://img.shields.io/badge/license-GNU%20GPL%20v3-blue.svg?style=flat">
+  </a>
+</div>
 
-* GNU / Linux (we recommend Ubuntu 16.04).
-* OpenCL
-* MySQL
-* GNU Make
+**CLgen** is an open source application for generating runnable programs using
+deep learning. CLgen *learns* to program using neural networks which model the
+semantics and usage from large volumes of program fragments, generating
+many-core OpenCL programs that are representative of, but *distinct* from, the
+programs it learns from.
 
-Optional, but recommended:
-
-* Nvidia GPU with [CUDA Toolkit 8.0 and cuDNN v6](http://docs.nvidia.com/cuda/cuda-installation-guide-linux/#axzz4VZnqTJ2A).
-
-## Installation
-
-**Step 1:** Configure the build.
-
-```sh
-$ ./configure
-```
-
-You will be asked a series of questions to customize the build.
-
-**Step 2:** Build the code.
-
-```sh
-$ make
-```
-
-Please note our software stack is pretty large, requiring around 7 GB of dependencies to be built. A clean build may take upwards of an hour.
-
-**Step 3 (optional):** Run the test suite.
-
-```sh
-$ make test
-```
-
-Please report any problems using the [issue tracker](https://github.com/ChrisCummins/dsmith/issues).
+<img src="https://raw.githubusercontent.com/ChrisCummins/clgen/master/docs/assets/pipeline.png" width="500">
 
 
-## Usage
+## Getting Started
 
-DeepSmith is installed in a virtual environment. Activate it using:
+See the [online documentation](http://chriscummins.cc/clgen/) for instructions
+on how to download and install CLgen.
+
+Download a tiny example dataset to train and sample your first CLgen model:
 
 ```sh
-$ source build/dsmith/bin/activate
+$ wget https://github.com/ChrisCummins/clgen/raw/master/tests/data/tiny.tar.bz2
+$ tar xf tiny.tar.bz2
+$ clgen sample model.json sampler.json
 ```
 
-Interactive prompt:
+<img src="https://raw.githubusercontent.com/ChrisCummins/clgen/master/docs/assets/clgen.gif" width="500">
 
-```
-(dsmith) $ dsmith
-Good evening. Type 'help' for available commands.
-```
 
-**Step 1:** Generate programs:
+## Resources
 
-```
-> make 1000 opencl programs using dsmith
-```
+Presentation slides:
 
-**Step 2:** Generate test cases:
+<a href="https://speakerdeck.com/chriscummins/synthesizing-benchmarks-for-predictive-modelling-cgo-17">
+  <img src="https://raw.githubusercontent.com/ChrisCummins/clgen/master/docs/assets/slides.png" width="500">
+</a>
 
-```
-> make opencl testcases
-```
+Publication
+["Synthesizing Benchmarks for Predictive Modeling"](https://github.com/ChrisCummins/paper-synthesizing-benchmarks)
+(CGO'17).
 
-**Step 3:** Run test cases:
+[Jupyter notebook](https://github.com/ChrisCummins/paper-synthesizing-benchmarks/blob/master/code/Paper.ipynb) containing experimental evaluation of
+CLgen.
 
-```
-> describe available opencl testbeds
-```
+Documentation for the [Python API](http://chriscummins.cc/clgen/api/) and
+[command line interface](http://chriscummins.cc/clgen/bin/).
 
-```
-> run opencl testcases on 1±
-```
-
-**Step 4:** Differential test results:
-
-```
-> difftest opencl results
-```
-
-When you are done using DeepSmith, exit the interactive prompt and deactivate the virtual environment using:
-
-```sh
-> exit
-God speed.
-(dsmith) $ deactivate
-```
 
 ## License
 
-Copyright 2017 Chris Cummins <chrisc.101@gmail.com>.
+Copyright 2016, 2017 Chris Cummins <chrisc.101@gmail.com>.
 
 Released under the terms of the GPLv3 license. See [LICENSE.txt](/LICENSE.txt)
 for details.
