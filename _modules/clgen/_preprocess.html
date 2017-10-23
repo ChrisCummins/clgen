@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen._preprocess &#8212; clgen 0.3.13 documentation</title>
+    <title>clgen._preprocess &#8212; clgen 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.13',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.13 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.4.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -95,7 +95,6 @@
 
 
 <span class="kn">import</span> <span class="nn">clgen</span>
-<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">clutil</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">dbutil</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">native</span>
@@ -170,6 +169,13 @@
 <div class="viewcode-block" id="GPUVerifyException"><a class="viewcode-back" href="../../api/index.html#clgen._preprocess.GPUVerifyException">[docs]</a><span class="k">class</span> <span class="nc">GPUVerifyException</span><span class="p">(</span><span class="n">UglyCodeException</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    GPUVerify found a bug.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="GPUVerifyTimeoutException"><a class="viewcode-back" href="../../api/index.html#clgen._preprocess.GPUVerifyTimeoutException">[docs]</a><span class="k">class</span> <span class="nc">GPUVerifyTimeoutException</span><span class="p">(</span><span class="n">GPUVerifyException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    GPUVerify timed out.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
@@ -357,7 +363,7 @@
     <span class="k">return</span> <span class="n">stdout</span></div>
 
 
-<div class="viewcode-block" id="gpuverify"><a class="viewcode-back" href="../../api/index.html#clgen._preprocess.gpuverify">[docs]</a><span class="k">def</span> <span class="nf">gpuverify</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="gpuverify"><a class="viewcode-back" href="../../api/index.html#clgen._preprocess.gpuverify">[docs]</a><span class="k">def</span> <span class="nf">gpuverify</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Run GPUverify over kernel.</span>
 
@@ -389,12 +395,14 @@
     <span class="k">with</span> <span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;.cl&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmp</span><span class="p">:</span>
         <span class="n">tmp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
         <span class="n">tmp</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="n">native</span><span class="o">.</span><span class="n">GPUVERIFY</span><span class="p">,</span> <span class="n">tmp</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;timeout&#39;</span><span class="p">,</span> <span class="s1">&#39;-s9&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">timeout</span><span class="p">),</span> <span class="n">native</span><span class="o">.</span><span class="n">GPUVERIFY</span><span class="p">,</span> <span class="n">tmp</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span>
 
         <span class="n">process</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">PIPE</span><span class="p">)</span>
         <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="o">-</span><span class="mi">9</span><span class="p">:</span>  <span class="c1"># timeout signal</span>
+        <span class="k">raise</span> <span class="n">GPUVerifyTimeoutException</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;GPUveryify failed to complete with </span><span class="si">{timeout}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">GPUVerifyException</span><span class="p">(</span><span class="n">stderr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">src</span></div>
@@ -658,8 +666,8 @@
         <span class="k">return</span> <span class="n">src</span></div>
 
 
-<div class="viewcode-block" id="preprocess"><a class="viewcode-back" href="../../api/index.html#clgen._preprocess.preprocess">[docs]</a><span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">,</span> <span class="n">use_shim</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-               <span class="n">use_gpuverify</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="preprocess_opencl"><a class="viewcode-back" href="../../api/index.html#clgen._preprocess.preprocess_opencl">[docs]</a><span class="k">def</span> <span class="nf">preprocess_opencl</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">,</span> <span class="n">use_shim</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                      <span class="n">use_gpuverify</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Preprocess an OpenCL source. There are three possible outcomes:</span>
 
@@ -709,6 +717,88 @@
         <span class="n">gpuverify</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">src</span></div>
+
+
+<span class="k">def</span> <span class="nf">_strip_comments</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Strip C/C++ style comments.</span>
+
+<span class="sd">    written by @markus-jarderot https://stackoverflow.com/a/241506/1318051</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">replacer</span><span class="p">(</span><span class="n">match</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot; &quot;</span> <span class="c1"># note: a space and not an empty string</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">s</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+        <span class="sa">r</span><span class="s1">&#39;//.*?$|/\*.*?\*/|</span><span class="se">\&#39;</span><span class="s1">(?:</span><span class="se">\\</span><span class="s1">.|[^</span><span class="se">\\\&#39;</span><span class="s1">])*</span><span class="se">\&#39;</span><span class="s1">|&quot;(?:</span><span class="se">\\</span><span class="s1">.|[^</span><span class="se">\\</span><span class="s1">&quot;])*&quot;&#39;</span><span class="p">,</span>
+        <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">replacer</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_remove_duplicate_empty_lines</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Truncate blank lines.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">last_line</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">line</span> <span class="ow">or</span> <span class="n">last_line</span><span class="p">:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="n">last_line</span> <span class="o">=</span> <span class="n">line</span>
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="preprocess_solidity"><a class="viewcode-back" href="../../api/index.html#clgen._preprocess.preprocess_solidity">[docs]</a><span class="k">def</span> <span class="nf">preprocess_solidity</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;anon&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Preprocess a solidity source.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">src</span> <span class="o">=</span> <span class="n">_strip_comments</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+    <span class="n">src</span> <span class="o">=</span> <span class="n">_remove_duplicate_empty_lines</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+    <span class="n">src</span> <span class="o">=</span> <span class="n">clangformat_ocl</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">src</span></div>
+
+
+<div class="viewcode-block" id="preprocess"><a class="viewcode-back" href="../../api/index.html#clgen._preprocess.preprocess">[docs]</a><span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;anon&quot;</span><span class="p">,</span> <span class="n">lang</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;opencl&quot;</span><span class="p">,</span>
+               <span class="o">**</span><span class="n">lang_opts</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Preprocess a file. There are three possible outcomes:</span>
+
+<span class="sd">    1. Good. Code is preprocessed and ready to be put into a training set.</span>
+<span class="sd">    2. Bad. Code can&#39;t be preprocessed (i.e. it&#39;s &quot;bad&quot; code).</span>
+<span class="sd">    3. Ugly. Code can be preprocessed but isn&#39;t useful for training</span>
+<span class="sd">       (e.g. it&#39;s an empty file).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    src : str</span>
+<span class="sd">        The source code as a string.</span>
+<span class="sd">    id : str, optional</span>
+<span class="sd">        An identifying name for the source code (used in exception messages).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Preprocessed source code as a string.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    BadCodeException</span>
+<span class="sd">        If code is bad (see above).</span>
+<span class="sd">    UglyCodeException</span>
+<span class="sd">        If code is ugly (see above).</span>
+<span class="sd">    clgen.InternalException</span>
+<span class="sd">        In case of some other error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">lang</span> <span class="o">==</span> <span class="s2">&quot;opencl&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">preprocess_opencl</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="o">**</span><span class="n">lang_opts</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">lang</span> <span class="o">==</span> <span class="s2">&quot;solidity&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">preprocess_solidity</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="o">**</span><span class="n">lang_opts</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;unsuporrted language &#39;</span><span class="si">{lang}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="preprocess_for_db"><a class="viewcode-back" href="../../api/index.html#clgen._preprocess.preprocess_for_db">[docs]</a><span class="k">def</span> <span class="nf">preprocess_for_db</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">preprocess_opts</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
@@ -883,11 +973,23 @@
 
     <span class="n">log</span><span class="o">.</span><span class="n">verbose</span><span class="p">(</span><span class="s2">&quot;creating jobs&quot;</span><span class="p">)</span>
 
+    <span class="c1"># Determine if we need to inline kernels when creating jobs</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT name FROM sqlite_master WHERE type=&#39;table&#39; AND name=&#39;ContentMeta&#39;;&quot;</span><span class="p">)</span>
+    <span class="n">meta_table</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">meta_table</span><span class="p">:</span>
+        <span class="n">get_kernel</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">kid</span><span class="p">:</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">get_inlined_kernel</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">kid</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="n">preprocess_opts</span><span class="p">[</span><span class="s2">&quot;lang&quot;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">get_kernel</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">kid</span><span class="p">:</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">get_kernel</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">kid</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="s2">&quot;ContentFiles&quot;</span><span class="p">)</span>
+
     <span class="c1"># create jobs</span>
     <span class="n">jobs</span> <span class="o">=</span> <span class="p">[{</span>
         <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">kid</span><span class="p">,</span>
-        <span class="s2">&quot;src&quot;</span><span class="p">:</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">get_kernel</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">kid</span><span class="p">,</span> <span class="s2">&quot;ContentFiles&quot;</span><span class="p">),</span>
-        <span class="s2">&quot;preprocess_opts&quot;</span><span class="p">:</span> <span class="n">preprocess_opts</span>
+        <span class="s2">&quot;src&quot;</span><span class="p">:</span> <span class="n">get_kernel</span><span class="p">(</span><span class="n">kid</span><span class="p">),</span>
+        <span class="s2">&quot;preprocess_opts&quot;</span><span class="p">:</span> <span class="n">preprocess_opts</span><span class="p">,</span>
     <span class="p">}</span> <span class="k">for</span> <span class="n">kid</span> <span class="ow">in</span> <span class="n">todo</span><span class="p">]</span>
 
     <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">jobs</span><span class="p">)</span>
@@ -1003,7 +1105,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.13 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.4.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

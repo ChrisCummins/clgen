@@ -21,7 +21,7 @@ CLgen requirements automatically:
 
 ::
 
-    $ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.3.13/install-deps.sh | bash
+    $ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.4.0/install-deps.sh | bash
 
 Note that on Ubuntu, sudo privileges are required to install these requirements
 - you may be prompted for your password.
@@ -31,8 +31,7 @@ each for each of the following requirements:
 
 -  `Python <https://www.python.org/>`_ >= 3.6.
 -  `Mono <http://www.mono-project.com/>`_.
--  `GCC <https://gcc.gnu.org/>`_ >= 4.8.2 or
-   `clang <http://llvm.org/releases/download.html>`_ >= 3.1.
+-  `clang <http://llvm.org/releases/download.html>`_ >= 3.1.
 -  `GNU Make <http://savannah.gnu.org/projects/make>`_ > 3.79.
 -  `glibc <https://www.gnu.org/software/libc/>`_ >= 2.16.
 -  `libhdf5 <https://support.hdfgroup.org/HDF5/release/obtainsrc.html>`_ >=
@@ -44,6 +43,7 @@ each for each of the following requirements:
 -  `git <https://git-scm.com/>`_.
 -  `curl <https://curl.haxx.se/>`_.
 -  `wget <https://www.gnu.org/software/wget/>`_.
+-  `patch <https://linux.die.net/man/1/patch>`_.
 
 Optional, but recommended:
 
@@ -76,9 +76,9 @@ Install the latest release of CLgen:
 ::
 
     # if you have an NVIDIA GPU with CUDA 8.0 and cuDNN:
-    (clgen)$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.3.13/install-cuda.sh | bash
+    (clgen)$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.4.0/install-cuda.sh | bash
     # CPU only:
-    (clgen)$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.3.13/install-cpu.sh | bash
+    (clgen)$ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.4.0/install-cpu.sh | bash
 
 When you are done using CLgen, deactivate the virtualenv environment:
 
@@ -106,9 +106,9 @@ Install the latest release of CLgen:
 ::
 
     # if you have an NVIDIA GPU with CUDA 8.0 and cuDNN:
-    $ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.3.13/install-cuda.sh | bash
+    $ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.4.0/install-cuda.sh | bash
     # CPU only:
-    $ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.3.13/install-cpu.sh | bash
+    $ curl -s https://raw.githubusercontent.com/ChrisCummins/clgen/0.4.0/install-cpu.sh | bash
 
 
 Contents
@@ -130,7 +130,7 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-.. |Documentation Status| image:: https://img.shields.io/badge/docs-0.3.13-brightgreen.svg?style=flat
+.. |Documentation Status| image:: https://img.shields.io/badge/docs-0.4.0-brightgreen.svg?style=flat
    :target: http://chriscummins.cc/clgen/
 
 .. |Build Status| image:: https://img.shields.io/travis/ChrisCummins/clgen/master.svg?style=flat
@@ -139,7 +139,7 @@ Indices and tables
 .. |Coverage Status| image:: https://img.shields.io/coveralls/ChrisCummins/clgen/master.svg?style=flat
    :target: https://coveralls.io/github/ChrisCummins/clgen?branch=master
 
-.. |Release Version| image:: https://img.shields.io/badge/release-0.3.13-blue.svg?style=flat
+.. |Release Version| image:: https://img.shields.io/badge/release-0.4.0-blue.svg?style=flat
    :target: https://github.com/ChrisCummins/clgen/releases
 
 .. |License Badge| image:: https://img.shields.io/badge/license-GNU%20GPL%20v3-blue.svg?style=flat

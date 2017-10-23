@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen._corpus &#8212; clgen 0.3.13 documentation</title>
+    <title>clgen._corpus &#8212; clgen 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.13',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.13 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.4.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -84,6 +84,7 @@
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">jsonutil</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">lockfile</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">prof</span>
+<span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">text</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">tar</span>
 <span class="kn">from</span> <span class="nn">labm8</span> <span class="k">import</span> <span class="n">types</span>
 <span class="kn">from</span> <span class="nn">labm8.dirhashcache</span> <span class="k">import</span> <span class="n">DirHashCache</span>
@@ -112,6 +113,7 @@
     <span class="s2">&quot;vocabulary&quot;</span><span class="p">:</span> <span class="s2">&quot;char&quot;</span><span class="p">,</span>
     <span class="s2">&quot;encoding&quot;</span><span class="p">:</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span>
     <span class="s2">&quot;preserve_order&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;language&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>   <span class="c1"># Note no explicit default language.</span>
 <span class="p">}</span>
 
 
@@ -185,6 +187,76 @@
     <span class="k">return</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
 
+<div class="viewcode-block" id="get_cl_kernel_end_idx"><a class="viewcode-back" href="../../api/index.html#clgen._corpus.get_cl_kernel_end_idx">[docs]</a><span class="k">def</span> <span class="nf">get_cl_kernel_end_idx</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_len</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">5000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the index of the character after the end of the OpenCL</span>
+<span class="sd">    kernel.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    src : str</span>
+<span class="sd">        OpenCL source.</span>
+<span class="sd">    start_idx : int, optional</span>
+<span class="sd">        Start index.</span>
+<span class="sd">    max_len : int, optional</span>
+<span class="sd">        Maximum kernel length.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        Index of end of OpenCL kernel.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;{&#39;</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># depth</span>
+    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">src</span><span class="p">),</span> <span class="n">start_idx</span> <span class="o">+</span> <span class="n">max_len</span><span class="p">)</span> <span class="ow">and</span> <span class="n">d</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">src</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;{&#39;</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">src</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;}&#39;</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">i</span></div>
+
+
+<div class="viewcode-block" id="get_cl_kernel"><a class="viewcode-back" href="../../api/index.html#clgen._corpus.get_cl_kernel">[docs]</a><span class="k">def</span> <span class="nf">get_cl_kernel</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">max_len</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">5000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the OpenCL kernel.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    src : str</span>
+<span class="sd">        OpenCL source.</span>
+<span class="sd">    start_idx : int, optional</span>
+<span class="sd">        Start index.</span>
+<span class="sd">    max_len : int, optional</span>
+<span class="sd">        Maximum kernel length.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        OpenCL kernel.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">src</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">get_cl_kernel_end_idx</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="get_cl_kernels"><a class="viewcode-back" href="../../api/index.html#clgen._corpus.get_cl_kernels">[docs]</a><span class="k">def</span> <span class="nf">get_cl_kernels</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return OpenCL kernels.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    src : str</span>
+<span class="sd">        OpenCL source.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    List[str]</span>
+<span class="sd">        OpenCL kernels.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">idxs</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">get_substring_idxs</span><span class="p">(</span><span class="s1">&#39;__kernel&#39;</span><span class="p">,</span> <span class="n">src</span><span class="p">)</span>
+    <span class="n">kernels</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_cl_kernel</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idxs</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">kernels</span></div>
+
+
 <div class="viewcode-block" id="encode_kernels_db"><a class="viewcode-back" href="../../api/index.html#clgen._corpus.encode_kernels_db">[docs]</a><span class="k">def</span> <span class="nf">encode_kernels_db</span><span class="p">(</span><span class="n">kernels_db</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Encode a kernels database.</span>
@@ -207,7 +279,7 @@
         <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()):</span>
             <span class="nb">id</span><span class="p">,</span> <span class="n">contents</span> <span class="o">=</span> <span class="n">row</span>
             <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DELETE FROM PreprocessedFiles WHERE id=?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nb">id</span><span class="p">,))</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">kernel</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">clutil</span><span class="o">.</span><span class="n">get_cl_kernels</span><span class="p">(</span><span class="n">contents</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">kernel</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">get_cl_kernels</span><span class="p">(</span><span class="n">contents</span><span class="p">)):</span>
                 <span class="n">features</span> <span class="o">=</span> <span class="n">get_kernel_features</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
                 <span class="n">kid</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">-</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">features</span><span class="p">)</span> <span class="o">==</span> <span class="mi">8</span><span class="p">:</span>
@@ -249,6 +321,11 @@
 <div class="viewcode-block" id="Corpus"><a class="viewcode-back" href="../../api/index.html#clgen._corpus.Corpus">[docs]</a><span class="k">class</span> <span class="nc">Corpus</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Representation of a training corpus.</span>
+
+<span class="sd">    Please note corpus instances should be treated as immutable. Upon</span>
+<span class="sd">    instantiation, a corpus&#39;s properties are used to determine its hash. If you</span>
+<span class="sd">    modify a property after instantiation, the hash will be out of date, which</span>
+<span class="sd">    can lead to bad things happening.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contentid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -278,17 +355,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">contentid</span>
 
         <span class="c1"># check that contentid exists</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">language</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Language</span><span class="o">.</span><span class="n">from_str</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;language&quot;</span><span class="p">))</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span>
-            <span class="ow">not</span> <span class="n">fs</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">cachepath</span><span class="p">(</span><span class="s2">&quot;contentfiles&quot;</span><span class="p">,</span> <span class="n">contentid</span><span class="p">))):</span>
-            <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s2">&quot;corpus </span><span class="si">{contentid}</span><span class="s2"> not found&quot;</span>
+            <span class="ow">not</span> <span class="n">fs</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">cachepath</span><span class="p">(</span><span class="s2">&quot;contentfiles&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{self.language}</span><span class="s2">-</span><span class="si">{contentid}</span><span class="s2">&quot;</span><span class="p">))):</span>
+            <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s2">&quot;corpus </span><span class="si">{self.language}</span><span class="s2">-</span><span class="si">{contentid}</span><span class="s2"> not found&quot;</span>
                                   <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">()))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">contentid</span> <span class="o">=</span> <span class="n">contentid</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">mkcache</span><span class="p">(</span><span class="s2">&quot;contentfiles&quot;</span><span class="p">,</span> <span class="n">contentid</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">mkcache</span><span class="p">(</span><span class="s2">&quot;contentfiles&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{self.language}</span><span class="s2">-</span><span class="si">{contentid}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kernels_db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="o">.</span><span class="n">keypath</span><span class="p">(</span><span class="s1">&#39;kernels.db&#39;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash</span><span class="p">(</span><span class="n">contentid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">mkcache</span><span class="p">(</span><span class="s2">&quot;corpus&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">mkcache</span><span class="p">(</span><span class="s2">&quot;corpus&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{self.language}</span><span class="s2">-</span><span class="si">{self.hash}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;contentfiles </span><span class="si">{self.contentid}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">()))</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;corpus </span><span class="si">{hash}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">hash</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">))</span>
@@ -349,7 +427,8 @@
             <span class="n">modified</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="n">preprocess_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
             <span class="n">encoding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;encoding&quot;</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">clgen</span><span class="o">.</span><span class="n">preprocess_db</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">clgen</span><span class="o">.</span><span class="n">preprocess_db</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">],</span>
+                                   <span class="n">lang</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">language</span><span class="p">)):</span>
                 <span class="n">modified</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="n">encode_kernels_db</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s2">&quot;kernels.db&quot;</span><span class="p">],</span> <span class="n">encoding</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -625,43 +704,6 @@
         <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">query</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
             <span class="k">yield</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Corpus.most_common_prototypes"><a class="viewcode-back" href="../../api/index.html#clgen._corpus.Corpus.most_common_prototypes">[docs]</a>    <span class="k">def</span> <span class="nf">most_common_prototypes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="nb">int</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the n most frequently occuring prototypes.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        c : Corpus</span>
-<span class="sd">            Corpus.</span>
-<span class="sd">        n : int</span>
-<span class="sd">            Number of prototypes to return:</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        Tuple[List[Tuple[float, str]], int]</span>
-<span class="sd">            Tuple of list of prototypes, and the number of prototypes.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">clutil</span>
-
-        <span class="n">prototypes</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">kernel</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessed</span><span class="p">():</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">prototype</span> <span class="o">=</span> <span class="n">clutil</span><span class="o">.</span><span class="n">KernelPrototype</span><span class="o">.</span><span class="n">from_source</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">prototype</span><span class="o">.</span><span class="n">is_synthesizable</span><span class="p">:</span>
-                    <span class="n">prototypes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">prototype</span><span class="o">.</span><span class="n">args</span><span class="p">))</span>
-            <span class="k">except</span> <span class="n">clutil</span><span class="o">.</span><span class="n">PrototypeException</span><span class="p">:</span>
-                <span class="k">pass</span>
-
-        <span class="c1"># Convert frequency into ratios</span>
-        <span class="n">counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">prototypes</span><span class="p">)</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">counter</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
-            <span class="n">prototype</span><span class="p">,</span> <span class="n">freq</span> <span class="o">=</span> <span class="n">row</span>
-            <span class="n">ratio</span> <span class="o">=</span> <span class="n">freq</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">prototypes</span><span class="p">)</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">ratio</span><span class="p">,</span> <span class="n">prototype</span><span class="p">))</span>
-
-        <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">prototypes</span><span class="p">)</span></div>
-
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">nf</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">num_good_kernels</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contentcache</span><span class="p">[</span><span class="s1">&#39;kernels.db&#39;</span><span class="p">])</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">f</span><span class="s2">&quot;corpus[</span><span class="si">{self.shorthash}</span><span class="s2">]: </span><span class="si">{nf}</span><span class="s2"> files, </span><span class="si">{self.size}</span><span class="s2"> tokens &quot;</span> <span class="o">+</span>
@@ -699,6 +741,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">corpus_json</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">uid</span> <span class="o">=</span> <span class="n">corpus_json</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">language</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Language</span><span class="o">.</span><span class="n">from_str</span><span class="p">(</span><span class="n">corpus_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;language&quot;</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">path</span><span class="p">:</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">unpack_directory_if_needed</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
@@ -709,7 +752,7 @@
             <span class="n">dirhashcache</span> <span class="o">=</span> <span class="n">DirHashCache</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">cachepath</span><span class="p">(</span><span class="s2">&quot;dirhash.db&quot;</span><span class="p">),</span> <span class="s1">&#39;sha1&#39;</span><span class="p">)</span>
             <span class="n">uid</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">profile</span><span class="p">(</span><span class="n">dirhashcache</span><span class="o">.</span><span class="n">dirhash</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">uid</span><span class="p">:</span>
-            <span class="n">cache_path</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">mkcache</span><span class="p">(</span><span class="s2">&quot;contentfiles&quot;</span><span class="p">,</span> <span class="n">uid</span><span class="p">)</span><span class="o">.</span><span class="n">path</span>
+            <span class="n">cache_path</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">mkcache</span><span class="p">(</span><span class="s2">&quot;contentfiles&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{language}</span><span class="s2">-</span><span class="si">{uid}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">path</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">fs</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">cache_path</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s2">&quot;Corpus content </span><span class="si">{}</span><span class="s2"> not found&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">uid</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
@@ -752,7 +795,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.13 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.4.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

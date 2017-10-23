@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen._sampler &#8212; clgen 0.3.13 documentation</title>
+    <title>clgen._sampler &#8212; clgen 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.13',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.13 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.4.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -89,16 +89,16 @@
 <span class="kn">from</span> <span class="nn">queue</span> <span class="k">import</span> <span class="n">Queue</span>
 <span class="kn">from</span> <span class="nn">threading</span> <span class="k">import</span> <span class="n">Event</span><span class="p">,</span> <span class="n">Thread</span>
 <span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">time</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">clgen</span>
-<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">clutil</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">dbutil</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
 
 <span class="c1"># Default options used for sampler. Any values provided by the user will</span>
 <span class="c1"># override these defaults.</span>
 <span class="n">DEFAULT_KERNELS_OPTS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;language&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># note language must be explicitly provided</span>
     <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
     <span class="s2">&quot;max_length&quot;</span><span class="p">:</span> <span class="mi">10000</span><span class="p">,</span>
     <span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
@@ -117,7 +117,7 @@
 <span class="p">}</span>
 
 
-<div class="viewcode-block" id="serialize_argspec"><a class="viewcode-back" href="../../api/index.html#clgen._sampler.serialize_argspec">[docs]</a><span class="k">def</span> <span class="nf">serialize_argspec</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="serialize_opencl_argspec"><a class="viewcode-back" href="../../api/index.html#clgen._sampler.serialize_opencl_argspec">[docs]</a><span class="k">def</span> <span class="nf">serialize_opencl_argspec</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Serializes an argument spec to a kernel prototype.</span>
 
@@ -172,8 +172,11 @@
             <span class="n">saver</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="n">sess</span><span class="p">,</span> <span class="n">ckpt</span><span class="o">.</span><span class="n">model_checkpoint_path</span><span class="p">)</span>
 
             <span class="k">def</span> <span class="nf">weighted_pick</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">temperature</span><span class="p">):</span>
-                <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">weights</span><span class="p">)</span>
-
+                <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                requires that all probabilities are &gt;= 0, i.e.:</span>
+<span class="sd">                  assert all(x &gt;= 0 for x in weights)</span>
+<span class="sd">                See: https://github.com/ChrisCummins/clgen/issues/120</span>
+<span class="sd">                &quot;&quot;&quot;</span>
                 <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
                 <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
                 <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">s</span><span class="p">))</span>
@@ -343,7 +346,7 @@
                 <span class="n">sample_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
                 <span class="n">sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
 
-                <span class="n">kernels</span> <span class="o">=</span> <span class="n">clutil</span><span class="o">.</span><span class="n">get_cl_kernels</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+                <span class="n">kernels</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">get_cl_kernels</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
                 <span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">crypto</span><span class="o">.</span><span class="n">sha1_str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kernels</span><span class="p">]</span>
 
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler_opts</span><span class="p">[</span><span class="s2">&quot;static_checker&quot;</span><span class="p">]:</span>
@@ -396,6 +399,11 @@
 <div class="viewcode-block" id="Sampler"><a class="viewcode-back" href="../../api/index.html#clgen._sampler.Sampler">[docs]</a><span class="k">class</span> <span class="nc">Sampler</span><span class="p">(</span><span class="n">clgen</span><span class="o">.</span><span class="n">CLgenObject</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    CLgen sampler for models.</span>
+
+<span class="sd">    Please note sampler instances should be treated as immutable. Upon</span>
+<span class="sd">    instantiation, a sampler&#39;s properties are used to determine its hash. If you</span>
+<span class="sd">    modify a property after instantiation, the hash will be out of date, which</span>
+<span class="sd">    can lead to bad things happening.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler_opts</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">kernel_opts</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -421,11 +429,16 @@
             <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">checksum_data</span><span class="p">])</span>
             <span class="k">return</span> <span class="n">crypto</span><span class="o">.</span><span class="n">sha1_str</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">_start_text</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">return</span> <span class="s2">&quot;__kernel void A(&quot;</span>
+        <span class="k">def</span> <span class="nf">_start_text</span><span class="p">(</span><span class="n">lang</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">lang</span> <span class="o">==</span> <span class="s2">&quot;opencl&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="s2">&quot;__kernel void A(&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">serialize_opencl_argspec</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">lang</span> <span class="o">==</span> <span class="s2">&quot;solidity&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;contract &quot;</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">serialize_argspec</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;unsupported sampler language &#39;</span><span class="si">{lang}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
 
         <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">sampler_opts</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">)</span>
         <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">kernel_opts</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">)</span>
@@ -450,7 +463,9 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">hash</span> <span class="o">=</span> <span class="n">_hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler_opts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_opts</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">start_text</span> <span class="o">=</span> <span class="n">_start_text</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_opts</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">language</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">Language</span><span class="o">.</span><span class="n">from_str</span><span class="p">(</span><span class="n">kernel_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;language&quot;</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_text</span> <span class="o">=</span> <span class="n">_start_text</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_opts</span><span class="p">[</span><span class="s2">&quot;language&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_opts</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">])</span>
 
         <span class="c1"># options to pass to preprocess_db()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">preprocess_opts</span> <span class="o">=</span> <span class="p">{</span>
@@ -473,7 +488,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sampler_model_hash</span> <span class="o">=</span> <span class="n">crypto</span><span class="o">.</span><span class="n">sha1_str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hash</span> <span class="o">+</span> <span class="n">model</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
 
-        <span class="n">cache</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">mkcache</span><span class="p">(</span><span class="s2">&quot;sampler&quot;</span><span class="p">,</span> <span class="n">sampler_model_hash</span><span class="p">)</span>
+        <span class="n">cache</span> <span class="o">=</span> <span class="n">clgen</span><span class="o">.</span><span class="n">mkcache</span><span class="p">(</span><span class="s2">&quot;sampler&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{self.language}</span><span class="s2">-</span><span class="si">{sampler_model_hash}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># validate metadata against cache</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stats</span> <span class="o">=</span> <span class="p">{</span>
@@ -655,7 +670,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.13 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.4.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

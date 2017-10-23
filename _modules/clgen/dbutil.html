@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen.dbutil &#8212; clgen 0.3.13 documentation</title>
+    <title>clgen.dbutil &#8212; clgen 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.13',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.13 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.4.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -71,6 +71,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">CLgen sqlite3 database utilities</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">editdistance</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -273,6 +274,82 @@
     <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">src</span></div>
+
+
+<div class="viewcode-block" id="get_inlined_kernel"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.get_inlined_kernel">[docs]</a><span class="k">def</span> <span class="nf">get_inlined_kernel</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">kid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">lang</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;opencl&quot;</span><span class="p">,</span>
+                       <span class="n">stack</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve a kernel from a database and inline any includes.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Path to database.</span>
+<span class="sd">    kid : str</span>
+<span class="sd">        Kernel ID.</span>
+<span class="sd">    lang : str</span>
+<span class="sd">        Programming language.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Source code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">stack</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">stack</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;SELECT contents FROM ContentFiles WHERE id=?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">kid</span><span class="p">,))</span>
+    <span class="n">src</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT path, repo_url FROM ContentMeta WHERE id=?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">kid</span><span class="p">,))</span>
+    <span class="n">repo_path</span><span class="p">,</span> <span class="n">repo</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+    <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">repo_path</span><span class="p">)</span>
+
+    <span class="n">include_re</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;opencl&quot;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\w*#include [&quot;&lt;](?P&lt;path&gt;.*)[&quot;&gt;]&#39;</span><span class="p">),</span>
+        <span class="s2">&quot;solidity&quot;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\w*import [&quot;&lt;](\./)?(?P&lt;path&gt;.*)[&quot;&gt;];&#39;</span><span class="p">)</span>
+    <span class="p">}[</span><span class="n">lang</span><span class="p">]</span>
+
+    <span class="n">outlines</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">src</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">include_re</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="n">include_name</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
+
+            <span class="c1"># try and resolve relative paths</span>
+            <span class="n">include_name</span> <span class="o">=</span> <span class="n">include_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;../&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;./&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+            <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;SELECT path FROM contentmeta WHERE repo_url=? AND path LIKE &#39;%</span><span class="si">{include_name}</span><span class="s2">%&#39;&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="p">))</span>
+            <span class="n">repo_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()]</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">repo_paths</span><span class="p">):</span>
+                <span class="n">distances</span> <span class="o">=</span> <span class="p">[</span><span class="n">editdistance</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">include_name</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">repo_paths</span><span class="p">]</span>
+                <span class="n">closest_match</span> <span class="o">=</span> <span class="n">repo_paths</span><span class="p">[</span><span class="n">distances</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">distances</span><span class="p">))]</span>
+
+                <span class="k">if</span> <span class="n">closest_match</span> <span class="ow">in</span> <span class="n">stack</span><span class="p">:</span>
+                    <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;// [FETCH] ignored recursive include: &#39;</span> <span class="o">+</span>
+                                    <span class="n">include_name</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">verbose</span><span class="p">(</span><span class="s2">&quot;closest match to&quot;</span><span class="p">,</span> <span class="n">include_name</span><span class="p">,</span> <span class="s2">&quot;is&quot;</span><span class="p">,</span> <span class="n">closest_match</span><span class="p">)</span>
+
+                    <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT id FROM contentmeta WHERE path=?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">closest_match</span><span class="p">,))</span>
+                    <span class="n">closest_kid</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+                    <span class="n">include_src</span> <span class="o">=</span> <span class="n">get_inlined_kernel</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">closest_kid</span><span class="p">,</span> <span class="n">lang</span><span class="p">,</span> <span class="n">stack</span><span class="p">)</span>
+                    <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;// [FETCH] include: &#39;</span> <span class="o">+</span> <span class="n">include_name</span><span class="p">)</span>
+                    <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">include_src</span><span class="p">)</span>
+                    <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;// [FETCH] eof(&#39;</span> <span class="o">+</span> <span class="n">include_name</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;// [FETCH] 404 not found: &#39;</span> <span class="o">+</span> <span class="n">include_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outlines</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="set_version_meta"><a class="viewcode-back" href="../../api/index.html#clgen.dbutil.set_version_meta">[docs]</a><span class="k">def</span> <span class="nf">set_version_meta</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="n">clgen</span><span class="o">.</span><span class="n">version</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -580,7 +657,9 @@
               <span class="s2">&quot;WHERE status=1 OR status=2&quot;</span><span class="p">)</span>
     <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
     <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
+    <span class="n">db</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
     <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;VACUUM&quot;</span><span class="p">)</span>
     <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
@@ -723,10 +802,7 @@
 
     <span class="k">if</span> <span class="nb">dir</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;writing to directory &#39;</span><span class="p">,</span> <span class="n">out_path</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">out_path</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="n">out_path</span><span class="p">)):</span>
-                <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s1">&#39;directory already exists!&#39;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">out_path</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
             <span class="nb">id</span><span class="p">,</span> <span class="n">contents</span> <span class="o">=</span> <span class="n">row</span>
@@ -844,7 +920,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.13 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.4.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>

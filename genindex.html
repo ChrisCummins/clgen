@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Index &#8212; clgen 0.3.13 documentation</title>
+    <title>Index &#8212; clgen 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.3.13',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">clgen 0.3.13 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">clgen 0.4.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -67,7 +67,6 @@
  | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
- | <a href="#Q"><strong>Q</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
@@ -87,8 +86,6 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/index.html#clgen.clutil.KernelPrototype.args">args (clgen.clutil.KernelPrototype attribute)</a>
-</li>
       <li><a href="api/index.html#clgen._atomizer.Atomizer.atomize">atomize() (clgen._atomizer.Atomizer method)</a>
 
       <ul>
@@ -110,8 +107,6 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/index.html#clgen._preprocess.BadCodeException">BadCodeException</a>
-</li>
-      <li><a href="api/index.html#clgen.clutil.KernelArg.bare_type">bare_type (clgen.clutil.KernelArg attribute)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -155,6 +150,8 @@
 </li>
       <li><a href="api/index.html#module-clgen._config">clgen._config (module)</a>
 </li>
+      <li><a href="api/index.html#module-clgen._contentdb">clgen._contentdb (module)</a>
+</li>
       <li><a href="api/index.html#module-clgen._corpus">clgen._corpus (module)</a>
 </li>
       <li><a href="api/index.html#module-clgen._explore">clgen._explore (module)</a>
@@ -193,9 +190,9 @@
 </li>
       <li><a href="api/index.html#clgen._preprocess.compiler_preprocess_cl">compiler_preprocess_cl() (in module clgen._preprocess)</a>
 </li>
-      <li><a href="api/index.html#clgen.clutil.KernelArg.components">components (clgen.clutil.KernelArg attribute)</a>
-</li>
       <li><a href="api/index.html#clgen.dbutil.connect">connect() (in module clgen.dbutil)</a>
+</li>
+      <li><a href="api/index.html#clgen._contentdb.ContentDb">ContentDb (class in clgen._contentdb)</a>
 </li>
       <li><a href="api/index.html#clgen._corpus.Corpus.contentfiles">contentfiles() (clgen._corpus.Corpus method)</a>
 </li>
@@ -233,17 +230,15 @@
 </li>
       <li><a href="api/index.html#clgen._model.Model.epochs">epochs (clgen._model.Model attribute)</a>
 </li>
-      <li><a href="api/index.html#clgen.log.error">error() (in module clgen.log)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/index.html#clgen.log.error">error() (in module clgen.log)</a>
+</li>
       <li><a href="api/index.html#clgen.dbutil.escape_sql_key">escape_sql_key() (in module clgen.dbutil)</a>
 </li>
       <li><a href="api/index.html#clgen._explore.explore">explore() (in module clgen._explore)</a>
 </li>
       <li><a href="api/index.html#clgen._explore.explore_gh">explore_gh() (in module clgen._explore)</a>
-</li>
-      <li><a href="api/index.html#clgen.clutil.extract_prototype">extract_prototype() (in module clgen.clutil)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -289,7 +284,7 @@
         <li><a href="api/index.html#clgen._sampler.Sampler.from_json">(clgen._sampler.Sampler static method)</a>
 </li>
       </ul></li>
-      <li><a href="api/index.html#clgen.clutil.KernelPrototype.from_source">from_source() (clgen.clutil.KernelPrototype static method)</a>
+      <li><a href="api/index.html#clgen.Language.from_str">from_str() (clgen.Language static method)</a>
 </li>
       <li><a href="api/index.html#clgen._atomizer.Atomizer.from_text">from_text() (clgen._atomizer.Atomizer static method)</a>
 
@@ -309,13 +304,15 @@
 </li>
       <li><a href="api/index.html#clgen.clutil.get_attribute_range">get_attribute_range() (in module clgen.clutil)</a>
 </li>
-      <li><a href="api/index.html#clgen.clutil.get_cl_kernel">get_cl_kernel() (in module clgen.clutil)</a>
+      <li><a href="api/index.html#clgen._corpus.get_cl_kernel">get_cl_kernel() (in module clgen._corpus)</a>
 </li>
-      <li><a href="api/index.html#clgen.clutil.get_cl_kernel_end_idx">get_cl_kernel_end_idx() (in module clgen.clutil)</a>
+      <li><a href="api/index.html#clgen._corpus.get_cl_kernel_end_idx">get_cl_kernel_end_idx() (in module clgen._corpus)</a>
 </li>
-      <li><a href="api/index.html#clgen.clutil.get_cl_kernels">get_cl_kernels() (in module clgen.clutil)</a>
+      <li><a href="api/index.html#clgen._corpus.get_cl_kernels">get_cl_kernels() (in module clgen._corpus)</a>
 </li>
       <li><a href="api/index.html#clgen.get_default_author">get_default_author() (in module clgen)</a>
+</li>
+      <li><a href="api/index.html#clgen.dbutil.get_inlined_kernel">get_inlined_kernel() (in module clgen.dbutil)</a>
 </li>
       <li><a href="api/index.html#clgen.dbutil.get_kernel">get_kernel() (in module clgen.dbutil)</a>
 </li>
@@ -332,6 +329,8 @@
       <li><a href="api/index.html#clgen._preprocess.gpuverify">gpuverify() (in module clgen._preprocess)</a>
 </li>
       <li><a href="api/index.html#clgen._preprocess.GPUVerifyException">GPUVerifyException</a>
+</li>
+      <li><a href="api/index.html#clgen._preprocess.GPUVerifyTimeoutException">GPUVerifyTimeoutException</a>
 </li>
       <li><a href="api/index.html#clgen._model.Model.grad_clip">grad_clip (clgen._model.Model attribute)</a>
 </li>
@@ -357,29 +356,19 @@
 </li>
       <li><a href="api/index.html#clgen.InternalError">InternalError</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/index.html#clgen.InvalidFile">InvalidFile</a>
 </li>
       <li><a href="api/index.html#clgen._atomizer.InvalidVocab">InvalidVocab</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/index.html#clgen.clutil.KernelArg.is_const">is_const (clgen.clutil.KernelArg attribute)</a>
-</li>
       <li><a href="api/index.html#clgen.dbutil.is_github">is_github() (in module clgen.dbutil)</a>
-</li>
-      <li><a href="api/index.html#clgen.clutil.KernelArg.is_global">is_global (clgen.clutil.KernelArg attribute)</a>
-</li>
-      <li><a href="api/index.html#clgen.clutil.KernelArg.is_local">is_local (clgen.clutil.KernelArg attribute)</a>
 </li>
       <li><a href="api/index.html#clgen.dbutil.is_modified">is_modified() (in module clgen.dbutil)</a>
 </li>
-      <li><a href="api/index.html#clgen.clutil.KernelArg.is_pointer">is_pointer (clgen.clutil.KernelArg attribute)</a>
+      <li><a href="api/index.html#clgen._fetch.is_opencl_path">is_opencl_path() (in module clgen._fetch)</a>
 </li>
-      <li><a href="api/index.html#clgen.clutil.KernelArg.is_restrict">is_restrict (clgen.clutil.KernelArg attribute)</a>
-</li>
-      <li><a href="api/index.html#clgen.clutil.KernelPrototype.is_synthesizable">is_synthesizable (clgen.clutil.KernelPrototype attribute)</a>
-</li>
-      <li><a href="api/index.html#clgen.clutil.KernelArg.is_vector">is_vector (clgen.clutil.KernelArg attribute)</a>
+      <li><a href="api/index.html#clgen._fetch.is_solidity_path">is_solidity_path() (in module clgen._fetch)</a>
 </li>
       <li><a href="api/index.html#clgen.log.is_verbose">is_verbose() (in module clgen.log)</a>
 </li>
@@ -391,12 +380,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/index.html#clgen.dbutil.kernel_ids">kernel_ids() (in module clgen.dbutil)</a>
 </li>
-      <li><a href="api/index.html#clgen.clutil.KernelArg">KernelArg (class in clgen.clutil)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/index.html#clgen.clutil.KernelPrototype">KernelPrototype (class in clgen.clutil)</a>
-</li>
       <li><a href="api/index.html#clgen.dbutil.kid_to_path">kid_to_path() (in module clgen.dbutil)</a>
 </li>
   </ul></td>
@@ -405,6 +390,8 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/index.html#clgen.Language">Language (class in clgen)</a>
+</li>
       <li><a href="api/index.html#clgen.dbutil.lc">lc() (in module clgen.dbutil)</a>
 </li>
       <li><a href="api/index.html#clgen.native.LIBCLC">LIBCLC (in module clgen.native)</a>
@@ -469,8 +456,6 @@
 </li>
       <li><a href="api/index.html#clgen._model.models_to_tab">models_to_tab() (in module clgen._model)</a>
 </li>
-      <li><a href="api/index.html#clgen._corpus.Corpus.most_common_prototypes">most_common_prototypes() (clgen._corpus.Corpus method)</a>
-</li>
       <li><a href="api/index.html#clgen.must_exist">must_exist() (in module clgen)</a>
 </li>
   </ul></td>
@@ -479,12 +464,6 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/index.html#clgen.clutil.KernelArg.name">name (clgen.clutil.KernelArg attribute)</a>
-
-      <ul>
-        <li><a href="api/index.html#clgen.clutil.KernelPrototype.name">(clgen.clutil.KernelPrototype attribute)</a>
-</li>
-      </ul></li>
       <li><a href="api/index.html#clgen._corpus.Corpus.next_batch">next_batch() (clgen._corpus.Corpus method)</a>
 </li>
       <li><a href="api/index.html#clgen._preprocess.NoCodeException">NoCodeException</a>
@@ -493,10 +472,10 @@
 </li>
       <li><a href="api/index.html#clgen._sampler.SampleConsumer.null_progress">null_progress() (clgen._sampler.SampleConsumer method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/index.html#clgen._corpus.Corpus.num_batches">num_batches (clgen._corpus.Corpus attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/index.html#clgen._sampler.Sampler.num_good_kernels">num_good_kernels (clgen._sampler.Sampler attribute)</a>
 </li>
       <li><a href="api/index.html#clgen.dbutil.num_good_kernels">num_good_kernels() (in module clgen.dbutil)</a>
@@ -507,8 +486,6 @@
 </li>
       <li><a href="api/index.html#clgen._sampler.Sampler.num_samples">num_samples (clgen._sampler.Sampler attribute)</a>
 </li>
-      <li><a href="api/index.html#clgen.clutil.KernelArg.numpy_type">numpy_type (clgen.clutil.KernelArg attribute)</a>
-</li>
   </ul></td>
 </tr></table>
 
@@ -517,7 +494,7 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/index.html#clgen.native.OCLGRIND">OCLGRIND (in module clgen.native)</a>
 </li>
-      <li><a href="api/index.html#clgen.clutil.OpenCLUtilException">OpenCLUtilException</a>
+      <li><a href="api/index.html#clgen.Language.OPENCL">OPENCL (clgen.Language attribute)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -553,21 +530,15 @@
 </li>
       <li><a href="api/index.html#clgen._preprocess.preprocess_inplace">preprocess_inplace() (in module clgen._preprocess)</a>
 </li>
+      <li><a href="api/index.html#clgen._preprocess.preprocess_opencl">preprocess_opencl() (in module clgen._preprocess)</a>
+</li>
+      <li><a href="api/index.html#clgen._preprocess.preprocess_solidity">preprocess_solidity() (in module clgen._preprocess)</a>
+</li>
       <li><a href="api/index.html#clgen._corpus.Corpus.preprocessed">preprocessed() (clgen._corpus.Corpus method)</a>
 </li>
       <li><a href="api/index.html#clgen._preprocess.PreprocessWorker">PreprocessWorker (class in clgen._preprocess)</a>
 </li>
       <li><a href="api/index.html#clgen._fetch.process_cl_file">process_cl_file() (in module clgen._fetch)</a>
-</li>
-      <li><a href="api/index.html#clgen.clutil.PrototypeException">PrototypeException</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="Q">Q</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/index.html#clgen.clutil.KernelArg.qualifiers">qualifiers (clgen.clutil.KernelArg attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -623,7 +594,9 @@
 </li>
       <li><a href="api/index.html#clgen._corpus.Corpus.seq_length">seq_length (clgen._corpus.Corpus attribute)</a>
 </li>
-      <li><a href="api/index.html#clgen._sampler.serialize_argspec">serialize_argspec() (in module clgen._sampler)</a>
+      <li><a href="api/index.html#clgen._sampler.serialize_opencl_argspec">serialize_opencl_argspec() (in module clgen._sampler)</a>
+</li>
+      <li><a href="api/index.html#clgen._contentdb.ContentDb.session">session() (clgen._contentdb.ContentDb method)</a>
 </li>
       <li><a href="api/index.html#clgen._corpus.Corpus.set_batch_pointer">set_batch_pointer() (clgen._corpus.Corpus method)</a>
 </li>
@@ -635,6 +608,8 @@
 </li>
       <li><a href="api/index.html#clgen.native.SHIMFILE">SHIMFILE (in module clgen.native)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/index.html#clgen._corpus.Corpus.shorthash">shorthash (clgen._corpus.Corpus attribute)</a>
 
       <ul>
@@ -643,9 +618,9 @@
         <li><a href="api/index.html#clgen._sampler.Sampler.shorthash">(clgen._sampler.Sampler attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/index.html#clgen._corpus.Corpus.size">size (clgen._corpus.Corpus attribute)</a>
+</li>
+      <li><a href="api/index.html#clgen.Language.SOLIDITY">SOLIDITY (clgen.Language attribute)</a>
 </li>
       <li><a href="api/index.html#clgen.dbutil.sql_insert_dict">sql_insert_dict() (in module clgen.dbutil)</a>
 </li>
@@ -662,8 +637,6 @@
       <li><a href="api/index.html#clgen._sampler.SampleProducer.stop">stop() (clgen._sampler.SampleProducer method)</a>
 </li>
       <li><a href="api/index.html#clgen._sampler.SampleProducer.stop_requested">stop_requested (clgen._sampler.SampleProducer attribute)</a>
-</li>
-      <li><a href="api/index.html#clgen.clutil.KernelArg.string">string (clgen.clutil.KernelArg attribute)</a>
 </li>
       <li><a href="api/index.html#clgen.clutil.strip_attributes">strip_attributes() (in module clgen.clutil)</a>
 </li>
@@ -697,8 +670,6 @@
 </li>
       <li><a href="api/index.html#clgen._model.Model.train_opts">train_opts (clgen._model.Model attribute)</a>
 </li>
-      <li><a href="api/index.html#clgen.clutil.KernelArg.type">type (clgen.clutil.KernelArg attribute)</a>
-</li>
   </ul></td>
 </tr></table>
 
@@ -706,8 +677,6 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/index.html#clgen._preprocess.UglyCodeException">UglyCodeException</a>
-</li>
-      <li><a href="api/index.html#clgen.clutil.UnknownTypeException">UnknownTypeException</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -721,8 +690,6 @@
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/index.html#clgen.clutil.KernelArg.vector_width">vector_width (clgen.clutil.KernelArg attribute)</a>
-</li>
       <li><a href="api/index.html#clgen.log.verbose">verbose() (in module clgen.log)</a>
 </li>
       <li><a href="api/index.html#clgen._preprocess.verify_bytecode_features">verify_bytecode_features() (in module clgen._preprocess)</a>
@@ -783,7 +750,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">clgen 0.3.13 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">clgen 0.4.0 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clgen._fetch &#8212; clgen 0.3.13 documentation</title>
+    <title>clgen._fetch &#8212; clgen 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.13',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.13 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.4.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" accesskey="U">clgen</a> &#187;</li> 
       </ul>
@@ -90,7 +90,6 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>
 
 <span class="kn">import</span> <span class="nn">clgen</span>
-<span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">clutil</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">dbutil</span>
 <span class="kn">from</span> <span class="nn">clgen</span> <span class="k">import</span> <span class="n">log</span>
 
@@ -212,12 +211,13 @@
 
 
 <span class="n">_include_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;\w*#include [&quot;&lt;](.*)[&quot;&gt;]&#39;</span><span class="p">)</span>
+<span class="n">_sol_include_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;\w*import [&quot;&lt;](\./)?(.*)[&quot;&gt;];&#39;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_download_file</span><span class="p">(</span><span class="n">github_token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">stack</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_download_opencl_file</span><span class="p">(</span><span class="n">github_token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                          <span class="n">stack</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fetch file from GitHub.</span>
-
 <span class="sd">    Recursively downloads and inlines headers.</span>
 
 <span class="sd">    Parameters</span>
@@ -265,7 +265,8 @@
                     <span class="k">break</span>
 
             <span class="k">if</span> <span class="n">include_url</span> <span class="ow">and</span> <span class="n">include_url</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stack</span><span class="p">:</span>
-                <span class="n">include_src</span> <span class="o">=</span> <span class="n">_download_file</span><span class="p">(</span><span class="n">github_token</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">include_url</span><span class="p">)</span>
+                <span class="n">include_src</span> <span class="o">=</span> <span class="n">_download_opencl_file</span><span class="p">(</span>
+                    <span class="n">github_token</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">include_url</span><span class="p">)</span>
                 <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">include_src</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">include_url</span><span class="p">:</span>
@@ -278,7 +279,35 @@
     <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outlines</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_process_file</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">github_token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_download_file</span><span class="p">(</span><span class="n">github_token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fetch file from GitHub.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    github_token : str</span>
+<span class="sd">        Authorization.</span>
+<span class="sd">    repo</span>
+<span class="sd">        Repository.</span>
+<span class="sd">    url : str</span>
+<span class="sd">        Path.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        File contents.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="n">url</span><span class="p">,</span>
+        <span class="n">headers</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;Authorization&#39;</span><span class="p">:</span> <span class="s1">&#39;token &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">github_token</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">b64decode</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_process_file</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">github_token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span>
+                  <span class="n">download_file_cb</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    GitHub file handler.</span>
 
@@ -305,10 +334,6 @@
     <span class="k">global</span> <span class="n">files_unchanged_counter</span>
     <span class="k">global</span> <span class="n">status_string</span>
 
-    <span class="c1"># We&#39;re only interested in OpenCL files.</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.cl&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.ocl&#39;</span><span class="p">)):</span>
-        <span class="k">return</span>
-
     <span class="n">url</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">url</span>
     <span class="n">sha</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">sha</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">path</span>
@@ -325,7 +350,7 @@
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="n">repo_url</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">url</span>
-    <span class="n">contents</span> <span class="o">=</span> <span class="n">_download_file</span><span class="p">(</span><span class="n">github_token</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="n">contents</span> <span class="o">=</span> <span class="n">download_file_cb</span><span class="p">(</span><span class="n">github_token</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
     <span class="n">size</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">size</span>
 
     <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DELETE FROM ContentFiles WHERE id=?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">url</span><span class="p">,))</span>
@@ -344,14 +369,67 @@
     <span class="k">return</span> <span class="kc">True</span>
 
 
-<div class="viewcode-block" id="fetch_github"><a class="viewcode-back" href="../../api/index.html#clgen._fetch.fetch_github">[docs]</a><span class="k">def</span> <span class="nf">fetch_github</span><span class="p">(</span><span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">github_username</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">github_pw</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                 <span class="n">github_token</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Download all of the OpenCL on GitHub (!)</span>
+<span class="k">def</span> <span class="nf">_scrape_github_for_files</span><span class="p">(</span><span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">github_username</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                             <span class="n">github_pw</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">github_token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                             <span class="n">query_terms</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">file_is_intetesting</span><span class="p">,</span>
+                             <span class="n">download_file_cb</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">errors_counter</span>
 
-<span class="sd">    Shortcomings of this appraoch:</span>
-<span class="sd">        * Only includes exclusively OpenCL files, no inline strings.</span>
-<span class="sd">        * Occasionally (&lt; 1%) can&#39;t find headers to include.</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">Github</span><span class="p">(</span><span class="n">github_username</span><span class="p">,</span> <span class="n">github_pw</span><span class="p">)</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">is_github</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s2">&quot;not a GitHub database&quot;</span><span class="p">)</span>
+
+    <span class="c1"># fetch the repositories to iterate over</span>
+    <span class="k">for</span> <span class="n">query</span> <span class="ow">in</span> <span class="n">query_terms</span><span class="p">:</span>
+        <span class="c1"># forks are okay - we use checksums to ensure uniqueness in</span>
+        <span class="c1"># final dataset</span>
+        <span class="n">repos</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">search_repositories</span><span class="p">(</span><span class="n">query</span> <span class="o">+</span> <span class="s1">&#39; fork:true sort:stars&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">repos</span><span class="p">:</span>
+            <span class="c1"># do nothing unless the repo is new or modified</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">_process_repo</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">repo</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># iterate over the entire git tree of the repo&#39;s default branch</span>
+            <span class="c1"># (usually &#39;master&#39;). If a file ends with the .cl extension, check</span>
+            <span class="c1"># to see if we already have it, else download it</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">branch</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">default_branch</span>
+                <span class="n">tree_iterator</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_git_tree</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tree</span>
+                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">tree_iterator</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">file_is_intetesting</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">_process_file</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">github_token</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span>
+                                          <span class="n">download_file_cb</span><span class="p">)</span>
+                        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                            <span class="n">errors_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">except</span> <span class="n">GithubException</span><span class="p">:</span>
+                <span class="c1"># do nothing in case of error (such as an empty repo)</span>
+                <span class="k">pass</span>
+
+    <span class="n">_print_counters</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">done.&quot;</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="is_opencl_path"><a class="viewcode-back" href="../../api/index.html#clgen._fetch.is_opencl_path">[docs]</a><span class="k">def</span> <span class="nf">is_opencl_path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; We&#39;re only interested in OpenCL files. &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">file</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.cl&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">file</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.ocl&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_solidity_path"><a class="viewcode-back" href="../../api/index.html#clgen._fetch.is_solidity_path">[docs]</a><span class="k">def</span> <span class="nf">is_solidity_path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; We&#39;re only interesting in Solidity files. &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">file</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.sol&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="fetch_github"><a class="viewcode-back" href="../../api/index.html#clgen._fetch.fetch_github">[docs]</a><span class="k">def</span> <span class="nf">fetch_github</span><span class="p">(</span><span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">github_username</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">github_pw</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">github_token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">lang</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;opencl&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Download all of the Solidity on GitHub (!)</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -364,64 +442,35 @@
 <span class="sd">    github_token : str</span>
 <span class="sd">        Authorization.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">global</span> <span class="n">errors_counter</span>
+    <span class="k">if</span> <span class="n">lang</span> <span class="o">==</span> <span class="s2">&quot;opencl&quot;</span><span class="p">:</span>
+        <span class="n">download_file_cb</span> <span class="o">=</span> <span class="n">_download_opencl_file</span>
+        <span class="n">file_is_intetesting</span> <span class="o">=</span> <span class="n">is_opencl_path</span>
+        <span class="n">query_terms</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;opencl&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;cl&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;khronos&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;gpu&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;gpgpu&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;cuda&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;amd&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;nvidia&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;heterogeneous&#39;</span>
+        <span class="p">]</span>
+    <span class="k">elif</span> <span class="n">lang</span> <span class="o">==</span> <span class="s2">&quot;solidity&quot;</span><span class="p">:</span>
+        <span class="n">download_file_cb</span> <span class="o">=</span> <span class="n">_download_file</span>
+        <span class="n">file_is_intetesting</span> <span class="o">=</span> <span class="n">is_solidity_path</span>
+        <span class="n">query_terms</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;solidity&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ethereum&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;solc&#39;</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;unsupported language &#39;</span><span class="si">{lang}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
 
-    <span class="n">g</span> <span class="o">=</span> <span class="n">Github</span><span class="p">(</span><span class="n">github_username</span><span class="p">,</span> <span class="n">github_pw</span><span class="p">)</span>
-    <span class="n">db</span> <span class="o">=</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">dbutil</span><span class="o">.</span><span class="n">is_github</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">clgen</span><span class="o">.</span><span class="n">UserError</span><span class="p">(</span><span class="s2">&quot;not a GitHub database&quot;</span><span class="p">)</span>
-
-    <span class="n">handle_repo</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">_process_repo</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">db</span><span class="p">)</span>
-
-    <span class="c1"># fetch the repositories to iterate over. Since opencl isn&#39;t</span>
-    <span class="c1"># treated as a first-class language by GitHub, we can&#39;t use the</span>
-    <span class="c1"># &#39;language=&#39; keyword for queries, so instead we through a much</span>
-    <span class="c1"># wider net and filter the results afterwards.</span>
-    <span class="n">query_terms</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s1">&#39;opencl&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;cl&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;khronos&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;gpu&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;gpgpu&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;cuda&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;amd&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;nvidia&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;heterogeneous&#39;</span>
-    <span class="p">]</span>
-    <span class="k">for</span> <span class="n">query</span> <span class="ow">in</span> <span class="n">query_terms</span><span class="p">:</span>
-        <span class="c1"># forks are okay - we use checksums to ensure uniqueness in</span>
-        <span class="c1"># final dataset</span>
-        <span class="n">repos</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">search_repositories</span><span class="p">(</span><span class="n">query</span> <span class="o">+</span> <span class="s1">&#39; fork:true sort:stars&#39;</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">repos</span><span class="p">:</span>
-            <span class="n">repo_modified</span> <span class="o">=</span> <span class="n">handle_repo</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
-
-            <span class="c1"># do nothing unless the repo is new or modified</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">repo_modified</span><span class="p">:</span>
-                <span class="k">continue</span>
-
-            <span class="n">handle_file</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">_process_file</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">github_token</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">repo</span><span class="p">)</span>
-
-            <span class="c1"># iterate over the entire git tree of the repo&#39;s default</span>
-            <span class="c1"># branch (usually &#39;master&#39;). If a file ends with the .cl</span>
-            <span class="c1"># extension, check to see if we already have it, else download</span>
-            <span class="c1"># it</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">branch</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">default_branch</span>
-                <span class="n">tree_iterator</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_git_tree</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tree</span>
-                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">tree_iterator</span><span class="p">:</span>
-                    <span class="k">try</span><span class="p">:</span>
-                        <span class="n">handle_file</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-                    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                        <span class="n">errors_counter</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="k">except</span> <span class="n">GithubException</span><span class="p">:</span>
-                <span class="c1"># do nothing in case of error (such as an empty repo)</span>
-                <span class="k">pass</span>
-
-    <span class="n">_print_counters</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">done.&quot;</span><span class="p">)</span>
-    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+    <span class="k">return</span> <span class="n">_scrape_github_for_files</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">github_username</span><span class="p">,</span> <span class="n">github_pw</span><span class="p">,</span>
+                                    <span class="n">github_token</span><span class="p">,</span> <span class="n">query_terms</span><span class="p">,</span>
+                                    <span class="n">file_is_intetesting</span><span class="p">,</span>
+                                    <span class="n">download_file_cb</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="inline_fs_headers"><a class="viewcode-back" href="../../api/index.html#clgen._fetch.inline_fs_headers">[docs]</a><span class="k">def</span> <span class="nf">inline_fs_headers</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">stack</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -564,7 +613,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.3.13 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">clgen 0.4.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../clgen.html" >clgen</a> &#187;</li> 
       </ul>
