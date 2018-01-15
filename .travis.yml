@@ -1,21 +1,54 @@
+# bazel boiler plate mostly taken from rules_go/.travis.yml. See:
+#   https://github.com/bazelbuild/rules_go/blob/master/.travis.yml
+
+# trusty beta image has jdk8, gcc4.8.4
+# FIXME(linux): dist: trusty
 sudo: required
-dist: trusty
+# xcode8 has jdk8
+osx_image: xcode8
+# Not technically required but suppresses 'Ruby' in Job status message.
+language: java
+
+# workaround submodule public key access.
+# See: http://stackoverflow.com/a/24600210
+git:
+  submodules: false
 
 os:
-  - linux
+  # FIXME(linux): - linux
   - osx
 
+# FIXME(linux):
+# addons:
+#   apt:
+#     sources:
+#       - ubuntu-toolchain-r-test
+#     packages:
+#       - clang-3.6
+
 before_install:
-  - uname -a
+  - ./tools/http-git-submodules.sh
+  - git submodule update --init --recursive
+  - |
+    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      brew update >/dev/null
+      brew install bazel
+      brew install python3
+    else
+      sudo add-apt-repository ppa:jonathonf/python-3.6
+
+      echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+      curl https://bazel.build/bazel-release.pub.gpg | sudo apt-key add -
+      sudo apt-get update >/dev/null
+      dpkg -s 'bazel' &>/dev/null || sudo apt-get install -y bazel
+      dpkg -s 'python3.6' &>/dev/null || sudo apt-get install -y python3.6
+    fi
 
 script:
-  - ./configure --exclude AppStore,Node
-  - ./run --describe --verbose
-  - ./run Git --verbose
-  - ./run --verbose
-  - ./run
-
-notifications:
-  email:
-    on_success: change # [always|never|change]
-    on_failure: change # [always|never|change]
+  - source .env
+  - echo $CC && $CC --version   # c compiler
+  - echo $CXX && $CXX --version  # c++ compiler
+  - bazel query //... | grep -v -f .travisignore  # test targets
+  - |
+    bazel test --local_resources=400,1,1.0 \
+        $(bazel query //... | grep -v -f .travisignore)
