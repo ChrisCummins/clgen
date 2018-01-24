@@ -1,61 +1,76 @@
-# Me.csv [![Release 0.0.1.dev1](https://img.shields.io/badge/release-0.0.1.dev1-blue.svg?style=flat)](https://github.com/ChrisCummins/me.csv/releases) [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://opensource.org/licenses/MIT)
+<div align="center">
+  <a href="https://github.com/ChrisCummins/clgen">
+    <img src="https://raw.githubusercontent.com/ChrisCummins/clgen/master/docs/assets/logo.png" width="420">
+  </a>
+</div>
 
-## Usage
+-------
 
-### Installation
+<div align="center">
+  <a href="http://chriscummins.cc/clgen/" target="_blank">
+    <img src="https://img.shields.io/badge/docs-0.4.0.dev0-brightgreen.svg?style=flat">
+  </a>
+  <a href="https://travis-ci.org/ChrisCummins/clgen" target="_blank">
+    <img src="https://img.shields.io/travis/ChrisCummins/clgen/master.svg?style=flat">
+  </a>
+  <a href="https://coveralls.io/github/ChrisCummins/clgen?branch=master">
+    <img src="https://img.shields.io/coveralls/ChrisCummins/clgen/master.svg?style=flat">
+  </a>
+   <a href="https://github.com/ChrisCummins/clgen/releases" target="_blank">
+    <img src="https://img.shields.io/badge/release-0.4.0.dev0-blue.svg?style=flat">
+  </a>
+  <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">
+    <img src="https://img.shields.io/badge/license-GNU%20GPL%20v3-blue.svg?style=flat">
+  </a>
+</div>
+
+**CLgen** is an open source application for generating runnable programs using
+deep learning. CLgen *learns* to program using neural networks which model the
+semantics and usage from large volumes of program fragments, generating
+many-core OpenCL programs that are representative of, but *distinct* from, the
+programs it learns from.
+
+<img src="https://raw.githubusercontent.com/ChrisCummins/clgen/master/docs/assets/pipeline.png" width="500">
+
+
+## Getting Started
+
+See the [online documentation](http://chriscummins.cc/clgen/) for instructions
+on how to download and install CLgen.
+
+Download a tiny example dataset to train and sample your first CLgen model:
 
 ```sh
-$ virtualenv -p python3.6 build/me
-$ source build/me/bin/activate
-$ pip install -r requirements.txt
+$ wget https://github.com/ChrisCummins/clgen/raw/master/tests/data/tiny.tar.bz2
+$ tar xf tiny.tar.bz2
+$ clgen sample model.json sampler.json
 ```
 
-### Configuration
+<img src="https://raw.githubusercontent.com/ChrisCummins/clgen/master/docs/assets/clgen.gif" width="500">
 
-Create file `~/.me.json`:
 
-```
-{
-  "sources": {
-    "omnifocus": {
-      "of2_path": "/Applications/bin/of2"
-    },
-    "healthkit": {
-      "export_path": "~/Documents/Health/export.zip"
-    }
-  },
-  "exports": {
-    "csv": {
-      "path": "~/Documents/me.csv/"
-    },
-    "gsheet": {
-      "name": "me.csv",
-      "keypath": "~/google-service-key.json",
-      "share_with": "me@example.com"
-    }
-  }
-}
-```
+## Resources
 
-#### Import from HealthKit
+Presentation slides:
 
-1. Select "Export Health Data" on iPhone's Health app.
-2. Set path to `export.zip` in `~/.my.json` > "sources" > "healthkit" > "export_path".
+<a href="https://speakerdeck.com/chriscummins/synthesizing-benchmarks-for-predictive-modelling-cgo-17">
+  <img src="https://raw.githubusercontent.com/ChrisCummins/clgen/master/docs/assets/slides.png" width="500">
+</a>
 
-#### Import from OmniFocus
+Publication
+["Synthesizing Benchmarks for Predictive Modeling"](https://github.com/ChrisCummins/paper-synthesizing-benchmarks)
+(CGO'17).
 
-1. Install [of2export](https://github.com/psidnell/ofexport2).
-2. Set path to `of2` in `~/.my.json` > "sources" > "omnifocus" > "of2_path".
+[Jupyter notebook](https://github.com/ChrisCummins/paper-synthesizing-benchmarks/blob/master/code/Paper.ipynb) containing experimental evaluation of
+CLgen.
 
-#### Export to Google Sheets
+Documentation for the [Python API](http://chriscummins.cc/clgen/api/) and
+[command line interface](http://chriscummins.cc/clgen/bin/).
 
-1. [Obtain OAuth2 credentials from Google Developers Console](http://gspread.readthedocs.io/en/latest/oauth2.html).
-2. Set path to the service key file in `~/.my.json` > "exports" > "gsheet" > "keypath".
-3. Set the name of the spreadsheet to export to in `~/.my.json` > "exports" > "gsheet" > "name".
-4. Set the email address linked to your Drive account in `~/.my.json` > "exports" > "gsheet" > "share_with".
 
-### Running
+## License
 
-```
-$ me.csv
-```
+Copyright 2016, 2017, 2018 Chris Cummins <chrisc.101@gmail.com>.
+
+Released under the terms of the GPLv3 license. See [LICENSE.txt](/LICENSE.txt)
+for details.
