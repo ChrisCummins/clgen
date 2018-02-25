@@ -1,26 +1,28 @@
-# clgen sources and data glob.
-sh_library(
-    name = "labm8",
-    srcs = glob([
-        "labm8/*.py",
-        "make/**/*",
-        "Makefile",
-        "requirements.txt",
-        "setup.py",
-        "setup.cfg",
-        "tests/**/*",
-    ]),
+cc_library(
+    name = "opencl",
+    hdrs = [
+        "third_party/opencl/include/cl.h",
+        "third_party/opencl/include/cl.hpp",
+    ],
     visibility = ["//visibility:public"],
 )
 
-# a script which sets up a virtualenv and runs the test suite.
-sh_test(
-    name = "main",
-    timeout = "eternal",
-    srcs = ["tests/.runner.sh"],
-    args = [
-        "src/labm8",
-        "python3.6",
-    ],
-    deps = [":labm8"],
+config_setting(
+    name = "darwin",
+    values = {"cpu": "darwin"},
+    visibility = ["//visibility:public"],
+)
+
+# The authoritative repo python interpreter. Install using:
+#   $ virtualenv -p python3.6 venv/phd
+#   $ source venv/phd/bin/activate
+#   $ pip uninstall -y setuptools
+#
+# The last command is an annoying workaround because setuptools contains
+# filenames with spaces in them, which bazel does not support.
+py_runtime(
+    name = "python3.6",
+    files = glob(["venv/phd/**"]),
+    interpreter = "venv/phd/bin/python3.6",
+    visibility = ["//visibility:public"],
 )
