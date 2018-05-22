@@ -1,0 +1,17 @@
+// The file defines the protos for describing CLgen instances.
+
+syntax = "proto2";
+package clgen;
+
+import "deeplearning/clgen/proto/model.proto";
+import "deeplearning/clgen/proto/sampler.proto";
+
+// A CLgen instance encapsulates all of the settings for training and sampling
+// a language model.
+message Instance {
+  // The path to the clgen working directory on the host machine.
+  optional string working_dir = 2;
+  // The CLgen model and sampler configuration.
+  optional clgen.Model model = 3;
+  optional clgen.Sampler sampler = 4;
+}
