@@ -1,3 +1,18 @@
+# THIS REPO [HAS MOVED](https://github.com/ChrisCummins/phd/tree/master/deeplearning/clgen)!
+
+Please note that this repository is **deprecated**. CLgen has found a new home
+as part of my
+[PhD repo](https://github.com/ChrisCummins/phd/tree/master/deeplearning/clgen).
+In the process of moving, it has been given a whole new set of features, bug
+fixes, and is much faster! :)
+
+[CLICK HERE FOR THE HARDER, BETTER, FASTER, STRONGER CLGEN.](https://github.com/ChrisCummins/phd/tree/master/deeplearning/clgen)
+
+I will not be backporting updates or fixing issues in this repository. All
+upstream development is taking place in the new repo.
+
+---------------------------
+
 <div align="center">
   <a href="https://github.com/ChrisCummins/clgen">
     <img src="https://raw.githubusercontent.com/ChrisCummins/clgen/master/docs/assets/logo.png" width="420">
