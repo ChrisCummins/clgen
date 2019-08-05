@@ -8,24 +8,8 @@ licenses(["notice"])  # BSD
 
 py_library(
     name = "scipy",
-    srcs = ["scipy.py"],
+    srcs = ["//third_party/py:empty.py"],
     deps = [
         requirement("scipy"),
-    ],
-)
-
-py_library(
-    name = "scikit_image",
-    srcs = ["scipy.py"],
-    deps = [
-        requirement("scikit-image"),
-    ],
-)
-
-py_library(
-    name = "scikit_learn",
-    srcs = ["scipy.py"],
-    deps = [
-        requirement("scikit-learn"),
     ],
 )
