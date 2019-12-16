@@ -29,6 +29,6 @@ python-utils==2.3.0
 pytz==2018.3
 scipy==1.2.1
 six==1.11.0  # Needed by absl.
-tensorflow==1.14.0
+tensorflow==1.15.0
 wrapt==1.11.2
 
