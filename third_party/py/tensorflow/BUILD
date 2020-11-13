@@ -13,8 +13,6 @@
 # packing Tensorflow as a pip dependency for bazel.
 # See github.com/bazelbuild/rules_python/issues/71
 
-load("@requirements//:requirements.bzl", "requirement")
-
 package(default_visibility = ["//visibility:public"])
 
 licenses(["notice"])  # Apache 2.0.
@@ -28,7 +26,6 @@ py_library(
         # rules_pip fails for TensorFlow, causing an empty package to be
         # downloaded. Because of this, we require the user to manually install
         # the version of TensorFlow specified in requirements.txt:
-        # requirement("tensorflow"),
         "//third_party/py/numpy",
         "//third_party/py/protobuf",
     ],
