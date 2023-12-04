@@ -16,7 +16,7 @@
     <img src="https://img.shields.io/badge/license-GNU%20GPL%20v3-blue.svg?style=flat">
   </a>
   <br>
-  Maintainer: <a href="https://github.com/fivosts">fivosts</a>
+  Maintainer: <a href="https://github.com/fivosts">fivosts</a>. See <a href="https://github.com/fivosts/BenchPress">BenchPress</a> for a more recent version. BenchPress also supports CLgen models.
 </div>
 
 **CLgen** is an open source application for generating runnable programs using
